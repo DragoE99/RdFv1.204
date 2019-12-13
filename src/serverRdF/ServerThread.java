@@ -3,15 +3,9 @@ package serverRdF;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import util.Commands;
 import util.Lobby;
-import util.Match;
 import util.User;
 
 
@@ -23,10 +17,11 @@ import util.User;
  */
 public class ServerThread extends Thread {
 
-	ServerSocket serverSocket;
+	//private ServerSocket serverSocket;
 	//Socket s;
-	ObjectInputStream in;
-	ObjectOutputStream out;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
+	private User test = new User("A", "B");
 
 	/**
 	 * Constructor
@@ -47,32 +42,8 @@ public class ServerThread extends Thread {
 		try {
 			
 			out.writeObject("Ciao, sono il server");													//Provvisorio
-			//String user = (String)in.readObject();
-			//String pwd = (String)in.readObject();
-			//System.out.println(user + "\n" + pwd);
 			
-//magari serve uno switch case per tutti gli input diversi che possono arrivare? Non so bene come fare
-			Commands c;
-			
-			while(true) {
-				c = (Commands) in.readObject();
-				
-				switch (c) {
-				case LOGIN : loginHandler();
-					break;
-				case SIGNUP : //metodo controlla e registra utente	
-					break;
-				case RESET : //metodo manda nuova mail	
-				case NO:
-					break;
-				case OK:
-					break;
-				case NEEDLOBBYLIST: this.giveLobbyList();
-					break;
-				default:
-					break;
-				}
-			}
+			listen();																//loop
 
 			//out.writeObject("Done");
 			
@@ -88,30 +59,111 @@ public class ServerThread extends Thread {
 	
 	
 	/**
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	private void listen() throws ClassNotFoundException, IOException {
+		Commands c;
+		
+		while(true) {
+			c = (Commands) in.readObject();
+			
+			switch (c) {
+			case LOGIN : loginHandler();
+				break;
+			case SIGNUP : signup();
+				break;
+			case RESET : resetPwd();	
+			case NO:
+				break;
+			case OK:
+				break;
+			case NEEDLOBBYLIST: giveLobbyList();
+				break;
+			case CREATELOBBY : createLobby();
+				break;
+			default:
+				break;
+			}
+		}											
+	}
+	
+	
+	/**
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 * 
 	 */
 	private void loginHandler() throws ClassNotFoundException, IOException {
-		User u = (User)in.readObject();
+		User u = (User)in.readObject();		
 		
-		User a = new User("A", "B");		
-		
-		if(u.equals(a)) {																		//provvisorio, bisogna controllare sul db
+		if(u.equals(test)) {																		//TODO provvisorio, bisogna controllare sul db
 			out.writeObject(Commands.OK);
 		} else {
 			out.writeObject(Commands.NO);
 		}
 	}
 
-	private void listen() throws ClassNotFoundException, IOException {
-		if (in.readObject().equals("Need lobby list"))
-			this.giveLobbyList();
-	}
+	
 
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	private void giveLobbyList() throws IOException {
 		out.writeObject(ServerListener.getLobbies()); 
 		
+	}
+	
+	/**
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 * 
+	 */
+	private void signup() throws ClassNotFoundException, IOException {
+		User u = (User)in.readObject();
+		
+		if(u.equals(test)) {																		//TODO, provvisorio, bisogna controllare sul db
+			out.writeObject(Commands.NO);
+		} else {
+			out.writeObject(Commands.OK);
+			
+			
+			//TODO inserirlo sul db
+		}
+	}
+	
+	/**
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 * 
+	 */
+	private void resetPwd() throws ClassNotFoundException, IOException {
+		String email = (String)in.readObject();
+		
+		if(!email.equals(test.getEmail())) {						//TODO controlla sul db se esiste l'utente
+			
+			out.writeObject(Commands.NO);
+		} else {
+			out.writeObject(Commands.OK);
+			
+			//manda la mail
+		}
+	}
+	
+	private void createLobby() throws IOException, ClassNotFoundException {
+		Lobby newLobby = (Lobby)in.readObject();
+		
+		if(newLobby.getLobbyName().equals("nome esistente")) {						//TODO controlla sul db se esiste il nome della lobby
+			out.writeObject(Commands.NO);
+		} else {
+			out.writeObject(Commands.OK);
+			
+			System.out.println(newLobby.getCreator().getEmail());
+			
+			ServerListener.addLobby(newLobby);
+		}
 	}
 
 }

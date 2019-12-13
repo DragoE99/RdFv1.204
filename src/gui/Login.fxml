@@ -33,7 +33,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </PasswordField>
-            <Hyperlink onAction="#passwordReset" text="Forgot your password?" />
+            <Hyperlink onAction="#passwordReset" prefHeight="23.0" prefWidth="135.0" text="Forgot your password?" />
             <Button fx:id="enterButton" mnemonicParsing="false" onAction="#login" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Enter" textFill="#c2d3e4">
                <VBox.margin>
                   <Insets top="20.0" />
@@ -45,7 +45,7 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Label text="Not registered yet?" textFill="#c2d3e4" />
-                  <Hyperlink fx:id="signUp" onAction="#signUp" text="Create an account" />
+                  <Hyperlink fx:id="signUp" onAction="#signUp" prefHeight="23.0" prefWidth="106.0" text="Create an account" />
                </children>
             </HBox>
          </children>

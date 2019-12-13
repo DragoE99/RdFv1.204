@@ -22,12 +22,12 @@ public class InsertableLobby extends Lobby{
 		private final SimpleBooleanProperty status;
 		
 		public InsertableLobby(Lobby lobby){
-			super();
+			//super();
 			
 			this.lobbyName = new SimpleStringProperty(lobby.getLobbyName());
 			this.nPlayers = new SimpleIntegerProperty(lobby.getNPlayers());
 			this.nSpectators = new SimpleIntegerProperty(lobby.getNSpectators());
-			this.status = new SimpleBooleanProperty(lobby.getStatus());
+			this.status = new SimpleBooleanProperty(lobby.isActive());
 		}
 
 		

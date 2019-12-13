@@ -1,11 +1,11 @@
 package playerRdF;
 
 import java.io.IOException;
-import java.util.Set;
 
 import gui.Main;
 import javafx.application.Application;
 import util.Match;
+import util.User;
 
 /**
  * Client is our main client class, it starts the proxy to connect with the server, as well as our GUI
@@ -16,6 +16,7 @@ import util.Match;
 public class Client {
 
 	private static Proxy proxy;
+	private static User me;																	//dovrebbe essere final, oppure non modificabile
 
 	public static void main(String[] args) throws IOException {
 		proxy = new Proxy();							
@@ -33,10 +34,29 @@ public class Client {
 		return proxy;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static Match getMatch() {
 		return new Match();
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static User getUser() {
+		return me;
+	}
+	
+	/**
+	 * 
+	 * @param u
+	 */
+	public static void setUser(User u) {
+		me = u;
+	}
 
 
 

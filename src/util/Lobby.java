@@ -25,21 +25,46 @@ public class Lobby implements Serializable {
 	private final String lobbyName;
 	private final Integer nPlayers;
 	private final Integer nSpectators;
-	private final Boolean status;
+	private final Boolean isActive;
+	private final User creator;
 
-	public Lobby(String lobbyName, int nPlayers, int nSpectators, boolean status) {
+	/**
+	 * 
+	 * @param lobbyName
+	 * @param nPlayers
+	 * @param nSpectators
+	 * @param isActive
+	 * @param creator
+	 */
+	public Lobby(String lobbyName, int nPlayers, int nSpectators, boolean isActive, User creator) {
 		this.lobbyName = lobbyName;
 		this.nPlayers = nPlayers;
 		this.nSpectators = nSpectators;
-		this.status = status;
+		this.isActive = isActive;
+		this.creator = creator;
 
 	}
 
-	public Lobby() {
+	/**
+	 * 
+	 * @param lobbyName
+	 * @param isActive
+	 * @param creator
+	 */
+	public Lobby(String lobbyName, boolean isActive, User creator) {
+		this.lobbyName = lobbyName;
+		this.nPlayers = null;
+		this.nSpectators = null;
+		this.isActive = isActive;
+		this.creator = creator;
+	}
+	
+	protected Lobby() {
 		this.lobbyName = null;
 		this.nPlayers = null;
 		this.nSpectators = null;
-		this.status = null;
+		this.isActive = null;
+		this.creator = null;
 	}
 
 	/**
@@ -109,8 +134,8 @@ public class Lobby implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Boolean getStatus() {
-		return status;
+	public Boolean isActive() {
+		return isActive;
 	}
 
 //	/**
@@ -120,4 +145,12 @@ public class Lobby implements Serializable {
 //	public void setStatus(boolean status) {
 //		this.status = status;
 //	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public User getCreator() {
+		return this.creator;
+	}
 }

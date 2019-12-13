@@ -1,11 +1,14 @@
 package serverRdF;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 import util.Lobby;
 import util.Match;
+import util.User;
 
 
 /**
@@ -22,6 +25,8 @@ public class ServerListener {
 	private static HashMap<Match, Lobby> lobbies = new HashMap<Match, Lobby>();
 	private static int counter = 0;
 	private static Socket socket;
+	
+	private static User admin = new User("admin", "admin");
 
 
 	public static void main(String args[]) throws IOException {
@@ -34,7 +39,11 @@ public class ServerListener {
 
 		ServerSocket serverSocket = new ServerSocket(PORT);
 		System.out.println("Server Started");
-		populateLobbies();
+		
+		
+		populateLobbies();																		//TODO 
+		
+		
 		try {
 			while(true) {
 				socket = serverSocket.accept();
@@ -61,16 +70,16 @@ public class ServerListener {
 	
 	
 	public static void populateLobbies() {
-		lobbies.put(new Match(), new Lobby("G", 2, 81, true));
-		lobbies.put(new Match(), new Lobby("Gi", 1, 84, true));
-		lobbies.put(new Match(), new Lobby("Gio", 3, 38, true));
-		lobbies.put(new Match(), new Lobby("Gior", 2, 86, true));
-		lobbies.put(new Match(), new Lobby("Giorg", 1, 18, true));
-		lobbies.put(new Match(), new Lobby("Giorgi", 3, 58, true));
-		lobbies.put(new Match(), new Lobby("Giorgio", 3, 84, true));
-		lobbies.put(new Match(), new Lobby("Giorgion", 2, 68, true));
-		lobbies.put(new Match(), new Lobby("Giorgione", 1, 78, true));
-		lobbies.put(new Match(), new Lobby("Giorgiones", 3, 82, true));
+		lobbies.put(new Match(), new Lobby("G", 2, 81, true, admin));
+		lobbies.put(new Match(), new Lobby("Gi", 1, 84, true, admin));
+		lobbies.put(new Match(), new Lobby("Gio", 3, 38, true, admin));
+		lobbies.put(new Match(), new Lobby("Gior", 2, 86, true, admin));
+		lobbies.put(new Match(), new Lobby("Giorg", 1, 18, true, admin));
+		lobbies.put(new Match(), new Lobby("Giorgi", 3, 58, true, admin));
+		lobbies.put(new Match(), new Lobby("Giorgio", 3, 84, true, admin));
+		lobbies.put(new Match(), new Lobby("Giorgion", 2, 68, true, admin));
+		lobbies.put(new Match(), new Lobby("Giorgione", 1, 78, true, admin));
+		lobbies.put(new Match(), new Lobby("Giorgiones", 3, 82, true, admin));
 	}
 	
 
@@ -94,7 +103,15 @@ public class ServerListener {
 	 * Getter for lobbies
 	 * @return the lobbies' HashMap
 	 */
-	public static HashMap<Match, Lobby> getLobbies() {
+	public synchronized static HashMap<Match, Lobby> getLobbies() {
 		return lobbies;
+	}
+	
+	/**
+	 * 
+	 * @param newLobby
+	 */
+	public synchronized static void addLobby(Lobby newLobby) {
+		lobbies.put(new Match(), newLobby);
 	}
 }
