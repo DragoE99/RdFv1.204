@@ -1,0 +1,100 @@
+package serverRdF;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+import util.Lobby;
+import util.Match;
+
+
+/**
+ * Server Listener is our main server class;
+ * after starting the server and database, it keeps "listening" and accepting connections
+ * and handles them
+ * 
+ * @author gruppo aelv
+ *
+ */
+public class ServerListener {
+	private static final int PORT = 8080;
+	private static Map<Integer, ServerThread> clients = new HashMap<Integer, ServerThread>();
+	private static HashMap<Match, Lobby> lobbies = new HashMap<Match, Lobby>();
+	private static int counter = 0;
+	private static Socket socket;
+
+
+	public static void main(String args[]) throws IOException {
+
+
+		//TODO login e inizializzazione db 
+
+
+
+
+		ServerSocket serverSocket = new ServerSocket(PORT);
+		System.out.println("Server Started");
+		populateLobbies();
+		try {
+			while(true) {
+				socket = serverSocket.accept();
+				ServerThread temp = new ServerThread("Thread " + counter);		//launch a new Thread for every connection
+				clients.put(counter, temp);												//insert into the set to keep track of them
+				counter++;
+
+
+				for(int i = 0; i < clients.size(); i++) {
+					System.out.println(clients.get(i).getName());
+				}
+
+			}
+
+		}catch (Exception e) {
+			System.out.println("qualcosa e' andato storto...");
+
+		}finally {
+			socket.close();
+			serverSocket.close();
+		}
+
+	}
+	
+	
+	public static void populateLobbies() {
+		lobbies.put(new Match(), new Lobby("G", 2, 81, true));
+		lobbies.put(new Match(), new Lobby("Gi", 1, 84, true));
+		lobbies.put(new Match(), new Lobby("Gio", 3, 38, true));
+		lobbies.put(new Match(), new Lobby("Gior", 2, 86, true));
+		lobbies.put(new Match(), new Lobby("Giorg", 1, 18, true));
+		lobbies.put(new Match(), new Lobby("Giorgi", 3, 58, true));
+		lobbies.put(new Match(), new Lobby("Giorgio", 3, 84, true));
+		lobbies.put(new Match(), new Lobby("Giorgion", 2, 68, true));
+		lobbies.put(new Match(), new Lobby("Giorgione", 1, 78, true));
+		lobbies.put(new Match(), new Lobby("Giorgiones", 3, 82, true));
+	}
+	
+
+	/**
+	 * Getter for PORT
+	 * @return our PORT number
+	 */
+	public static int getPort() {
+		return PORT;
+	}
+
+	/**
+	 * Getter for socket
+	 * @return the socket we are using
+	 */
+	public static Socket getSocket() {
+		return socket;
+	}
+
+	/**
+	 * Getter for lobbies
+	 * @return the lobbies' HashMap
+	 */
+	public static HashMap<Match, Lobby> getLobbies() {
+		return lobbies;
+	}
+}
