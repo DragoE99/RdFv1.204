@@ -15,7 +15,8 @@ public enum Commands implements Serializable {
 	LOGIN,
 	SIGNUP,
 	RESET, 
-	NEEDLOBBYLIST;
+	NEEDLOBBYLIST,
+	CREATELOBBY;
 	//tutti gli altri comandi
 
 }

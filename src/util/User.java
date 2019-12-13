@@ -21,13 +21,13 @@ public class User implements Serializable {
 	 * @param nickname
 	 * @param password
 	 */
-	public User(String name, String surname, String email, String nickname, String password, Integer id) {
+	public User(String name, String surname, String email, String nickname, String password) {
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
 		this.nickname = nickname;
 		this.password = password;
-		this.id = id;
+		//this.id = id;
 	}
 	
 	/**
@@ -53,6 +53,10 @@ public class User implements Serializable {
 			return true;
 		else 
 			return false;
+	}
+
+	public String getEmail() {
+		return email;
 	}
 	
 	

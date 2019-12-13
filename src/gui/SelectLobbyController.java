@@ -27,7 +27,6 @@ import util.Match;
 public class SelectLobbyController implements Initializable{
 
 	@FXML private Node pane;
-	private HashMap<Match, Lobby> lobbyList;
 	
 
 	@FXML
@@ -51,12 +50,11 @@ public class SelectLobbyController implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-		//HashMap<Match, Lobby> lobbyList;
+		HashMap<Match, Lobby> lobbyList;
 		
 		
 		try {
-			//lobbyList = new HashMap<Match, Lobby>(Client.getProxy().demandLobbyList());
-			refreshLobbyList();
+			lobbyList = new HashMap<Match, Lobby>(Client.getProxy().demandLobbyList());
 			
 			
 			for (Match key : lobbyList.keySet()) { 
@@ -118,7 +116,7 @@ public class SelectLobbyController implements Initializable{
 
 
 	public void refresh(ActionEvent e) throws IOException, ClassNotFoundException {
-		this.refreshLobbyList();
+		this.refresh();
 	}
 	public void back(ActionEvent e) throws IOException {
 		
@@ -130,13 +128,17 @@ public class SelectLobbyController implements Initializable{
 		
 	}
 	public void play(ActionEvent e) throws IOException {
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("WaitingRoom.fxml")))); 
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Game.fxml")))); 
 	}
 
+	public void refresh() throws ClassNotFoundException, IOException {
+		/*
+		 * HashMap<Match, Lobby> lobbyList = (HashMap<Match, Lobby>)
+		 * Client.getProxy().demandLobbyList(); ObservableList<TableColumn<String, ?>>
+		 * colonne = table.getColumns();
+		 * colonne.get(0)..add(lobbyList.get(Client.getMatch()).getLobbyName());
+		 */
 
-	public void refreshLobbyList() throws ClassNotFoundException, IOException {
-		lobbyList = new HashMap<Match, Lobby>(Client.getProxy().demandLobbyList());
-		
 	}
 	
 	
