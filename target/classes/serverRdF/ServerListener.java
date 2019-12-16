@@ -35,12 +35,26 @@ public class ServerListener {
 
 		//TODO login e inizializzazione db 
 
+		/* ************ roba per la connessione al DB************
+		se non presente il database non eseguire*/
 		DataBaseConnection DB = new DataBaseConnection();
 		try {
 			DB.getAllUsers();
+			boolean result =DB.getOneUser("i@i.it", "boia");
+			if(result){
+				System.out.println("successo ritornato correttamente");
+			}else {
+				System.out.println("fallimento ERRORE");
+			}
+
+			if(DB.thereIsAdmin()){
+				System.out.println("admin presente ");
+			}else {
+				System.out.println("admin assente");
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}// */
 
 
 		ServerSocket serverSocket = new ServerSocket(PORT);
