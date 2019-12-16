@@ -23,6 +23,7 @@ public class DataBaseConnection {
         return connection;
     }
 
+    /* ******************** Query users table *************************/
     //TODO FAR INIZIALIZZARE L'UTENTE SERVE NEL LOGIN. IL SERVER THREAD DEVE AVERE UN UTENTE STATIC?
     public boolean getOneUser(String email, String password){
         try (Connection conn = getConnectionInstance()) {
