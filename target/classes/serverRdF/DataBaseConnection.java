@@ -7,8 +7,10 @@ public class DataBaseConnection {
     public DataBaseConnection() {
     }
 
+    //TODO ELIMINARE COMMENTI
+    // INUTILE FARE SINGLETON SULLA CONNESSIONE PERCHE TANTO DOPO UN PO' LA CHIUDE
     private static Connection getConnectionInstance() throws SQLException {
-       
+
        // if(connection==null){
             System.out.println("prima della connessione");
             String url = "jdbc:postgresql://localhost:5432/postgres";
@@ -21,6 +23,8 @@ public class DataBaseConnection {
         return connection;
     }
 
+    /* ******************** Query users table *************************/
+    //TODO FAR INIZIALIZZARE L'UTENTE SERVE NEL LOGIN. IL SERVER THREAD DEVE AVERE UN UTENTE STATIC?
     public boolean getOneUser(String email, String password){
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
@@ -40,6 +44,8 @@ public class DataBaseConnection {
         }
         return true;
     }
+
+    //funzione che ritorna falso se non ci sono admin o vero se c'è ne almeno uno
     public boolean thereIsAdmin(){
         String qry ="SELECT COUNT(*) FROM users WHERE role = 'a'";
         try (Connection conn = getConnectionInstance()) {
@@ -54,6 +60,7 @@ public class DataBaseConnection {
         }
     }
 
+    //FUNZIONE che stampa tutti gli utenti presenti nel server utile più che altro per test
     public void getAllUsers() throws SQLException {
         Connection conn =getConnectionInstance();
         Statement st = conn.createStatement();
@@ -61,8 +68,7 @@ public class DataBaseConnection {
         //ciclo while che ritorna una COLONNA cioè lo stesso campo per tutte le righe
         // tipo tutti i nomi degli utenti
         /*se vuoi fare la get dell'id devi usare i long*/
-        while (rs.next())
-        {
+        while (rs.next())        {
 
             System.out.println(rs.getString("name")+" "+rs.getString("surname"));
 
