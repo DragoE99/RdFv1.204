@@ -1,9 +1,12 @@
 package serverRdF;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
 import java.util.Properties;
 
-public class DataBaseConnection {
+public class DataBaseConnection  {
     public DataBaseConnection() {
     }
 
@@ -78,6 +81,29 @@ public class DataBaseConnection {
     }
 
     public int modifyName(String newUserName){
+        String SQL = "UPDATE users "
+                + "SET name = ?,"
+                + "last_change_date = CURRENT_TIMESTAMP "
+                + "WHERE id = ?";
+
+        int affectedrows = 0;
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+            pstmt.setString(1, newUserName);
+            pstmt.setInt(2, 3);
+
+            affectedrows = pstmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return affectedrows;
+
+    }
+
+    public int modifySurname(String newUserName){
         String SQL = "UPDATE users "
                 + "SET surname = ?,"
                 + "last_change_date = CURRENT_TIMESTAMP "

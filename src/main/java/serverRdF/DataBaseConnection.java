@@ -1,9 +1,12 @@
 package serverRdF;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
 import java.util.Properties;
 
-public class DataBaseConnection {
+public class DataBaseConnection  {
     public DataBaseConnection() {
     }
 

@@ -42,6 +42,12 @@
             <artifactId>json</artifactId>
             <version>20190722</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jboss.spec.javax.rmi/jboss-rmi-api_1.0_spec -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.rmi</groupId>
+            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
+            <version>1.0.6.Final</version>
+        </dependency>
 
     </dependencies>
 </project>

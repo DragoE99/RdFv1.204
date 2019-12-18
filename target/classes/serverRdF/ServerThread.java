@@ -3,6 +3,10 @@ package serverRdF;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import util.Commands;
 import util.Lobby;
@@ -15,7 +19,7 @@ import util.User;
  * @author gruppo aelv
  *
  */
-public class ServerThread extends Thread {
+public class ServerThread extends Thread{
 
 	//private ServerSocket serverSocket;
 	//Socket s;
@@ -29,6 +33,7 @@ public class ServerThread extends Thread {
 	 * @param name, String representing the name we want to assign to this thread
 	 * @throws IOException 
 	 */
+
 	public ServerThread(String name) throws IOException {
 		super(name);
 		//this.s = socket;
@@ -37,17 +42,24 @@ public class ServerThread extends Thread {
 		start();
 	}
 
+	/* ********** testing*************************/
+
 	@Override
 	public void run() {
 		try {
+
 			
 			out.writeObject("Ciao, sono il server");													//Provvisorio
 			
-			listen();																//loop
+			listen();
+
+			//loop
 
 			//out.writeObject("Done");
 			
 			//this.listen();
+
+
 
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("erroreServerThread");
