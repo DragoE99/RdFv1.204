@@ -39,7 +39,7 @@ public class ServerListener {
 		se non presente il database non eseguire*/
 		DataBaseConnection DB = new DataBaseConnection();
 		try {
-			DB.getAllUsers();
+			DB.getAllUsers();/*
 			boolean result =DB.getOneUser("i@i.it", "boia");
 			if(result){
 				System.out.println("successo ritornato correttamente");
@@ -51,7 +51,11 @@ public class ServerListener {
 				System.out.println("admin presente ");
 			}else {
 				System.out.println("admin assente");
-			}
+			}*/
+
+			int i =DB.modifyName("kujo");
+			System.out.println("colonne modificate: "+i);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}// */
@@ -59,9 +63,10 @@ public class ServerListener {
 
 		ServerSocket serverSocket = new ServerSocket(PORT);
 		System.out.println("Server Started");
-		
-		
-		populateLobbies();																		//TODO 
+
+		return;
+
+		/*populateLobbies();																		//TODO
 		
 		
 		try {
@@ -84,7 +89,7 @@ public class ServerListener {
 		}finally {
 			socket.close();
 			serverSocket.close();
-		}
+		}*/
 
 	}
 	

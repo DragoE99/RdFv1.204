@@ -76,4 +76,51 @@ public class DataBaseConnection {
         rs.close();
         st.close();
     }
+
+    public int modifyName(String newUserName){
+        String SQL = "UPDATE users "
+                + "SET name = ?,"
+                + "last_change_date = CURRENT_TIMESTAMP "
+                + "WHERE id = ?";
+
+        int affectedrows = 0;
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+            pstmt.setString(1, newUserName);
+            pstmt.setInt(2, 3);
+
+            affectedrows = pstmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return affectedrows;
+
+    }
+
+    public int modifySurname(String newUserName){
+        String SQL = "UPDATE users "
+                + "SET surname = ?,"
+                + "last_change_date = CURRENT_TIMESTAMP "
+                + "WHERE id = ?";
+
+        int affectedrows = 0;
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+            pstmt.setString(1, newUserName);
+            pstmt.setInt(2, 3);
+
+            affectedrows = pstmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return affectedrows;
+
+    }
+
 }
