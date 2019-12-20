@@ -6,20 +6,81 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DataBaseConnection {
+    private String ipAddress;
+    private String port;
+    private String dbName;
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    private String dbUser;
+    private String dbPassword;
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public void setDbUser(String dbUser) {
+        this.dbUser = dbUser;
+    }
+
+    public void setDbPassword(String dbPassword) {
+        this.dbPassword = dbPassword;
+    }
+
+    public DataBaseConnection(String ipAddress, String port, String dbName, String dbUser, String dbPassword) {
+        this.ipAddress = ipAddress;
+        this.port = port;
+        this.dbName = dbName;
+        this.dbUser = dbUser;
+        this.dbPassword = dbPassword;
+    }
+
     public DataBaseConnection() {
+        setIpAddress("localhost");
+        setPort("5432");
+        setDbName("postgres");
+        setDbUser("postgres");
+        setDbPassword("postgres");
+
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public String getDbUser() {
+        return dbUser;
+    }
+
+    public String getDbPassword() {
+        return dbPassword;
     }
 
     //TODO ELIMINARE COMMENTI
     // INUTILE FARE SINGLETON SULLA CONNESSIONE PERCHE TANTO DOPO UN PO' LA CHIUDE
-    private static Connection getConnectionInstance() throws SQLException {
+    private Connection getConnectionInstance() throws SQLException {
 
-            System.out.println("prima della connessione");
-            String url = "jdbc:postgresql://localhost:5432/postgres";
-            Properties props = new Properties();
-            props.setProperty("user","postgres");
-            props.setProperty("password","postgres");
-            Connection connection = DriverManager.getConnection(url, props);
-            System.out.println("connessione avvenuta");
+        System.out.println("prima della connessione");
+        String url = "jdbc:postgresql://"+ipAddress+":"+port+"/"+dbName;
+        Properties props = new Properties();
+        props.setProperty("user",dbUser);
+        props.setProperty("password",dbPassword);
+        Connection connection = DriverManager.getConnection(url, props);
+        System.out.println("connessione avvenuta");
         return connection;
     }
 
@@ -150,11 +211,11 @@ public class DataBaseConnection {
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 
-            /*pstmt.setString(1, newUser.getName());
+            pstmt.setString(1, newUser.getName());
             pstmt.setString(2,newUser.getSurname() );
-            pstmt.setString(3,newUser.getMail());
+            pstmt.setString(3,newUser.getEmail());
             pstmt.setString(4, newUser.getNickname());
-            pstmt.setInt(5, newUser.getId());*/
+            pstmt.setInt(5, newUser.getId());
 
             affectedrows = pstmt.executeUpdate();
 
@@ -166,6 +227,34 @@ public class DataBaseConnection {
     }
 
 
+    public int insertUser(User newUser){
+        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
+        int affectedrows = 0;
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+                pstmt.setString(1, newUser.getName());
+                pstmt.setString(2,newUser.getSurname());
+                pstmt.setString(3,newUser.getEmail());
+                pstmt.setString(4, newUser.getPassword());
+                pstmt.setString(5, newUser.getNickname());
+               /* if(newUser instanceof admin){
+                    pstmt.setString(6, "a");
+                }else if(newUser instanceof user){
+                    pstmt.setString(6, "p");
+                }else {
+                    pstmt.setString(6, "u");
+                }*/
+
+                affectedrows = pstmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return affectedrows;
+    }
 
 
     /* ********************query match table********************************/
@@ -173,7 +262,6 @@ public class DataBaseConnection {
     public void insertMatch() {
 
         Integer[] id = {3,4,5};
-
 
         String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
         try (Connection conn = getConnectionInstance();
