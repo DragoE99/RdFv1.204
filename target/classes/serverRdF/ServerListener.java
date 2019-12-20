@@ -56,6 +56,15 @@ public class ServerListener {
 			int i =DB.modifyName("kujo");
 			System.out.println("colonne modificate: "+i);
 
+			if(DB.checkMail("mail2@.it")){
+				System.out.println("mail presente ");
+			}else {
+				System.out.println("mail assente");
+			}
+
+
+			DB.insertMatch();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}// */
@@ -64,9 +73,9 @@ public class ServerListener {
 		ServerSocket serverSocket = new ServerSocket(PORT);
 		System.out.println("Server Started");
 
-		return;
+		//return;
 
-		/*populateLobbies();																		//TODO
+		populateLobbies();																		//TODO
 		
 		
 		try {
@@ -89,7 +98,7 @@ public class ServerListener {
 		}finally {
 			socket.close();
 			serverSocket.close();
-		}*/
+		}
 
 	}
 	

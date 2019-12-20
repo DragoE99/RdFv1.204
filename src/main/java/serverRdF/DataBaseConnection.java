@@ -1,5 +1,7 @@
 package serverRdF;
 
+import util.User;
+
 import java.sql.*;
 import java.util.Properties;
 
@@ -11,7 +13,6 @@ public class DataBaseConnection {
     // INUTILE FARE SINGLETON SULLA CONNESSIONE PERCHE TANTO DOPO UN PO' LA CHIUDE
     private static Connection getConnectionInstance() throws SQLException {
 
-       // if(connection==null){
             System.out.println("prima della connessione");
             String url = "jdbc:postgresql://localhost:5432/postgres";
             Properties props = new Properties();
@@ -19,7 +20,6 @@ public class DataBaseConnection {
             props.setProperty("password","postgres");
             Connection connection = DriverManager.getConnection(url, props);
             System.out.println("connessione avvenuta");
-       // }
         return connection;
     }
 
@@ -120,6 +120,74 @@ public class DataBaseConnection {
             System.out.println(ex.getMessage());
         }
         return affectedrows;
+
+    }
+    public boolean checkMail(String mail){
+        String qry ="SELECT COUNT(*) FROM users WHERE mail = '"+mail+"'";
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(qry);
+            rs.next();
+            return rs.getInt(1) > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+    public int modifyUser (User newUser){
+        String SQL = "UPDATE users "
+                + "SET name = ?,"
+                + "SET surname = ?,"
+                + "SET mail = ?,"
+                + "SET nickname = ?,"
+                + "last_change_date = CURRENT_TIMESTAMP "
+                + "WHERE id = ?";
+
+        int affectedrows = 0;
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+            /*pstmt.setString(1, newUser.getName());
+            pstmt.setString(2,newUser.getSurname() );
+            pstmt.setString(3,newUser.getMail());
+            pstmt.setString(4, newUser.getNickname());
+            pstmt.setInt(5, newUser.getId());*/
+
+            affectedrows = pstmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return affectedrows;
+
+    }
+
+
+
+
+    /* ********************query match table********************************/
+
+    public void insertMatch() {
+
+        Integer[] id = {3,4,5};
+
+
+        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            Array array = conn.createArrayOf("INTEGER", id);
+            pstmt.setString(1, "e");   // Set state
+            pstmt.setInt(2, 2); //set creator id
+            pstmt.setArray(3, array);  // Set ID palyers
+
+            pstmt.executeUpdate();  // Execute the query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 

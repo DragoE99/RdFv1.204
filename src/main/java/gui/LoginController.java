@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
@@ -11,7 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import playerRdF.Client;
 import util.Commands;
 import util.User;
@@ -89,6 +92,12 @@ public class LoginController {
 		
 		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ResetPassword.fxml"))));
 		
+	}
+
+	public void chooseFile(){
+		FileChooser file = new FileChooser();
+		Stage primaryStage = null;
+		File selectedFile = file.showOpenDialog(primaryStage);
 	}
 
 
