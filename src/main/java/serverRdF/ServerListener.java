@@ -3,12 +3,15 @@ package serverRdF;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import util.Admin;
 import util.Lobby;
 import util.Match;
+import util.Player;
 import util.User;
 
 
@@ -27,56 +30,31 @@ public class ServerListener {
 	private static int counter = 0;
 	private static Socket socket;
 	
-	private static User admin = new User("admin", "admin");
+	private static User admin = new Admin("admin", "admin");
+	private static Set<User> users = new HashSet<User>();
 
 
 	public static void main(String args[]) throws IOException {
 
 
 		//TODO login e inizializzazione db 
-
 		/* ************ roba per la connessione al DB************
-		se non presente il database non eseguire*/
+		se non presente il database non eseguire
 		DataBaseConnection DB = new DataBaseConnection();
 		try {
-			DB.getAllUsers();/*
-			boolean result =DB.getOneUser("i@i.it", "boia");
-			if(result){
-				System.out.println("successo ritornato correttamente");
-			}else {
-				System.out.println("fallimento ERRORE");
-			}
-
-			if(DB.thereIsAdmin()){
-				System.out.println("admin presente ");
-			}else {
-				System.out.println("admin assente");
-			}*/
-
-			int i =DB.modifyName("kujo");
-			System.out.println("colonne modificate: "+i);
-
-			if(DB.checkMail("mail2@.it")){
-				System.out.println("mail presente ");
-			}else {
-				System.out.println("mail assente");
-			}
-
-
-			DB.insertMatch();
-
+			DB.getAllUsers();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}// */
+		}*/
+
 
 
 		ServerSocket serverSocket = new ServerSocket(PORT);
 		System.out.println("Server Started");
-
-		//return;
-
-		populateLobbies();																		//TODO
 		
+		
+		populateLobbies();																		//TODO 
+		populateUsers();
 		
 		try {
 			while(true) {
@@ -102,8 +80,10 @@ public class ServerListener {
 
 	}
 	
-	
-	public static void populateLobbies() {
+	/**
+	 * Populate the HashMap<Lobby> with data taken from DB
+	 */
+	private static void populateLobbies() {
 		lobbies.put(new Match(), new Lobby("G", 2, 81, true, admin));
 		lobbies.put(new Match(), new Lobby("Gi", 1, 84, true, admin));
 		lobbies.put(new Match(), new Lobby("Gio", 3, 38, true, admin));
@@ -114,6 +94,13 @@ public class ServerListener {
 		lobbies.put(new Match(), new Lobby("Giorgion", 2, 68, true, admin));
 		lobbies.put(new Match(), new Lobby("Giorgione", 1, 78, true, admin));
 		lobbies.put(new Match(), new Lobby("Giorgiones", 3, 82, true, admin));
+	}
+	
+	/**
+	 * Populate the HashSet<User> with data taken from DB
+	 */
+	private static void populateUsers() {  //TODO Aggancio a DB
+		users.add(new Player("Achille", "boh"));
 	}
 	
 
@@ -148,4 +135,12 @@ public class ServerListener {
 	public synchronized static void addLobby(Lobby newLobby) {
 		lobbies.put(new Match(), newLobby);
 	}
+
+
+	public static Set<User> getUsers() {
+
+		return users;
+	}
+	
+	//TEST TEST TEST AGGIUNGO UN COMMENTO PER VEDERE SE FUNZIONA GIT. LO
 }

@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.Commands;
 
@@ -19,13 +21,13 @@ import util.Commands;
  */
 public class ResetPasswordController {
 
-	
+
 	@FXML private TextField email;
-	
-	
+
+	@FXML private ImageView back;
 	//dovremmo forse creare delle spiegazioni, es. "ti manderemo una mail con una nuova password"
-	
-	
+
+
 	/**
 	 * 
 	 * @param e
@@ -33,9 +35,9 @@ public class ResetPasswordController {
 	 * @throws ClassNotFoundException 
 	 */
 	public void enter(ActionEvent e) throws IOException, ClassNotFoundException {
-		
+
 		Commands reply = Client.getProxy().resetPwd(email.getText());
-		
+
 		if(reply == Commands.OK) {
 
 			//rimanda al login quando hai finito con successo
@@ -44,7 +46,15 @@ public class ResetPasswordController {
 			//TODO
 			System.err.println("Utente non esiste");
 		}
-		
+
 	}
-	
+
+	public void back(MouseEvent e) throws IOException {
+
+		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Login.fxml"))));
+		}
+	}
+
+
 }

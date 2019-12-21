@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="200.0" prefWidth="306.0" style="-fx-background-color: #21232F;" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx">
+   <children>
+      <Label fx:id="errorLabel" text="Unexpected error. Please restart the application" wrapText="TRUE" alignment="CENTER" prefHeight="200.0" prefWidth="306.0" textAlignment="CENTER" textFill="RED">
+         <font>
+            <Font size="22.0"/>
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

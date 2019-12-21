@@ -1,8 +1,17 @@
 package util;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import gui.Main;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.chart.Axis;
+import javafx.stage.Stage;
 
 /**
  * Class representing our game sentence, with methods to handle it
@@ -40,44 +49,102 @@ public class Sentence implements Serializable {
 	 */
 	public char[][] tokenize() {
 
-		StringTokenizer stringTokenizer = new StringTokenizer(this.sentence, " ");
-		int numberOfTokens = stringTokenizer.countTokens();
-		String [] words = new String[numberOfTokens]; 
-		String [] rows = new String[4];
-		int tracker = 0;
-		for (int i = 0; i < numberOfTokens; i++) {
-			words[i] = stringTokenizer.nextToken();
-		}
-		for (int i = 0; i < rows.length; i++) {
-			for (int j = tracker; j < words.length; j++) {
-				if (!(rows[i] == null)) {
-					if (rows[i].length() + words[j].length() + 1 < 15)
-						rows[i] += words[j] + " ";
-					else {
-						rows[i] = rows[i].trim();
-						tracker = j;
-						break;
-					}
-				} else {
-					rows[i] = words[j] + " ";
+		try {
+
+			String [] rows = calculateRows(this.sentence, 15);
+//			for (int i = 0; i < rows.length; i++) {
+//				System.out.println(rows[i]);
+//			}
+
+			char [][] insertableMatrix = new char[4][15];
+
+
+			for (int i = 0; i < rows.length; i++) {
+				char [] a = rows[i].toCharArray();
+				for (int j = 0; j < a.length; j++) {
+					insertableMatrix[i][j] = a[j];
 				}
 			}
-		}
-
-		char [][] insertableMatrix = new char[4][15];
 
 
-		for (int i = 0; i < rows.length; i++) {
-			char [] a = rows[i].toCharArray();
-			for (int j = 0; j < a.length; j++) {
-				insertableMatrix[i][j] = a[j];
+			return insertableMatrix;
+		} catch (ArrayIndexOutOfBoundsException e){ 
+
+			Stage stage = new Stage();
+
+			stage.setTitle("Unexpected Error");
+
+			Parent root;
+			try {
+				root = FXMLLoader.load(new Main().getClass().getResource("Error.fxml"));
+
+				stage.setScene(new Scene(root));
+			} catch (IOException e1) {
+				System.out.println("Cannot find the fxml file");
 			}
-		}
 
-		return insertableMatrix;
+			stage.setResizable(false);
+			stage.requestFocus();
+			stage.show();
+
+			return null;
+		}
 	}
-	
-	
+
+	/**
+	 * 
+	 * @param input
+	 * @param maxLineLength
+	 * @return an array of String that represent the value of every row 
+	 */
+	private String[] calculateRows (String input, int maxLineLength) {
+		
+		StringTokenizer tok = new StringTokenizer(input, " ");
+		
+		StringBuilder sb = new StringBuilder();
+		
+		int lineLength = 0;
+		
+		while (tok.hasMoreTokens()) {
+			
+			String word = tok.nextToken();
+			
+			while (word.length() > maxLineLength) {
+				sb.append(word.substring(0, maxLineLength - lineLength) + "\n");
+				
+				word = word.substring(maxLineLength - lineLength);
+				
+				lineLength = 0;
+				
+			}
+			
+			if (lineLength + word.length() > maxLineLength) {
+				
+				sb.append("\n");
+				
+				lineLength = 0;
+			} 
+				
+				sb.append(word);
+				
+				lineLength += word.length();
+				
+				if (lineLength < maxLineLength) {
+					
+					sb.append(" "); 
+					lineLength++;
+					
+				} else {
+					sb.append("\n");
+					lineLength = 0;
+				}
+				
+					
+			
+		}
+		
+		return sb.toString().split("\n");
+	}
 
 	public List<User> getSeenBy() {
 		return seenBy;

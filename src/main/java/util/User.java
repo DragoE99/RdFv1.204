@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author gruppo aelv
  *
  */
-public class User implements Serializable {
+public abstract class User implements Serializable {
 
 	private String name, surname, email, nickname, password;
 	private Integer id;
@@ -29,7 +29,16 @@ public class User implements Serializable {
 		this.password = password;
 		//this.id = id;
 	}
-	
+
+	public User(String name, String surname, String email, String nickname, String password, Integer id) {
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.nickname = nickname;
+		this.password = password;
+		this.id = id;
+	}
+
 	/**
 	 * 
 	 * @param email
@@ -39,9 +48,9 @@ public class User implements Serializable {
 		this.email = email;
 		this.password = password;
 	}
-
+	
 	/**
-	 *
+	 * 
 	 * @param u
 	 */
 	public User(User u) {
@@ -52,18 +61,8 @@ public class User implements Serializable {
 		this.password = u.password;
 		//this.id = id;
 	}
-
-
-
-	public User(String name, String surname, String email, String nickname, String password, Integer id) {
-		this.name = name;
-		this.surname = surname;
-		this.email = email;
-		this.nickname = nickname;
-		this.password = password;
-		this.id = id;
-	}
-//=========================NON SO SE SERVE O SE È GIUSTO===============================
+	
+	//=========================NON SO SE SERVE O SE ï¿½ GIUSTO===============================
 	/**
 	 * 
 	 * @param u
@@ -75,10 +74,6 @@ public class User implements Serializable {
 			return true;
 		else 
 			return false;
-	}
-
-	public String getEmail() {
-		return email;
 	}
 
 	public String getName() {
@@ -95,6 +90,10 @@ public class User implements Serializable {
 
 	public void setSurname(String surname) {
 		this.surname = surname;
+	}
+
+	public String getEmail() {
+		return email;
 	}
 
 	public void setEmail(String email) {
@@ -124,5 +123,4 @@ public class User implements Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
 }

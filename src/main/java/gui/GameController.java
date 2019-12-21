@@ -1,14 +1,24 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
+import adminRdF.Client;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import util.Sentence;
@@ -139,13 +149,24 @@ public class GameController implements Initializable {
 	@FXML Pane pane3_12; 
 	@FXML Pane pane3_13; 
 	@FXML Pane pane3_14;
-	@FXML private Label advice;
 	
+	@FXML private Label hint;
+	
+	@FXML private MenuItem callCons;
+	
+	@FXML private Button buyVowel;
+	
+	@FXML private Label multiplier;
+	
+	@FXML private TextField insertConsonant;
+	
+	@FXML private Label wallet;
 	
 	private Label [][] labels;
 		
 	private Pane [][] panes;
 	
+	private Sentence sentence;
 
 	
 
@@ -174,11 +195,15 @@ public class GameController implements Initializable {
 			pane3_8, pane3_9, pane3_10, pane3_11, pane3_12, pane3_13, pane3_14}};
 
 		
-		Sentence s = new Sentence("VINSERO BATTAGLIE GRAZIE ALLA LORO FUGA", "Le amazzoni");
+		sentence = new Sentence("VINSERO BATTAGLIE GRAZIE ALLA LORO FOGA", "Le amazzoni");
 	
-		insertSentence(s);
+		insertSentence(sentence);
 		
-		advice.setText(s.getHint());	
+		hint.setText(sentence.getHint());	
+		
+		//splitMenuButton.setStyle("-fx-color: #424967;");
+		
+		
 	}
 	
 	/**
@@ -191,10 +216,59 @@ public class GameController implements Initializable {
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix[0].length; j++) {
 				labels[i][j].setText(new String("" + matrix[i][j]));
+				labels[i][j].setVisible(false);
 				if(matrix[i][j] != '\u0000' && matrix[i][j] != ' ')
 					panes[i][j].setBackground(new Background(new BackgroundFill(Paint.valueOf("#616285"), null, null)));
 			}	
 		}
 	}
+	
+	/**
+	 * 
+	 * @param e
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public void quit(ActionEvent e) throws IOException, ClassNotFoundException {
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
+	}
+	
+	public void spin(ActionEvent e) {
+		insertConsonant.setDisable(false);
+		Random rand = new Random();
+		multiplier.setText("" + (rand.nextInt(950) + 50));
+	}
+	
+	public void checkConsonant(ActionEvent e) {
+		if (insertConsonant.getText().length() != 1) {
+			System.out.println("il testo non è della lunghezza indicata!");
+			//Client.getProxy().giveTurn();
+			
+		} else {
+			
+			int counter = 0;
+			System.out.println("sono nell'else");
+			if (this.sentence.getSentence().toLowerCase().contains(insertConsonant.getCharacters())) {
+				System.out.println("la frase contiene il carattere specificato");
+				for (int i = 0; i < 4; i++) {
+					
+					for (int j = 0; j < 15; j++) {
+						
+						if (insertConsonant.getText().equalsIgnoreCase(labels[i][j].getText())) {
+							System.out.println("sono nell'if e nei due for");
+							labels[i][j].setVisible(true);
+							
+							counter++;
+						}
+					}
+				}
+			}
+			
+			wallet.setText((Integer.parseInt(multiplier.getText()) * counter + Integer.parseInt(wallet.getText().substring(0, wallet.getText().length()-2)) + " €"));
+			
+		}
+	}
 
 }
+
+

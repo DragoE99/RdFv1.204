@@ -116,8 +116,6 @@ public class Proxy extends Thread {									//cambiare nome?
 		
 		out.writeObject(u);
 		
-		
-		
 		return (Commands)in.readObject();
 	}
 	

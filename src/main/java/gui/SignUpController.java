@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Image;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
@@ -9,8 +10,11 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.Commands;
+import util.Player;
 import util.User;
 
 /**
@@ -21,7 +25,7 @@ import util.User;
 public class SignUpController {
 	
 
-	@FXML private Node pane;
+	@FXML private ImageView back;
 	
 	
 	@FXML
@@ -60,7 +64,7 @@ public class SignUpController {
 				//errori se mail, nickame esistono gia',...
 				
 				
-				User u = new User(name.getText(), surname.getText(), email.getText(), nickname.getText(), password.getText());
+				User u = (User)new Player(name.getText(), surname.getText(), email.getText(), nickname.getText(), password.getText());
 				
 				Commands reply = Client.getProxy().signup(u);
 				
@@ -79,4 +83,12 @@ public class SignUpController {
 			}
 			
 		}
+	
+public void back(MouseEvent e) throws IOException {
+		
+		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Login.fxml"))));
+		}
+	}
+
 }

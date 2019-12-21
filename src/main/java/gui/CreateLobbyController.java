@@ -11,24 +11,21 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import playerRdF.Client;
 import util.Commands;
 import util.Lobby;
 
-public class CreateLobbyController implements Initializable {
+public class CreateLobbyController{
 
 	@FXML private Node pane;
 	
 	@FXML private TextField name;
 	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		
-		Stage stage = Main.getStage();
-		stage.setTitle("Create lobby");
-		
-	}
+	@FXML private ImageView back;
+	
 	
 	/**
 	 * @throws IOException 
@@ -44,7 +41,7 @@ public class CreateLobbyController implements Initializable {
 			//manda alla waiting room
 			
 		} else if(reply == Commands.NO){
-			System.err.println("Nome già esistente");
+			System.err.println("Nome gia' esistente");
 		}
 		
 	}
@@ -54,9 +51,11 @@ public class CreateLobbyController implements Initializable {
 		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("WaitingRoom.fxml"))));
 	}
 
-	public void back(ActionEvent e) throws IOException {
-
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
+	public void back(MouseEvent e) throws IOException {
+		
+		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
+		}
 	}
 	
 	

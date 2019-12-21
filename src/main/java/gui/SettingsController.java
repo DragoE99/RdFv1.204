@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 public class SettingsController {
 	
@@ -20,6 +22,8 @@ public class SettingsController {
 	@FXML private TextField surname;
 	@FXML private TextField nickname;
 	@FXML private TextField email;
+	
+	@FXML private ImageView back;
 	
 	
 //display textfiel and okButton
@@ -67,8 +71,12 @@ public class SettingsController {
 		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ChangePassword.fxml"))));
 	}
 	
-	public void back(ActionEvent e) throws IOException {
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+public void back(MouseEvent e) throws IOException {
+		
+		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+		}
 	}
+
 	
 }
