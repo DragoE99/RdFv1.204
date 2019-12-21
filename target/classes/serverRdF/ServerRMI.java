@@ -20,7 +20,7 @@ public class ServerRMI extends Thread  implements ServerInterface {
     @Override
     public void run() {
         System.out.println(" stampa di prova");
-        System.setProperty("java.rmi.server.hostname","18.5.28.53");
+        //System.setProperty("java.rmi.server.hostname","18.5.28.53");
         try {
 
             obj = new ServerRMI();
