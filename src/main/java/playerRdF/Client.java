@@ -19,7 +19,7 @@ public class Client {
 	private static User me;																	//dovrebbe essere final, oppure non modificabile
 
 	public static void main(String[] args) throws IOException {
-		proxy = new Proxy();							
+		proxy = new Proxy();
 		proxy.start();																		//launching the proxy thread
 
 		Application.launch(Main.class, args);												//launching the GUI

@@ -1,10 +1,16 @@
 package util;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import gui.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
 import javafx.stage.Stage;
+import serverRdF.DataBaseConnection;
 
 /**
  * Class representing our game sentence, with methods to handle it
@@ -169,4 +176,32 @@ public class Sentence implements Serializable {
 	public Integer getAuthor_id() {
 		return author_id;
 	}
+
+
+
+	public void cvsSentenceReader(String filePath) {
+		try {
+			//TODO COLLEGARE CON CSVFILECONTROLLER
+			CSVReader reader = new CSVReader(new FileReader(filePath));
+			String[] nextLine = new String[2];
+			List<Sentence> sentences = new ArrayList<Sentence>();
+			while ((nextLine = reader.readNext()) != null) {
+				Sentence sentence = new Sentence(nextLine[0], nextLine[1]);
+				if(sentence.getSentence().length()<60 && sentence.getHint().length()<60){
+					sentences.add(sentence);
+				}
+			}
+			//TODO PASSARE LA LISTA A SERVER THREAD E POI A DATABASECONNECTION
+			/*DataBaseConnection query =new DataBaseConnection();
+			try {
+				query.insertSentences(sentences);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}*/
+
+		} catch (IOException | CsvValidationException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

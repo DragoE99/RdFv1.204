@@ -1,8 +1,11 @@
 package serverRdF;
 
+import org.omg.PortableInterceptor.USER_EXCEPTION;
+import util.Sentence;
 import util.User;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Properties;
 
 public class DataBaseConnection {
@@ -278,5 +281,29 @@ public class DataBaseConnection {
         }
 
     }
+/* ******************************** query sentence table****************************************/
+public void insertSentences(List<Sentence> sentences, User user) throws SQLException {
 
+    Connection conn = getConnectionInstance();
+    int count=0;
+
+    try (CallableStatement insElem = conn.prepareCall("{ ? = call sentence_insert( ?, ?, ?) }"))
+    {
+        for (Sentence sentence:
+                sentences) {
+            insElem.registerOutParameter(1, Types.INTEGER);
+            insElem.setString(2, sentence.getSentence());
+            insElem.setString(3, sentence.getHint());
+            //TODO inseriment frase usare la get user ID per l'id da passare
+            insElem.setInt(4, user.getId());    //id creatore frase
+            insElem.execute();
+            count+=insElem.getInt(1);
+        }
+
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    //TODO OPZIONALE: RITORNARE IL NUMERO DI FRASI INSERITE
+    System.out.println("nuove frasi inserite: "+count);
+}
 }
