@@ -21,8 +21,8 @@ public class Client {
 	public static void main(String[] args) throws IOException {
 		ClientRMI test = new ClientRMI();
 		test.modifyName("incredibile");
-		proxy = new Proxy();							
-		proxy.start();																		//launching the proxy thread
+		/*proxy = new Proxy();
+		proxy.start();	*/																	//launching the proxy thread
 
 		Application.launch(Main.class, args);												//launching the GUI
 		
