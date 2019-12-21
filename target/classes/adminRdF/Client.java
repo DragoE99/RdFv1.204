@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import gui.Main;
 import javafx.application.Application;
+import playerRdF.Proxy;
 import util.Match;
 import util.User;
 

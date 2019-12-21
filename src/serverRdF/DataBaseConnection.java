@@ -49,11 +49,11 @@ public class DataBaseConnection {
     }
 
     public DataBaseConnection() {
-        setIpAddress("localhost");
-        setPort("5432");
-        setDbName("postgres");
-        setDbUser("postgres");
-        setDbPassword("postgres");
+        setIpAddress("localhost"); //$NON-NLS-1$
+        setPort("5432"); //$NON-NLS-1$
+        setDbName(Messages.getString("DataBaseConnection.word_postgres")); //$NON-NLS-1$
+        setDbUser("postgres"); //$NON-NLS-1$
+        setDbPassword("postgres"); //$NON-NLS-1$
 
     }
 
@@ -77,13 +77,13 @@ public class DataBaseConnection {
     // INUTILE FARE SINGLETON SULLA CONNESSIONE PERCHE TANTO DOPO UN PO' LA CHIUDE
     private Connection getConnectionInstance() throws SQLException {
 
-        System.out.println("prima della connessione");
-        String url = "jdbc:postgresql://"+ipAddress+":"+port+"/"+dbName;
+        System.out.println("prima della connessione"); //$NON-NLS-1$
+        String url = "jdbc:postgresql://"+ipAddress+":"+port+"/"+dbName; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         Properties props = new Properties();
-        props.setProperty("user",dbUser);
-        props.setProperty("password",dbPassword);
+        props.setProperty("user",dbUser); //$NON-NLS-1$
+        props.setProperty("password",dbPassword); //$NON-NLS-1$
         Connection connection = DriverManager.getConnection(url, props);
-        System.out.println("connessione avvenuta");
+        System.out.println("connessione avvenuta"); //$NON-NLS-1$
         return connection;
     }
 
@@ -92,10 +92,10 @@ public class DataBaseConnection {
     public boolean getOneUser(String email, String password){
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='"+email+"' AND password = '"+ password+"'");
+            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='"+email+"' AND password = '"+ password+"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             while (rs.next())
             {
-                System.out.println(rs.getString("name")+" "+rs.getString("surname"));
+                System.out.println(rs.getString("name")+" "+rs.getString("surname")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 /*rs.getString("name");
                 rs.getString("nickname");
                 rs.getString("surname");
@@ -111,7 +111,7 @@ public class DataBaseConnection {
 
     //funzione che ritorna falso se non ci sono admin o vero se c'è ne almeno uno
     public boolean thereIsAdmin(){
-        String qry ="SELECT COUNT(*) FROM users WHERE role = 'a'";
+        String qry ="SELECT COUNT(*) FROM users WHERE role = 'a'"; //$NON-NLS-1$
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(qry);
@@ -128,13 +128,13 @@ public class DataBaseConnection {
     public void getAllUsers() throws SQLException {
         Connection conn =getConnectionInstance();
         Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM users");
+        ResultSet rs = st.executeQuery("SELECT * FROM users"); //$NON-NLS-1$
         //ciclo while che ritorna una COLONNA cioè lo stesso campo per tutte le righe
         // tipo tutti i nomi degli utenti
         /*se vuoi fare la get dell'id devi usare i long*/
         while (rs.next())        {
 
-            System.out.println(rs.getString("name")+" "+rs.getString("surname"));
+            System.out.println(rs.getString("name")+" "+rs.getString("surname")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         }
         rs.close();
@@ -142,10 +142,10 @@ public class DataBaseConnection {
     }
 
     public int modifyName(String newUserName){
-        String SQL = "UPDATE users "
-                + "SET name = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
-                + "WHERE id = ?";
+        String SQL = Messages.getString("DataBaseConnection.23") //$NON-NLS-1$
+                + "SET name = ?," //$NON-NLS-1$
+                + "last_change_date = CURRENT_TIMESTAMP " //$NON-NLS-1$
+                + "WHERE id = ?"; //$NON-NLS-1$
 
         int affectedrows = 0;
 
@@ -165,10 +165,10 @@ public class DataBaseConnection {
     }
 
     public int modifySurname(String newUserName){
-        String SQL = "UPDATE users "
-                + "SET surname = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
-                + "WHERE id = ?";
+        String SQL = "UPDATE users " //$NON-NLS-1$
+                + "SET surname = ?," //$NON-NLS-1$
+                + "last_change_date = CURRENT_TIMESTAMP " //$NON-NLS-1$
+                + "WHERE id = ?"; //$NON-NLS-1$
 
         int affectedrows = 0;
 
@@ -187,7 +187,7 @@ public class DataBaseConnection {
 
     }
     public boolean checkMail(String mail){
-        String qry ="SELECT COUNT(*) FROM users WHERE mail = '"+mail+"'";
+        String qry ="SELECT COUNT(*) FROM users WHERE mail = '"+mail+"'"; //$NON-NLS-1$ //$NON-NLS-2$
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(qry);
@@ -201,13 +201,13 @@ public class DataBaseConnection {
 
     }
     public int modifyUser (User newUser){
-        String SQL = "UPDATE users "
-                + "SET name = ?,"
-                + "SET surname = ?,"
-                + "SET mail = ?,"
-                + "SET nickname = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
-                + "WHERE id = ?";
+        String SQL = "UPDATE users " //$NON-NLS-1$
+                + "SET name = ?," //$NON-NLS-1$
+                + "SET surname = ?," //$NON-NLS-1$
+                + "SET mail = ?," //$NON-NLS-1$
+                + "SET nickname = ?," //$NON-NLS-1$
+                + "last_change_date = CURRENT_TIMESTAMP " //$NON-NLS-1$
+                + "WHERE id = ?"; //$NON-NLS-1$
 
         int affectedrows = 0;
 
@@ -231,7 +231,7 @@ public class DataBaseConnection {
 
 
     public int insertUser(User newUser){
-        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)"; //$NON-NLS-1$
         int affectedrows = 0;
 
         try (Connection conn = getConnectionInstance();
@@ -266,12 +266,12 @@ public class DataBaseConnection {
 
         Integer[] id = {3,4,5};
 
-        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)"; //$NON-NLS-1$
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
 
-            Array array = conn.createArrayOf("INTEGER", id);
-            pstmt.setString(1, "e");   // Set state
+            Array array = conn.createArrayOf("INTEGER", id); //$NON-NLS-1$
+            pstmt.setString(1, "e");   // Set state //$NON-NLS-1$
             pstmt.setInt(2, 2); //set creator id
             pstmt.setArray(3, array);  // Set ID palyers
 
@@ -287,7 +287,7 @@ public void insertSentences(List<Sentence> sentences, User user) throws SQLExcep
     Connection conn = getConnectionInstance();
     int count=0;
 
-    try (CallableStatement insElem = conn.prepareCall("{ ? = call sentence_insert( ?, ?, ?) }"))
+    try (CallableStatement insElem = conn.prepareCall("{ ? = call sentence_insert( ?, ?, ?) }")) //$NON-NLS-1$
     {
         for (Sentence sentence:
                 sentences) {
@@ -304,6 +304,6 @@ public void insertSentences(List<Sentence> sentences, User user) throws SQLExcep
         System.out.println(e.getMessage());
     }
     //TODO OPZIONALE: RITORNARE IL NUMERO DI FRASI INSERITE
-    System.out.println("nuove frasi inserite: "+count);
+    System.out.println("nuove frasi inserite: "+count); //$NON-NLS-1$
 }
 }
