@@ -19,6 +19,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.InsertableLobby;
 import util.Lobby;
@@ -26,7 +28,7 @@ import util.Match;
 
 public class SelectLobbyController implements Initializable{
 
-	@FXML private Node pane;
+	@FXML private ImageView back;
 	private HashMap<Match, Lobby> lobbyList;
 	
 
@@ -120,11 +122,13 @@ public class SelectLobbyController implements Initializable{
 	public void refresh(ActionEvent e) throws IOException, ClassNotFoundException {
 		this.refreshLobbyList();
 	}
-	public void back(ActionEvent e) throws IOException {
+public void back(MouseEvent e) throws IOException {
 		
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
-		
+		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+		}
 	}
+
 	public void create(ActionEvent e) throws IOException {
 		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("CreateLobby.fxml"))));
 		

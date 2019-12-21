@@ -1,9 +1,9 @@
 package serverRdF;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Properties;
+import util.Commands;
+import util.Lobby;
+import util.Player;
+import util.User;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -12,11 +12,10 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import util.Commands;
-import util.Lobby;
-import util.Player;
-import util.User;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Properties;
 
 
 /**
