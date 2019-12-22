@@ -1,7 +1,9 @@
 package serverRdF;
 
 import org.omg.PortableInterceptor.USER_EXCEPTION;
+import util.Player;
 import util.Sentence;
+import util.StringManager;
 import util.User;
 
 import java.sql.*;
@@ -78,10 +80,10 @@ public class DataBaseConnection {
     private Connection getConnectionInstance() throws SQLException {
 
         System.out.println("prima della connessione");
-        String url = "jdbc:postgresql://"+ipAddress+":"+port+"/"+dbName;
+        String url = "jdbc:postgresql://" + ipAddress + ":" + port + "/" + dbName;
         Properties props = new Properties();
-        props.setProperty("user",dbUser);
-        props.setProperty("password",dbPassword);
+        props.setProperty("user", dbUser);
+        props.setProperty("password", dbPassword);
         Connection connection = DriverManager.getConnection(url, props);
         System.out.println("connessione avvenuta");
         return connection;
@@ -89,118 +91,42 @@ public class DataBaseConnection {
 
     /* ******************** Query users table *************************/
     //TODO FAR INIZIALIZZARE L'UTENTE SERVE NEL LOGIN. IL SERVER THREAD DEVE AVERE UN UTENTE STATIC?
-    public boolean getOneUser(String email, String password){
+    public Player getOneUser(String email, String password) {
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='"+email+"' AND password = '"+ password+"'");
-            while (rs.next())
-            {
-                System.out.println(rs.getString("name")+" "+rs.getString("surname"));
-                /*rs.getString("name");
-                rs.getString("nickname");
-                rs.getString("surname");
-                rs.getString("mail");
-                rs.getInt("id");*/
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    //funzione che ritorna falso se non ci sono admin o vero se c'è ne almeno uno
-    public boolean thereIsAdmin(){
-        String qry ="SELECT COUNT(*) FROM users WHERE role = 'a'";
-        try (Connection conn = getConnectionInstance()) {
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(qry);
+            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='" + email + "' AND password = '" + password + "'");
             rs.next();
-            return rs.getInt(1) > 0;
-
+                System.out.println(rs.getString("name") + " " + rs.getString("surname"));
+                return new Player(rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getString("mail"),
+                        rs.getString("nickname"),
+                        password,
+                        rs.getInt("id") );
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
     //FUNZIONE che stampa tutti gli utenti presenti nel server utile più che altro per test
     public void getAllUsers() throws SQLException {
-        Connection conn =getConnectionInstance();
+        Connection conn = getConnectionInstance();
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM users");
         //ciclo while che ritorna una COLONNA cioè lo stesso campo per tutte le righe
         // tipo tutti i nomi degli utenti
         /*se vuoi fare la get dell'id devi usare i long*/
-        while (rs.next())        {
+        while (rs.next()) {
 
-            System.out.println(rs.getString("name")+" "+rs.getString("surname"));
+            System.out.println(rs.getString("name") + " " + rs.getString("surname"));
 
         }
         rs.close();
         st.close();
     }
 
-    public int modifyName(String newUserName){
-        String SQL = "UPDATE users "
-                + "SET name = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
-                + "WHERE id = ?";
-
-        int affectedrows = 0;
-
-        try (Connection conn = getConnectionInstance();
-             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-
-            pstmt.setString(1, newUserName);
-            pstmt.setInt(2, 3);
-
-            affectedrows = pstmt.executeUpdate();
-
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-        return affectedrows;
-
-    }
-
-    public int modifySurname(String newUserName){
-        String SQL = "UPDATE users "
-                + "SET surname = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
-                + "WHERE id = ?";
-
-        int affectedrows = 0;
-
-        try (Connection conn = getConnectionInstance();
-             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-
-            pstmt.setString(1, newUserName);
-            pstmt.setInt(2, 3);
-
-            affectedrows = pstmt.executeUpdate();
-
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-        return affectedrows;
-
-    }
-    public boolean checkMail(String mail){
-        String qry ="SELECT COUNT(*) FROM users WHERE mail = '"+mail+"'";
-        try (Connection conn = getConnectionInstance()) {
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(qry);
-            rs.next();
-            return rs.getInt(1) > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-    }
-    public int modifyUser (User newUser){
+    public int modifyUser(User newUser) {
         String SQL = "UPDATE users "
                 + "SET name = ?,"
                 + "SET surname = ?,"
@@ -215,8 +141,8 @@ public class DataBaseConnection {
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 
             pstmt.setString(1, newUser.getName());
-            pstmt.setString(2,newUser.getSurname() );
-            pstmt.setString(3,newUser.getEmail());
+            pstmt.setString(2, newUser.getSurname());
+            pstmt.setString(3, newUser.getEmail());
             pstmt.setString(4, newUser.getNickname());
             pstmt.setInt(5, newUser.getId());
 
@@ -230,18 +156,18 @@ public class DataBaseConnection {
     }
 
 
-    public int insertUser(User newUser){
+    public int insertUser(User newUser) {
         String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
         int affectedrows = 0;
 
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 
-                pstmt.setString(1, newUser.getName());
-                pstmt.setString(2,newUser.getSurname());
-                pstmt.setString(3,newUser.getEmail());
-                pstmt.setString(4, newUser.getPassword());
-                pstmt.setString(5, newUser.getNickname());
+            pstmt.setString(1, newUser.getName());
+            pstmt.setString(2, newUser.getSurname());
+            pstmt.setString(3, newUser.getEmail());
+            pstmt.setString(4, newUser.getPassword());
+            pstmt.setString(5, newUser.getNickname());
                /* if(newUser instanceof admin){
                     pstmt.setString(6, "a");
                 }else if(newUser instanceof user){
@@ -250,7 +176,7 @@ public class DataBaseConnection {
                     pstmt.setString(6, "u");
                 }*/
 
-                affectedrows = pstmt.executeUpdate();
+            affectedrows = pstmt.executeUpdate();
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -264,7 +190,7 @@ public class DataBaseConnection {
 
     public void insertMatch() {
 
-        Integer[] id = {3,4,5};
+        Integer[] id = {3, 4, 5};
 
         String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
         try (Connection conn = getConnectionInstance();
@@ -281,29 +207,85 @@ public class DataBaseConnection {
         }
 
     }
-/* ******************************** query sentence table****************************************/
-public void insertSentences(List<Sentence> sentences, User user) throws SQLException {
 
-    Connection conn = getConnectionInstance();
-    int count=0;
+    /* ******************************** query sentence table****************************************/
+    public void insertSentences(List<Sentence> sentences, User user) throws SQLException {
 
-    try (CallableStatement insElem = conn.prepareCall("{ ? = call sentence_insert( ?, ?, ?) }"))
-    {
-        for (Sentence sentence:
-                sentences) {
-            insElem.registerOutParameter(1, Types.INTEGER);
-            insElem.setString(2, sentence.getSentence());
-            insElem.setString(3, sentence.getHint());
-            //TODO inseriment frase usare la get user ID per l'id da passare
-            insElem.setInt(4, user.getId());    //id creatore frase
-            insElem.execute();
-            count+=insElem.getInt(1);
+        Connection conn = getConnectionInstance();
+        int count = 0;
+
+        try (CallableStatement insElem = conn.prepareCall("{ ? = call sentence_insert( ?, ?, ?) }")) {
+            for (Sentence sentence :
+                    sentences) {
+                insElem.registerOutParameter(1, Types.INTEGER);
+                insElem.setString(2, sentence.getSentence());
+                insElem.setString(3, sentence.getHint());
+                //TODO inseriment frase usare la get user ID per l'id da passare
+                insElem.setInt(4, user.getId());    //id creatore frase
+                insElem.execute();
+                count += insElem.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-    } catch (SQLException e) {
-        System.out.println(e.getMessage());
+        //TODO OPZIONALE: RITORNARE IL NUMERO DI FRASI INSERITE
+        System.out.println("nuove frasi inserite: " + count);
     }
-    //TODO OPZIONALE: RITORNARE IL NUMERO DI FRASI INSERITE
-    System.out.println("nuove frasi inserite: "+count);
-}
+
+    /* ************************* Check Query **********************************/
+    private boolean checkQuery(String tableName, String[] column, String[] valueToCheck) {
+        String qry = "SELECT COUNT(*) FROM " + tableName + " WHERE " + column[0] + " = '" + valueToCheck[0] + "'";
+        for (int i = 1; i < valueToCheck.length; i++) {
+            qry = qry + " AND " + column[i] + " = '" + valueToCheck[i] + "'";
+        }
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(qry);
+            rs.next();
+            return rs.getInt(1) > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean checkAdminExistence() {
+        return checkQuery(
+                StringManager.getString("usersTableName"),
+                new String[]{StringManager.getString("user_column_role")},
+                new String[]{StringManager.getString("adminRole")}
+        );
+    }
+
+    public boolean checkMailExistence(String mail) {
+        return checkQuery(
+                StringManager.getString("usersTableName"),
+                new String[]{StringManager.getString("users_column_mail")},
+                new String[]{mail}
+        );
+    }
+
+    public boolean logInCheck(String mail, String password) {
+        String[] column = {StringManager.getString("users_column_mail"), StringManager.getString("users_column_password")};
+        return checkQuery(
+                StringManager.getString("usersTableName"),
+                column,
+                new String[]{mail, password}
+        );
+    }
+
+    public boolean matchNameCheck(String name) {
+        return checkQuery(
+                StringManager.getString("matches_table_name"),
+                new String[]{
+                        StringManager.getString("match_name_column_name"),
+                        StringManager.getString("state_column_matches_table")
+                },
+                new String[]{
+                        name,
+                        StringManager.getString("match_state_running_convention")}
+        );
+    }
 }

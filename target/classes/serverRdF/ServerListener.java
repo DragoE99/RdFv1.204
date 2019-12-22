@@ -39,13 +39,11 @@ public class ServerListener {
 
 		//TODO login e inizializzazione db 
 		/* ************ roba per la connessione al DB************
-		se non presente il database non eseguire
+		se non presente il database non eseguire*/
 		DataBaseConnection DB = new DataBaseConnection();
-		try {
-			DB.getAllUsers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}*/
+		if(DB.checkAdminExistence()){
+			System.out.println("admin trovato");
+		}else System.out.println("adimn non trovato");
 
 
 
