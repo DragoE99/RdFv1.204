@@ -1,6 +1,5 @@
 package serverRdF;
 
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 import util.Player;
 import util.Sentence;
 import util.StringManager;
@@ -331,5 +330,14 @@ public class DataBaseConnection {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    public int deleteUser(User user){
+        //TODO pensare se voler identificare tramite mail o id
+        return deleteQuery(
+                StringManager.getString("usersTableName"),
+                new String[]{StringManager.getString("users_column_mail")},
+                new String[]{user.getEmail()}
+        );
     }
 }
