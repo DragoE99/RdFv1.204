@@ -241,7 +241,7 @@ public class GameController implements Initializable {
 	
 	public void checkConsonant(ActionEvent e) {
 		if (insertConsonant.getText().length() != 1) {
-			System.out.println("il testo non è della lunghezza indicata!");
+			System.out.println("il testo non e' della lunghezza indicata!");
 			//Client.getProxy().giveTurn();
 			
 		} else {
@@ -264,7 +264,7 @@ public class GameController implements Initializable {
 				}
 			}
 			
-			wallet.setText((Integer.parseInt(multiplier.getText()) * counter + Integer.parseInt(wallet.getText().substring(0, wallet.getText().length()-2)) + " €"));
+			wallet.setText((Integer.parseInt(multiplier.getText()) * counter + Integer.parseInt(wallet.getText().substring(0, wallet.getText().length()-2)) + " "));
 			
 		}
 	}

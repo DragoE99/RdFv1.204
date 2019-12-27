@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 /**
  * 
  * @author achil
- * Classe che in sostanza trasforma i campi di Lobby in property, così da poter
+ * Classe che in sostanza trasforma i campi di Lobby in property, cosi' da poter
  * essere inseriti nella TableView.
  * Azione necessaria per via del fatto che i campi property non implementano 
  * serializable e quindi se avessimo lasciato Lobby con i campi SimpleXProperty

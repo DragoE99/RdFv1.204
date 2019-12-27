@@ -75,7 +75,7 @@ public class SignUpController {
 					
 				} else if(reply == Commands.NO){
 					//messaggio di errore
-					System.err.println("Utente già esistente");
+					System.err.println("Utente gia'S esistente");
 					
 				}
 				

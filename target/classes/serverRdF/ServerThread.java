@@ -232,7 +232,7 @@ public class ServerThread extends Thread {
 		String text = "Your new password is " + newPwd + ". Please remember it.";
 		String subject = "Password reset";
 		
-		String from = "";		//i dati di un nostro account? Però non si dovrebbe fare, non so come
+		String from = "";		//i dati di un nostro account? Pero' non si dovrebbe fare, non so come
 		String pwd = "";
 		
 		sendMail(from, pwd, to, subject, text);

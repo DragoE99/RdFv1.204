@@ -1,6 +1,5 @@
 package serverRdF;
 
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 import util.Player;
 import util.Sentence;
 import util.StringManager;
@@ -96,13 +95,13 @@ public class DataBaseConnection {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='" + email + "' AND password = '" + password + "'");
             rs.next();
-                System.out.println(rs.getString("name") + " " + rs.getString("surname"));
-                return new Player(rs.getString("name"),
-                        rs.getString("surname"),
-                        rs.getString("mail"),
-                        rs.getString("nickname"),
-                        password,
-                        rs.getInt("id") );
+            System.out.println(rs.getString("name") + " " + rs.getString("surname"));
+            return new Player(rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("mail"),
+                    rs.getString("nickname"),
+                    password,
+                    rs.getInt("id"));
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -116,7 +115,7 @@ public class DataBaseConnection {
         ResultSet rs = st.executeQuery("SELECT * FROM users");
         //ciclo while che ritorna una COLONNA cioè lo stesso campo per tutte le righe
         // tipo tutti i nomi degli utenti
-        /*se vuoi fare la get dell'id devi usare i long*/
+        /*se vuoi fare la get dell'id devi usare gli int*/
         while (rs.next()) {
 
             System.out.println(rs.getString("name") + " " + rs.getString("surname"));
@@ -286,6 +285,59 @@ public class DataBaseConnection {
                 new String[]{
                         name,
                         StringManager.getString("match_state_running_convention")}
+        );
+    }
+
+    public boolean verificationMailCheck(String mail) {
+        return checkQuery(
+                StringManager.getString("verifications_table_name"),
+                new String[]{StringManager.getString("user_mail_ver.table_name")},
+                new String[]{mail}
+        );
+    }
+
+    /* verifica se il codice di verifica e' presente e in caso positivo elimina tale riga e ritorna true */
+    public boolean verificationCodeCheck(String verificationCode) {
+        if (checkQuery(StringManager.getString("verifications_table_name"),
+                new String[]{StringManager.getString("verification.code_column_name")},
+                new String[]{verificationCode}
+                )
+        ) {
+            int affectedRow = deleteQuery(
+                    StringManager.getString("verifications_table_name"),
+                    new String[]{StringManager.getString("verification.code_column_name")},
+                    new String[]{verificationCode});
+            //TODO OPZIONALE: comunicare quando si elimina piu' di una riga dato che non e' normale
+            return affectedRow >=0 ;
+
+            }
+
+        return false;
+    }
+
+    /* ************************* Delete Query **********************************/
+    /* query generale per delete ritorna il numero di righe eliminate oppure -1 in caso di errore*/
+    private int deleteQuery(String tableName, String[] column, String[] valueToDelete) {
+        String qry = "DELETE * FROM " + tableName + " WHERE " + column[0] + " = '" + valueToDelete[0] + "'";
+        for (int i = 1; i < valueToDelete.length; i++) {
+            qry = qry + " AND " + column[i] + " = '" + valueToDelete[i] + "'";
+        }
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            return st.executeUpdate(qry);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public int deleteUser(User user){
+        //TODO pensare se voler identificare tramite mail o id
+        return deleteQuery(
+                StringManager.getString("usersTableName"),
+                new String[]{StringManager.getString("users_column_mail")},
+                new String[]{user.getEmail()}
         );
     }
 }
