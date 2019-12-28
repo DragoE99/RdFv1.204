@@ -25,22 +25,19 @@ public class ClientRMI {
 
     }
 
-    public int modifyName(String newUserName) {
-
-        int x=0;
-        try {
-            x = stub.modifyName("pippo");
-            System.out.println("ottimo ritornato "+x );
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return x;
-    }
-
     public boolean loginCheck(String email, String password){
         try {
             stub.logInCheck(email, password);
+            return true;
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean matchNameCheck(String name){
+        try {
+            stub.matchNameCheck(name);
             return true;
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
