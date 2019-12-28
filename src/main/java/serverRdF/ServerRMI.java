@@ -1,10 +1,14 @@
 package serverRdF;
 
+import util.Sentence;
+import util.User;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class ServerRMI extends Thread  implements ServerInterface {
     public ServerRMI(){}
@@ -38,6 +42,62 @@ public class ServerRMI extends Thread  implements ServerInterface {
     @Override
     public int modifyName(String newUserName) {
         DataBaseConnection DB = new DataBaseConnection();
-        return DB.modifyName(newUserName);
+       // return DB.modifyUser(newUserName);
+        return 0;
+    }
+
+    @Override
+    public int deleteUser(User user) throws RemoteException {
+        return 0;
+    }
+
+    @Override
+    public boolean verificationCodeCheck(String verificationCode) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public boolean verificationMailCheck(String mail) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public boolean matchNameCheck(String name) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public boolean logInCheck(String mail, String password) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public boolean checkMailExistence(String mail) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public boolean checkAdminExistence() throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public void insertSentences(List<Sentence> sentences, User user) throws RemoteException {
+
+    }
+
+    @Override
+    public int insertUser(User newUser) throws RemoteException {
+        return 0;
+    }
+
+    @Override
+    public int modifyUser(User newUser) throws RemoteException {
+        return 0;
+    }
+
+    @Override
+    public User getOneUser(String email, String password) throws RemoteException {
+        return null;
     }
 }

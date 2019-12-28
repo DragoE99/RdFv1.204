@@ -13,17 +13,11 @@ public class ClientRMI {
     private Registry registry;
     private ServerInterface stub;
 
-    public static void main(String[] args) throws IOException {
-        ClientRMI test = new ClientRMI();
-        test.modifyName("incredibile");       																	//launching the proxy thread// launching the GUI
-
-    }
-
     public ClientRMI() {
 
         try {
             Registry registry = LocateRegistry.getRegistry(3333);
-            stub = (ServerInterface) registry.lookup("diocane");
+            stub = (ServerInterface) registry.lookup("ruota");
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -42,5 +36,16 @@ public class ClientRMI {
             e.printStackTrace();
         }
         return x;
+    }
+
+    public boolean loginCheck(String email, String password){
+        try {
+            stub.logInCheck(email, password);
+            return true;
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
     }
 }

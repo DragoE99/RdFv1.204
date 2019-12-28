@@ -13,11 +13,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import playerRdF.Client;
+import playerRdF.ClientRMI;
 import util.Commands;
 import util.User;
-
-
-// Dobbiamo fare una nuova UI (non usare "provafx.fxml") quindi probabilmente rifare tutto
 
 /**
  * The controller for our login window
@@ -56,17 +54,18 @@ public class LoginController {
 		} else {
 			//TODO
 			User u = new User(user.getText(), psw.getText());
-			Commands reply = Client.getProxy().sendLoginData(u);
+			//Commands reply = Client.getProxy().sendLoginData(u);
+			ClientRMI check = new ClientRMI();
 			
-			if(reply == Commands.OK) {
+			if(check.loginCheck(u.getEmail(),u.getPassword())) {
 				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
 				Client.setUser(u);
 				
-			} else if(reply == Commands.NO){
+			} else{
 				//messaggio di errore
-				System.err.println("Nome o password errati");
+				System.err.println("Nome o password errati");}
 				
-			}
+
 		}
 	}
 
