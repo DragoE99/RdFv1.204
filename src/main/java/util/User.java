@@ -10,7 +10,27 @@ import java.io.Serializable;
  */
 public abstract class User implements Serializable {
 
-	private String name, surname, email, nickname, password;
+	private String name;
+	private String surname;
+	private String email;
+	private String nickname;
+	private String password;
+
+	public User(String name, String surname, String email, String nickname, String password, String role, Integer id) {
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.nickname = nickname;
+		this.password = password;
+		this.role = role;
+		this.id = id;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	private String role;
 	private Integer id;
 	
 	/**

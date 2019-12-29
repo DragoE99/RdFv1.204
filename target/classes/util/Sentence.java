@@ -32,14 +32,21 @@ public class Sentence implements Serializable {
 	final private String hint;
 	final private Integer id;
 	final private Integer author_id;
-	private List<User> seenBy;
+	private List<Integer> seenBy;
 
-	public Sentence(String sentence, String hint, Integer id, Integer author_id, List<User> seenBy) {
+	public Sentence(String sentence, String hint, Integer id, Integer author_id, List<Integer> seenBy) {
 		this.sentence = sentence;
 		this.hint = hint;
 		this.id = id;
 		this.author_id = author_id;
 		this.seenBy = seenBy;
+	}
+
+	public Sentence(String sentence, String hint, Integer id, Integer author_id) {
+		this.sentence = sentence;
+		this.hint = hint;
+		this.id = id;
+		this.author_id = author_id;
 	}
 
 	public Sentence(String sentence, String hint) {
@@ -153,11 +160,11 @@ public class Sentence implements Serializable {
 		return sb.toString().split("\n");
 	}
 
-	public List<User> getSeenBy() {
+	public List<Integer> getSeenBy() {
 		return seenBy;
 	}
 
-	public void setSeenBy(List<User> seenBy) {
+	public void setSeenBy(List<Integer> seenBy) {
 		this.seenBy = seenBy;
 	}
 

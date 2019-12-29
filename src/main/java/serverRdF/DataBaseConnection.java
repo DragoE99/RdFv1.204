@@ -1,9 +1,6 @@
 package serverRdF;
 
-import util.Player;
-import util.Sentence;
-import util.StringManager;
-import util.User;
+import util.*;
 
 import java.sql.*;
 import java.util.List;
@@ -107,6 +104,33 @@ public class DataBaseConnection {
             return null;
         }
     }
+    public User getUserById(int id){
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE id= " + id);
+            rs.next();
+            System.out.println(rs.getString("name") + " " + rs.getString("surname"));
+            if(rs.getString("role")=="p"){
+            return new Player(rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("mail"),
+                    rs.getString("nickname"),
+                    rs.getString("password"),
+                    rs.getInt("id"));
+            }else {
+                return new Admin(rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getString("mail"),
+                        rs.getString("nickname"),
+                        rs.getString("password"),
+                        rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 
     //FUNZIONE che stampa tutti gli utenti presenti nel server utile più che altro per test
     public void getAllUsers() throws SQLException {
@@ -126,12 +150,13 @@ public class DataBaseConnection {
     }
 
     public int modifyUser(User newUser) {
-        String SQL = "UPDATE users "
+        String SQL ="UPDATE users "
                 + "SET name = ?,"
-                + "SET surname = ?,"
-                + "SET mail = ?,"
-                + "SET nickname = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
+                + " surname = ?,"
+                + " mail = ?,"
+                + " nickname = ?,"
+                + " password = ?,"
+                + " last_change_date = CURRENT_TIMESTAMP "
                 + "WHERE id = ?";
 
         int affectedrows = 0;
@@ -263,6 +288,13 @@ public class DataBaseConnection {
                 StringManager.getString("usersTableName"),
                 new String[]{StringManager.getString("users_column_mail")},
                 new String[]{mail}
+        );
+    }
+    public boolean checkNicknameExistence(String nickname) {
+        return checkQuery(
+                StringManager.getString("usersTableName"),
+                new String[]{StringManager.getString("nickname_column")},
+                new String[]{nickname}
         );
     }
 
