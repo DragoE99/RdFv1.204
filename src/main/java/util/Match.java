@@ -12,10 +12,10 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Match implements Serializable {
 
-	private String id = null;
+	private int id ;
 	private Integer[] id_players;	//3
 	private Integer[] totScores; 	//3
-	private int manche;
+	private String name;
 	private Integer[][] mancheScore; //5 , 3
 	private int currentTurn;
 	private Sentence sentence;
@@ -41,7 +41,7 @@ public class Match implements Serializable {
 	 * Getter
 	 * @return
 	 */
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -57,7 +57,7 @@ public class Match implements Serializable {
 	 * Setter
 	 * @return
 	 */
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
