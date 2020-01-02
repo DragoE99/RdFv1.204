@@ -20,7 +20,7 @@ public class DatabasePopulator {
 
     public static void main(String args[]) throws IOException {
         DatabasePopulator test = new DatabasePopulator();
-        User mio = test.getUseById(2);
+        User mio = test.getUserById(2);
         ArrayList<Sentence> sentences = test.getAllSentence();
         ArrayList<User> users = test.getAllPlayer();
         System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
@@ -69,11 +69,8 @@ public class DatabasePopulator {
     }
 
     public void insertUser() {
-
         String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
         int affectedrows = 0;
-
-
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 
@@ -141,7 +138,7 @@ public class DatabasePopulator {
         }
     }
 
-    public User getUseById(int id) {
+    public User getUserById(int id) {
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM users WHERE id= " + id);
@@ -389,6 +386,19 @@ public class DatabasePopulator {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+    public boolean matchNameCheck(String matchName){
+        String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'r') OR (match_name = '" + matchName + "' AND state = 'c')";
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(qry);
+            rs.next();
+            return rs.getInt(1) > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
