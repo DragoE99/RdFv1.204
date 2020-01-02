@@ -20,7 +20,6 @@ public class Client {
 
 	public static void main(String[] args) throws IOException {
 		ClientRMI test = new ClientRMI();
-		test.modifyName("incredibile");
 		/*proxy = new Proxy();
 		proxy.start();	*/																	//launching the proxy thread
 

@@ -17,9 +17,6 @@ import playerRdF.ClientRMI;
 import util.Commands;
 import util.User;
 
-
-// Dobbiamo fare una nuova UI (non usare "provafx.fxml") quindi probabilmente rifare tutto
-
 /**
  * The controller for our login window
  * 

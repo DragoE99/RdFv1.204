@@ -9,10 +9,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
 public class DataBaseConnection extends Thread  implements ServerInterface {
+    private HashMap<String, GameServer> runningMatch = new HashMap<>();
     private String ipAddress;
     private String port;
     private String dbName;
@@ -160,10 +162,10 @@ public class DataBaseConnection extends Thread  implements ServerInterface {
     public int modifyUser(User newUser) {
         String SQL = "UPDATE users "
                 + "SET name = ?,"
-                + "SET surname = ?,"
-                + "SET mail = ?,"
-                + "SET nickname = ?,"
-                + "last_change_date = CURRENT_TIMESTAMP "
+                + "  surname = ?,"
+                + "  mail = ?,"
+                + " nickname = ?,"
+                + " last_change_date = CURRENT_TIMESTAMP "
                 + "WHERE id = ?";
 
         int affectedrows = 0;
@@ -375,8 +377,5 @@ public class DataBaseConnection extends Thread  implements ServerInterface {
         );
     }
 
-    @Override
-    public int modifyName(String newUserName) throws RemoteException {
-        return 0;
-    }
+
 }
