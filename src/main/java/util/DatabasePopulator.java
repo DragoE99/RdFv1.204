@@ -18,7 +18,7 @@ public class DatabasePopulator {
 
     public static void main(String args[]) throws IOException {
         DatabasePopulator test = new DatabasePopulator();
-        User mio = test.getUseById(2);
+        User mio = test.getUserById(2);
         ArrayList<Sentence> sentences = test.getAllSentence();
         ArrayList<User> users = test.getAllPlayer();
         System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
@@ -124,7 +124,7 @@ public class DatabasePopulator {
         }
     }
 
-    public User getUseById(int id) {
+    public User getUserById(int id) {
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM users WHERE id= " + id);
