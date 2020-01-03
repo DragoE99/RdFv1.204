@@ -18,6 +18,58 @@ public class Match implements Serializable {
 	private String name;
 	private Integer[][] mancheScore; //5 , 3
 	private int currentTurn;
+	private Manche[] manches;//5
+
+
+	public Match(int id, Integer[] id_players, String name, Integer[][] mancheScore, int currentTurn, Sentence sentence) {
+		this.id = id;
+		this.id_players = id_players;
+		this.name = name;
+		this.mancheScore = mancheScore;
+		this.currentTurn = currentTurn;
+		this.sentence = sentence;
+	}
+
+	public Integer[] getTotScores() {
+		return totScores;
+	}
+
+	public void setTotScores(Integer[] totScores) {
+		this.totScores = totScores;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer[][] getMancheScore() {
+		return mancheScore;
+	}
+
+	public void setMancheScore(Integer[][] mancheScore) {
+		this.mancheScore = mancheScore;
+	}
+
+	public int getCurrentTurn() {
+		return currentTurn;
+	}
+
+	public void setCurrentTurn(int currentTurn) {
+		this.currentTurn = currentTurn;
+	}
+
+	public Sentence getSentence() {
+		return sentence;
+	}
+
+	public void setSentence(Sentence sentence) {
+		this.sentence = sentence;
+	}
+
 	private Sentence sentence;
 
 

@@ -16,21 +16,6 @@ public class DatabasePopulator {
     public DatabasePopulator() {
     }
 
-    public static void main(String args[]) throws IOException {
-        DatabasePopulator test = new DatabasePopulator();
-        User mio = test.getUserById(2);
-        ArrayList<Sentence> sentences = test.getAllSentence();
-        ArrayList<User> users = test.getAllPlayer();
-        System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
-        System.out.println("lista user " + users.size() + " lista frasi " + sentences.size());
-        Integer[] iduser = new Integer[3];
-        for (int i = 4; i < 7; i++) {
-            iduser[i - 4] = users.get(i).getId();
-        }
-        //test.updateSeenByUserSentence(74,iduser);
-        System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());
-    }
-
     private String ipAddress = "localhost";
     private String port = "5432";
     private String dbName = "postgres";
@@ -46,6 +31,65 @@ public class DatabasePopulator {
         System.out.println("connessione avvenuta");
         return connection;
     }
+    public static void main(String args[]) throws IOException {
+        DatabasePopulator test = new DatabasePopulator();
+        User mio = test.getUserById(2);
+        ArrayList<Sentence> sentences = test.getAllSentence();
+        ArrayList<User> users = test.getAllPlayer();
+        System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
+        System.out.println("lista user " + users.size() + " lista frasi " + sentences.size());
+        Integer[] iduser = new Integer[3];
+        for (int i = 4; i < 7; i++) {
+            iduser[i - 4] = users.get(i).getId();
+        }
+        //test.updateSeenByUserSentence(74,iduser);
+        System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());
+    }
+
+    public Match createManche(Match match){
+        String sql = "INSERT INTO matches (match_id, sentence_id, seen_by_user) VALUES(?, ?, ?)";
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            Array array = conn.createArrayOf("INTEGER", match.getId_players());
+            pstmt.setInt(1, match.getId());   // Set state possible state running, ended, created, interrupted
+            pstmt.setInt(2, match.getSentence().getId()); //set creator id
+            pstmt.setArray(3, array);  // Set ID palyers
+
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            rs.next();
+
+            return new Match(rs.getInt("id"),
+                    match.getId_players(),
+                    match.getName(),match.getMancheScore(),match.getCurrentTurn(),match.getSentence());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+   /* public void updateManche(Match match){
+        String sql = "UPDATE matches " +
+                "SET seen_by_user = ?, " +
+                "manche_wallet_p1 = ? " +
+                "manche_wallet_p2 = ? " +
+                "manche_wallet_p3 = ? " +
+                "WHERE id = ?";
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            Array array = conn.createArrayOf("INTEGER", match.getId_players());
+            pstmt.setArray(1, array);  // Set ID palyers
+            pstmt.setInt(2, match.getMancheScore()[]);   // Set state possible state running, ended, created, interrupted
+            pstmt.setInt(2, match.getSentence().getId()); //set creator id
+
+            pstmt.executeUpdate();  // Execute the query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }*/
 
     public void insertUser() {
 
@@ -304,27 +348,6 @@ public class DatabasePopulator {
 
     }
 
-    public ArrayList<Match> getPlayableMatch() {
-        String qry = "SELECT * FROM matches WHERE state = 'c'";
-        ArrayList<Match> playableMatch = new ArrayList();
-        try (Connection conn = getConnectionInstance();
-             PreparedStatement pstmt = conn.prepareStatement(qry);) {
-
-            ResultSet rs = pstmt.executeQuery();  // Execute the query
-            while (rs.next()) {
-                playableMatch.add(new Match());     //da aggingere i campi qui sotto commentati per inizializzarlo
-                /*
-                rs.getString("match_name");
-                rs.getInt("id");
-                rs.getArray("user_id");
-                 */
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return playableMatch;
-    }
-
     public Match updateMatch(Integer[] playerId, int machId) {
         String qry = "UPDATE matches " +
                 "SET user_id = ? ," +
@@ -359,5 +382,28 @@ public class DatabasePopulator {
 
         return toUpdate;
     }
+
+    public ArrayList<Match> getPlayableMatch() {
+        String qry = "SELECT * FROM matches WHERE state = 'c'";
+        ArrayList<Match> playableMatch = new ArrayList();
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            while (rs.next()) {
+                playableMatch.add(new Match());     //da aggingere i campi qui sotto commentati per inizializzarlo
+                /*
+                rs.getString("match_name");
+                rs.getInt("id");
+                rs.getArray("user_id");
+                 */
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playableMatch;
+    }
+
+
 
 }
