@@ -42,7 +42,6 @@ public class ServerRMI extends Thread  implements ServerInterface {
             System.exit(0);
         }
     }
-    @Override
     public int modifyName(String newUserName) {
         DataBaseConnection DB = new DataBaseConnection();
        // return DB.modifyUser(newUserName);

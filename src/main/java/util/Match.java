@@ -14,9 +14,9 @@ public class Match implements Serializable {
 
 	private int idMatch;
 	private Integer[] id_players;	//3
-
 	private String matchName;
 	private String state;
+	private Manches[] manches;//5
 
 	public Match(Integer[] id_players, String matchName) {
 		this.id_players = id_players;
