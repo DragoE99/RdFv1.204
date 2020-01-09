@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ServerInterface extends Remote {
-    int modifyName(String newUserName) throws RemoteException;
     int deleteUser(User user) throws RemoteException;
     boolean verificationCodeCheck(String verificationCode) throws RemoteException;
     boolean verificationMailCheck(String mail) throws RemoteException;

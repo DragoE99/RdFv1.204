@@ -8,9 +8,12 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ServerRMI extends Thread  implements ServerInterface {
+
     public ServerRMI(){}
     ServerRMI obj;
     ServerInterface stub;
@@ -39,7 +42,6 @@ public class ServerRMI extends Thread  implements ServerInterface {
             System.exit(0);
         }
     }
-    @Override
     public int modifyName(String newUserName) {
         DataBaseConnection DB = new DataBaseConnection();
        // return DB.modifyUser(newUserName);

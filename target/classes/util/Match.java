@@ -1,6 +1,12 @@
 package util;
 
+import serverRdF.RemoteGameObserverInterface;
+
 import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Match is our game state class, that will be passed back and forth and updated between client and server 
@@ -10,13 +16,13 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("serial")
-public class Match implements Serializable {
+public class Match extends Observable implements Serializable {
 
 	private int idMatch;
 	private Integer[] id_players;	//3
-
 	private String matchName;
 	private String state;
+	private ArrayList<Manches> manches;//5
 
 	public Match(Integer[] id_players, String matchName) {
 		this.id_players = id_players;
@@ -33,6 +39,33 @@ public class Match implements Serializable {
     public Match() {
 
     }
+	private class WrappedObserver implements Observer, Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		private RemoteGameObserverInterface ro = null;
+
+		public WrappedObserver(RemoteGameObserverInterface ro) {
+			this.ro = ro;
+		}
+
+		@Override
+		public void update(Observable o, Object arg) {
+			try {
+				ro.update(o, arg);
+			} catch (RemoteException e) {
+				System.out
+						.println("Remote exception removing observer:" + this);
+				o.deleteObserver(this);
+			}
+		}
+
+	}
+	public void addObserver(RemoteGameObserverInterface o) {
+		WrappedObserver mo = new WrappedObserver(o);
+		addObserver(mo);
+		System.out.println("Added observer:" + mo);
+	}
 
     public int getIdMatch() {
 		return idMatch;
@@ -64,6 +97,14 @@ public class Match implements Serializable {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public String getCurrentSentence(){
+		return manches.get(manches.size()-1).sentence.getSentence();
+	}
+
+	public int getTurn(){
+		return manches.get(manches.size()-1).getActionTurn();
 	}
 //private Integer[][] mancheScore; //5 , 3
 	//private int currentTurn;

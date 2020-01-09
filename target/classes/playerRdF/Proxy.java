@@ -27,8 +27,6 @@ public class Proxy extends Thread {									//cambiare nome?
 	ObjectOutputStream out;
 	InetAddress addr;
 
-	//TODO multi client e provare con più computer
-
 
 	/**
 	 * Constructor

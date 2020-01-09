@@ -2,9 +2,7 @@ package util;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import playerRdF.GameRmi;
 import serverRdF.DataBaseConnection;
-import serverRdF.GameServer;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,7 +18,7 @@ public class DatabasePopulator {
 
     public static void main(String args[]) throws IOException {
         DatabasePopulator test = new DatabasePopulator();
-        User mio = test.getUseById(2);
+        User mio = test.getUserById(2);
         ArrayList<Sentence> sentences = test.getAllSentence();
         ArrayList<User> users = test.getAllPlayer();
         System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
@@ -32,13 +30,15 @@ public class DatabasePopulator {
         //test.updateSeenByUserSentence(74,iduser);
         System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());
         //test.createMatch(iduser,"match1");
-        Match provaRmiGame= new Match(iduser,"match1");
+
+        /*Match provaRmiGame= new Match(iduser,"match1");
         GameServer testGame = new GameServer(provaRmiGame);
         testGame.start();
         System.out.println("match name "+ provaRmiGame.getMatchName());
         GameRmi giocatore = new GameRmi(provaRmiGame.getMatchName());
 
-//todo impossibile uare la stssa porta
+//todo impossibile usare la stssa porta
+
         //Match provaRmiGame2= new Match(iduser,"match12");
         //GameServer testGame2 = new GameServer(provaRmiGame2);
         //testGame2.start();
@@ -46,7 +46,7 @@ public class DatabasePopulator {
         GameRmi giocatore2 = new GameRmi(provaRmiGame.getMatchName());
         giocatore2.stampa();
 
-        giocatore.stampa();
+        giocatore.stampa();*/
 
     }
 
@@ -67,11 +67,8 @@ public class DatabasePopulator {
     }
 
     public void insertUser() {
-
         String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
         int affectedrows = 0;
-
-
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 
@@ -139,7 +136,7 @@ public class DatabasePopulator {
         }
     }
 
-    public User getUseById(int id) {
+    public User getUserById(int id) {
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM users WHERE id= " + id);
@@ -346,7 +343,6 @@ public class DatabasePopulator {
                 " state = ? " +
                 "WHERE id = ?";
         Match toUpdate = new Match();
-        if (playerId.length == 3)
             try (Connection conn = getConnectionInstance();
                  PreparedStatement pstmt = conn.prepareStatement(qry)) {
 
@@ -375,4 +371,32 @@ public class DatabasePopulator {
         return toUpdate;
     }
 
+    public void endMatch(int matchId){
+        String qry = "UPDATE matches " +
+                "SET  state = ? " +
+                "WHERE id = ?";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+            pstmt.setString(1, "e");
+            pstmt.setInt(2, matchId);
+
+            pstmt.executeUpdate();  // Execute the query
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean matchNameCheck(String matchName){
+        String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'r') OR (match_name = '" + matchName + "' AND state = 'c')";
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(qry);
+            rs.next();
+            return rs.getInt(1) > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

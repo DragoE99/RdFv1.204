@@ -17,7 +17,8 @@ import java.util.Properties;
 
 public class DataBaseConnection extends Thread implements ServerInterface {
 
-    private HashMap<String, GameServer> runningMatch = new HashMap<>();
+    /* Match that are currently running or created */
+    private HashMap<String,  Match> activeMatch = new HashMap<>();
 
     private String ipAddress;
     private String port;

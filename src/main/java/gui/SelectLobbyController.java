@@ -52,6 +52,7 @@ public class SelectLobbyController implements Initializable{
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
 		//HashMap<Match, Lobby> lobbyList;
+
 		
 		
 		try {
