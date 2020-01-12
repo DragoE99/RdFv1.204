@@ -35,18 +35,7 @@ public class DatabasePopulator {
         GameServer testGame = new GameServer(provaRmiGame);
         testGame.start();
         System.out.println("match name "+ provaRmiGame.getMatchName());
-        GameRmi giocatore = new GameRmi(provaRmiGame.getMatchName());
-
-//todo impossibile usare la stssa porta
-
-        //Match provaRmiGame2= new Match(iduser,"match12");
-        //GameServer testGame2 = new GameServer(provaRmiGame2);
-        //testGame2.start();
-        System.out.println("match name "+ provaRmiGame.getMatchName());
-        GameRmi giocatore2 = new GameRmi(provaRmiGame.getMatchName());
-        giocatore2.stampa();
-
-        giocatore.stampa();*/
+        GameRmi giocatore = new GameRmi(provaRmiGame.getMatchName());*/
 
     }
 
@@ -251,7 +240,8 @@ public class DatabasePopulator {
                 " UNION " +
                 "SELECT * " +
                 "FROM sentences WHERE ? = ANY(seen_by_user)" +
-                " )";
+                " ) " +
+                "LIMIT 5";
         ArrayList<Sentence> playableSentence = new ArrayList<>();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {

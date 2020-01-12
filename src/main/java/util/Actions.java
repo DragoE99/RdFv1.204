@@ -2,32 +2,29 @@ package util;
 
 public class Actions {
     Integer id;
-    int turn;
+    int moveNumber;
     String actionName;
     String letter;
     boolean jolly;
     int actionWallet;
-    int playerNumber; // indica se e' il g1 g2 o g3
     int playerId;// basta il turno
 
     public Actions() {
     }
 
-    public Actions(String actionName, boolean jolly, int actionWallet, int playerNumber, int playerId) {
+    public Actions(String actionName, boolean jolly, int actionWallet, int playerId) {
         this.actionName = actionName;
         this.jolly = jolly;
         this.actionWallet = actionWallet;
-        this.playerNumber = playerNumber;
         this.playerId = playerId;
     }
 
-    public Actions(Integer id, int turn, String actionName, boolean jolly, int actionWallet, int playerNumber, int playerId) {
+    public Actions(Integer id, int moveNumber, String actionName, boolean jolly, int actionWallet, int playerId) {
         this.id = id;
-        this.turn = turn;
+        this.moveNumber = moveNumber;
         this.actionName = actionName;
         this.jolly = jolly;
         this.actionWallet = actionWallet;
-        this.playerNumber = playerNumber;
         this.playerId = playerId;
     }
 
@@ -39,12 +36,12 @@ public class Actions {
         this.id = id;
     }
 
-    public int getTurn() {
-        return turn;
+    public int getMoveNumber() {
+        return moveNumber;
     }
 
-    public void setTurn(int turn) {
-        this.turn = turn;
+    public void setMoveNumber(int moveNumber) {
+        this.moveNumber = moveNumber;
     }
 
     public String getActionName() {
@@ -79,13 +76,6 @@ public class Actions {
         this.actionWallet = actionWallet;
     }
 
-    public int getPlayerNumber() {
-        return playerNumber;
-    }
-
-    public void setPlayerNumber(int playerNumber) {
-        this.playerNumber = playerNumber;
-    }
 
     public int getPlayerId() {
         return playerId;

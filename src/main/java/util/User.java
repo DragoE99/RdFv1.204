@@ -107,21 +107,6 @@ public class User implements Serializable {
 		this.email = email;
 		this.password = password;
 	}
-	
-	
-	//=========================NON SO SE SERVE O SE e' GIUSTO===============================
-	/**
-	 * 
-	 * @param u
-	 * @return
-	 */
-	public boolean equals(User u) {
-		//FIXME
-		if((this.email.equals(u.email))&&(this.password.equals(u.password)))	
-			return true;
-		else 
-			return false;
-	}
 
 	public String getEmail() {
 		return email;

@@ -10,10 +10,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class DataBaseConnection extends Thread implements ServerInterface {
 
@@ -164,14 +161,14 @@ public class DataBaseConnection extends Thread implements ServerInterface {
                    if(!verificationMailCheck(email)){
                        temp.setRole("a");
                      modifyUser(temp);
-                   }
-                }else return null;
+                   }else return null;
+                }
                 if(temp.getRole().equals("v")){
                     if(!verificationMailCheck(email)){
                         temp.setRole("p");
                         modifyUser(temp);
-                    }
-                }else return null;
+                    }else return null;
+                }
                 return temp;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -298,24 +295,56 @@ public class DataBaseConnection extends Thread implements ServerInterface {
     * ******************** GAME QUERY *******************************
     */
 
-    public void createMatch(Integer[] id, String matchName) {
-
-        id = new Integer[]{3, 4, 5};
-
-        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
-        try (Connection conn = getConnectionInstance();
-             PreparedStatement pstmt = conn.prepareStatement(sql);) {
-
-            Array array = conn.createArrayOf("INTEGER", id);
-            pstmt.setString(1, "c");   // Set state
-            pstmt.setInt(2, id[1]); //set creator id
-            pstmt.setArray(3, array);  // Set ID palyers
-
-            pstmt.executeUpdate();  // Execute the query
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public Match createMatch(Match match) {
+        //deleteMatch(match);
+        synchronized (this){
+            if(!activeMatch.containsKey(match.getMatchName())){
+                activeMatch.put(match.getMatchName(),match);
+            }else return null;
         }
 
+        String sql = "INSERT INTO matches (state, creator_id, user_id, match_name) VALUES (?, ?, ?, ?)";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            Array array = conn.createArrayOf("INTEGER", match.getPlayers().toArray());
+            pstmt.setString(1, "c");   // Set state
+            pstmt.setInt(2, match.getPlayers().get(0).getId()); //set creator id
+            pstmt.setArray(3, array);  // Set ID palyers
+            pstmt.setString(4,match.getMatchName()); //set Match Name
+
+            pstmt.executeUpdate();
+            Match temp = getMatchbyName(match);
+            if(temp!= null){
+                activeMatch.replace(temp.getMatchName(), temp);
+                return temp;
+            }else return null;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+    private Match getMatchbyName(Match match){
+        String qry= "SELECT * FROM matches WHERE match_name = ?";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+            pstmt.setString(1,match.getMatchName());
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            rs.next();
+            ArrayList<User> userID= new ArrayList<User>();
+                Integer[] arrayId= (Integer[]) rs.getArray("user_id").getArray();
+                for (Integer id: arrayId
+                ) {
+                    userID.add(getUserById(id));
+                }
+            return new Match(rs.getInt("id"),userID,rs.getString("match_name"),rs.getString("state"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void insertMatch() {
@@ -324,7 +353,7 @@ public class DataBaseConnection extends Thread implements ServerInterface {
 
         String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
         try (Connection conn = getConnectionInstance();
-             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             Array array = conn.createArrayOf("INTEGER", id);
             pstmt.setString(1, "e");   // Set state
@@ -351,7 +380,7 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         }
     }
 
-    public ArrayList<Sentence> getMatchSentence(Integer[] idPlayer) {
+    public ArrayList<Sentence> getMatchSentence(Match match) {
         String qry = "SELECT * FROM sentences EXCEPT ( " +
                 "SELECT * " +
                 "FROM sentences WHERE ? = ANY(seen_by_user)" +
@@ -361,15 +390,16 @@ public class DataBaseConnection extends Thread implements ServerInterface {
                 " UNION " +
                 "SELECT * " +
                 "FROM sentences WHERE ? = ANY(seen_by_user)" +
-                " )";
+                " ) " +
+                "LIMIT 5";
         ArrayList<Sentence> playableSentence = new ArrayList<>();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {
 
 
-            pstmt.setInt(1, idPlayer[0]);   // Set ID palyers
-            pstmt.setInt(2, idPlayer[1]); // Set ID palyers
-            pstmt.setInt(3, idPlayer[2]);  // Set ID palyers
+            pstmt.setInt(1, match.getPlayers().get(0).getId());   // Set ID palyers
+            pstmt.setInt(2, match.getPlayers().get(1).getId()); // Set ID palyers
+            pstmt.setInt(3, match.getPlayers().get(2).getId());  // Set ID palyers
 
             ResultSet rs = pstmt.executeQuery();  // Execute the query
             while (rs.next()) {
@@ -383,17 +413,52 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        match.setMancheSentences(playableSentence);
+        updateActiveMatch(match);
         return playableSentence;
     }
-    public ArrayList<Match> getPlayableMatch() {
-        String qry = "SELECT * FROM matches WHERE state = 'c'";
+    private User getUserById(Integer id){
+        String qry="SELECT * FROM users WHERE id = '"+id+"'";
+        try(Connection conn = getConnectionInstance();
+            PreparedStatement pstmt = conn.prepareStatement(qry);)  {
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            System.out.println(rs.getString("name") + " " + rs.getString("surname"));
+            User temp = new User(rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("mail"),
+                    rs.getString("nickname"),
+                    rs.getString("password"),
+                    rs.getString("role"),
+                    rs.getInt("id"));
+
+            return temp;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public ArrayList<Match> getDbActiveMatch() {
+        String qry = "SELECT * FROM matches WHERE state = 'c' OR state = 'r'";
         ArrayList<Match> playableMatch = new ArrayList();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {
 
             ResultSet rs = pstmt.executeQuery();  // Execute the query
+
             while (rs.next()) {
-                playableMatch.add(new Match());     //da aggingere i campi qui sotto commentati per inizializzarlo
+                ArrayList<User> userID= new ArrayList<User>();
+                Integer[] arrayId= (Integer[]) rs.getArray("user_id").getArray();
+                for (Integer id: arrayId
+                     ) {
+                    System.out.println("lunghezza arryID: "+arrayId.length);
+                    userID.add(getUserById(id));
+                    System.out.println("lunghezza Arraylst: "+userID.size());
+                }
+                playableMatch.add(new Match(rs.getInt("id"),
+                        userID,
+                        rs.getString("match_name"),
+                        rs.getString("state")));     //da aggingere i campi qui sotto commentati per inizializzarlo
                 /*
                 rs.getString("match_name");
                 rs.getInt("id");
@@ -406,7 +471,11 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         return playableMatch;
     }
 
-    public Match updateMatch(Integer[] playerId, int machId) {
+    public Match updateMatch(Match match) {
+        match= getMatchbyName(match);
+        activeMatch.put(match.getMatchName(),match);
+
+        //activeMatch.replace(match.getMatchName(),match);
         String qry = "UPDATE matches " +
                 "SET user_id = ? ," +
                 " state = ? " +
@@ -415,17 +484,16 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
 
-            Array array = conn.createArrayOf("INTEGER", playerId);
+            Array array = conn.createArrayOf("INTEGER", match.getPlayers().toArray());
             pstmt.setArray(1, array);  // Set ID palyers
-            if (playerId.length == 3) {
+            if (match.getPlayers().size() == 3) {
                 pstmt.setString(2, "r");
             } else pstmt.setString(2, "c");  // Set state
-            pstmt.setInt(3, machId); //set creator id
+            pstmt.setInt(3, match.getIdMatch()); //match Id
 
 
-            ResultSet rs = pstmt.executeQuery();  // Execute the query
-            rs.next();
-            toUpdate = new Match();     //da aggingere i campi qui sotto commentati per inizializzarlo
+            pstmt.executeUpdate();
+            toUpdate = getMatchbyName(match);
                 /*
                 rs.getString("match_name");
                 rs.getInt("id");
@@ -440,14 +508,17 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         return toUpdate;
     }
 
-    public void endMatch(int matchId){
+
+
+    public void endMatch(Match match){
+        activeMatch.remove(match.getMatchName());
         String qry = "UPDATE matches " +
                 "SET  state = ? " +
                 "WHERE id = ?";
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
             pstmt.setString(1, "e");
-            pstmt.setInt(2, matchId);
+            pstmt.setInt(2, match.getIdMatch());
 
             pstmt.executeUpdate();  // Execute the query
 
@@ -458,10 +529,7 @@ public class DataBaseConnection extends Thread implements ServerInterface {
 
     /* ******************************** query sentence table****************************************/
     public void insertSentences(List<Sentence> sentences, User user) {
-
-
         int count = 0;
-
         try (Connection conn = getConnectionInstance();
              CallableStatement insElem = conn.prepareCall("{ ? = call sentence_insert( ?, ?, ?) }")) {
             for (Sentence sentence :
@@ -530,7 +598,7 @@ public class DataBaseConnection extends Thread implements ServerInterface {
     /* ************************* Delete Query **********************************/
     /* query generale per delete ritorna il numero di righe eliminate oppure -1 in caso di errore*/
     private int deleteQuery(String tableName, String[] column, String[] valueToDelete) {
-        String qry = "DELETE * FROM " + tableName + " WHERE " + column[0] + " = '" + valueToDelete[0] + "'";
+        String qry = "DELETE FROM " + tableName + " WHERE " + column[0] + " = '" + valueToDelete[0] + "'";
         for (int i = 1; i < valueToDelete.length; i++) {
             qry = qry + " AND " + column[i] + " = '" + valueToDelete[i] + "'";
         }
@@ -551,6 +619,44 @@ public class DataBaseConnection extends Thread implements ServerInterface {
                 new String[]{StringManager.getString("user_id_column_name")},
                 new String[]{user.getEmail()}
         );
+    }
+    public int deleteMatch(Match match){
+        //todo ricrearla con l'id se serve al posto del nome forse
+        return deleteQuery("matches",new String[]{"match_name"},new String[] {match.getMatchName()});
+    }
+
+    /*
+    *
+    * *****************      ALTRI METODI
+    *
+    * */
+
+    public void updateActiveMatch(Match match){
+        activeMatch.get(match.getMatchName()).setMatch(match);
+    }
+    public Match getMatchFromHash(String matchName){
+        return activeMatch.get(matchName);
+    }
+    public void addObserver(Match match, RemoteGameObserverInterface o){
+        activeMatch.get(match.getMatchName()).addObserver(o);
+    }
+
+    @Override
+    public Match addPlayer(Match match) throws RemoteException {
+        synchronized (this){
+            if(activeMatch.get(match.getMatchName()).getPlayers().size()<3)activeMatch.get(match.getMatchName()).setMatch(match);
+            else return null;
+        }
+        return activeMatch.get(match.getMatchName());
+    }
+
+    @Override
+    public HashMap<String,  Match> getActiveMatch() throws RemoteException {
+        ArrayList<Match> temp= getDbActiveMatch();
+        for (Match m: temp) {
+            activeMatch.put(m.getMatchName(),m);
+        }
+        return activeMatch;
     }
 
     /*

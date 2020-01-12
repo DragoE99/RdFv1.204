@@ -3,22 +3,37 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="adminRDF.GameController">
+<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="adminRDF.GameController">
    <children>
-      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="800.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER" prefHeight="20.0" prefWidth="300.0" spacing="60.0">
                <children>
-                  <Label fx:id="player1" text="Label" />
-                  <Label fx:id="player2" text="Label" />
-                  <Label fx:id="player3" text="Label" />
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label fx:id="nextPlayer" text="Label">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font></Label>
+                        <Label fx:id="lastPlayer" text="Label">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font></Label>
+                     </children>
+                  </VBox>
+                  <Label fx:id="currentlyPlaying" text="Label">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Label>
                </children>
                </HBox>
-            <Pane fx:id="sentencePane" prefHeight="200.0" prefWidth="200.0" />
+            <Pane fx:id="sentencePane" prefHeight="300.0" prefWidth="640.0" />
+            <Button mnemonicParsing="false" onAction="#rotatePlayer" text="SwitchPlayer" />
          </children>
          <padding>
-            <Insets bottom="80.0" left="80.0" right="80.0" top="80.0" />
+            <Insets bottom="80.0" left="80.0" right="80.0" top="20.0" />
          </padding>
       </VBox>
    </children>

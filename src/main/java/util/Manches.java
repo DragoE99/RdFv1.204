@@ -9,6 +9,8 @@ public class Manches {
     List<Integer> seenBy;
     Integer[] playerWallet = {0,0,0}; //3 wallet at the end of manche
     ArrayList<Actions> actions;
+    Integer playerTurn; //possible value 1 2 3
+    private ArrayList<User> players;
 
     public Manches() {
     }
@@ -24,10 +26,6 @@ public class Manches {
     public Manches(Integer id, Sentence sentence) {
         this.id = id;
         this.sentence = sentence;
-    }
-
-    public int getActionTurn(){
-        return actions.get(actions.size()-1).getTurn();
     }
 
     public Integer getId() {
@@ -68,5 +66,21 @@ public class Manches {
 
     public void setActions(ArrayList<Actions> actions) {
         this.actions = actions;
+    }
+
+    public ArrayList<User> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(User players) {
+        this.players.add(players);
+    }
+
+    public Integer getPlayerTurn() {
+        return playerTurn;
+    }
+
+    public void setPlayerTurn(Integer playerTurn) {
+        this.playerTurn = playerTurn;
     }
 }

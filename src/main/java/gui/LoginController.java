@@ -55,11 +55,12 @@ public class LoginController {
 			//TODO
 			User u = new User(user.getText(), psw.getText());
 			//Commands reply = Client.getProxy().sendLoginData(u);
-			ClientRMI check = new ClientRMI();
+			ClientRMI check = ClientRMI.getInstance();
+			System.out.println("prima instnce");
 			
 			if(check.loginCheck(u.getEmail(),u.getPassword())) {
 				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
-				Client.setUser(u);
+				//Client.setUser(u);
 				
 			} else{
 				//messaggio di errore

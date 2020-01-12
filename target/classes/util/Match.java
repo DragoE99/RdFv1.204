@@ -19,19 +19,21 @@ import java.util.Observer;
 public class Match extends Observable implements Serializable {
 
 	private int idMatch;
-	private Integer[] id_players;	//3
+	private ArrayList<User> players;	//3
 	private String matchName;
 	private String state;
+	//created after match started
 	private ArrayList<Manches> manches;//5
+	private ArrayList<Sentence> mancheSentences;
 
-	public Match(Integer[] id_players, String matchName) {
-		this.id_players = id_players;
+	public Match(ArrayList<User> players, String matchName) {
+		this.players = players;
 		this.matchName = matchName;
 	}
 
-	public Match(int idMatch, Integer[] id_players, String matchName, String state) {
+	public Match(int idMatch, ArrayList<User> players, String matchName, String state) {
 		this.idMatch = idMatch;
-		this.id_players = id_players;
+		this.players = players;
 		this.matchName = matchName;
 		this.state = state;
 	}
@@ -75,24 +77,40 @@ public class Match extends Observable implements Serializable {
 		this.idMatch = idMatch;
 	}
 
-	public Integer[] getId_players() {
-		return id_players;
+	public ArrayList<User> getPlayers() {
+		return players;
 	}
 
-	public void setId_players(Integer[] id_players) {
-		this.id_players = id_players;
+	public void addManchePlayer(User player) {
+		this.players.add(player);
 	}
+	public void removePlayer(User player){ this.players.remove(player);}
 
 	public String getMatchName() {
 		return matchName;
 	}
 
-	public void setMancheName(String matchName) {
+	public void setMatch(Match match){
+
+		this.players = match.getPlayers();
+		this.matchName = match.getMatchName();
+		this.state = match.getState();
+		this.manches = match.getManches();
+		this.mancheSentences = match.getMancheSentences();
+		setChanged();
+		notifyObservers();
+	}
+
+	public void setMatchName(String matchName) {
 		this.matchName = matchName;
 	}
 
 	public String getState() {
 		return state;
+	}
+
+	public ArrayList<Manches> getManches() {
+		return manches;
 	}
 
 	public void setState(String state) {
@@ -103,20 +121,31 @@ public class Match extends Observable implements Serializable {
 		return manches.get(manches.size()-1).sentence.getSentence();
 	}
 
-	public int getTurn(){
-		return manches.get(manches.size()-1).getActionTurn();
+	public Integer getPlayerTurn(){
+		return manches.get(manches.size()-1).getPlayerTurn();
 	}
-//private Integer[][] mancheScore; //5 , 3
+	public void setNextPlayerTurn(){
+		manches.get(manches.size()-1).setPlayerTurn((getPlayerTurn()+1)%3);
+	}
+
+	public ArrayList<Sentence> getMancheSentences() {
+		return mancheSentences;
+	}
+
+	public Manches getCurrentManche(){
+		return manches.get(manches.size()-1);
+	}
+
+
+	public void setMancheSentences(ArrayList<Sentence> mancheSentences) {
+		this.mancheSentences = mancheSentences;
+	}
+	//private Integer[][] mancheScore; //5 , 3
 	//private int currentTurn;
 	//private Sentence sentence;
 	//private Integer[] totScores; 	//3
 
-
-
 	/**
 	 * Constructor
 	 */
-
-
-
 }

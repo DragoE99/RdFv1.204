@@ -83,7 +83,6 @@ public class Proxy extends Thread {									//cambiare nome?
 		try {
 			reply = (Commands) in.readObject();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return reply;

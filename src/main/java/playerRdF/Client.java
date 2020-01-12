@@ -19,7 +19,7 @@ public class Client {
 	private static User me;																	//dovrebbe essere final, oppure non modificabile
 
 	public static void main(String[] args) throws IOException {
-		ClientRMI test = new ClientRMI();
+		ClientRMI test =ClientRMI.getInstance();
 		/*proxy = new Proxy();
 		proxy.start();	*/																	//launching the proxy thread
 

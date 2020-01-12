@@ -1,5 +1,6 @@
 package serverRdF;
 
+import util.Match;
 import util.Sentence;
 import util.User;
 
@@ -9,6 +10,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,6 +68,42 @@ public class ServerRMI extends Thread  implements ServerInterface {
     @Override
     public boolean matchNameCheck(String name) throws RemoteException {
         return false;
+    }
+
+    @Override
+    public Match createMatch(Match match) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public Match updateMatch(Match match) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public Match addPlayer(Match match) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public HashMap<String, Match> getActiveMatch() throws RemoteException {
+        return null;
+    }
+
+
+    @Override
+    public void updateActiveMatch(Match match) throws RemoteException {
+
+    }
+
+    @Override
+    public Match getMatchFromHash(String matchName) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public void addObserver(Match match, RemoteGameObserverInterface o) throws RemoteException {
+
     }
 
     @Override
