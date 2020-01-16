@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
+import playerRdF.Client;
 import playerRdF.ClientRMI;
 import serverRdF.RemoteGameObserverInterface;
 import util.Match;
@@ -63,11 +64,14 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         * */
 
         System.out.println("entrato nella funzione");
+
+
+        currentMatch= ClientRMI.getInstance().getMatch();
+        currentlyPlaying.setText(currentMatch.getPlayers().get(currentMatch.getPlayerTurn()).getName());
+        nextPlayer.setText(currentMatch.getPlayers().get((currentMatch.getPlayerTurn()+1)%3).getName());
+        lastPlayer.setText(currentMatch.getPlayers().get((currentMatch.getPlayerTurn()+2)%3).getName());
         pane=createContent();
         sentencePane.getChildren().addAll(pane);
-        currentlyPlaying.setText("Jotaro");
-        nextPlayer.setText("Dio");
-        lastPlayer.setText("Joseph");
 
     }
 
@@ -82,7 +86,7 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         Pane root = new Pane();
         root.setPrefSize(800, 600);
 
-        char[][] test= sentenceTokenizer("VINSERO BATTAGLIE GRAZIE ALLA LORO FUGA");
+        char[][] test= sentenceTokenizer(currentMatch.getCurrentManche().getSentence().getSentence());
 
 
         for (int j=0;j<4;j++) {
@@ -197,9 +201,13 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         char[][] table =new char[NUM_OF_ROW][NUM_PER_ROW];
 
         for (int j=0;j<4;j++) {
-            char[] row= panelRow[j].toCharArray();
-            for (int k=0;k<row.length;k++) {
-                table[j][k]=row[k];
+            try {
+                char[] row= panelRow[j].toCharArray();
+                for (int k=0;k<row.length;k++) {
+                    table[j][k]=row[k];
+                }
+            } catch (Exception e) {
+               // e.printStackTrace();
             }
         }
         return table;

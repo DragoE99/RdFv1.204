@@ -138,6 +138,7 @@ public class Match extends Observable implements Serializable {
 			observerIds.add(u.getId());
 		}}
 		this.manches.add(new Manches(sentences.get(0),observerIds));
+
 		setState(StringManager.getString("match_state_running_convention")); //set state running
 		setMancheSentences(sentences);
 		//create manche from DB

@@ -3,6 +3,7 @@ package util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Manches implements Serializable {
     Integer id;
@@ -19,6 +20,9 @@ public class Manches implements Serializable {
     public Manches(Sentence sentence, List<Integer> seenBy) {
         this.sentence = sentence;
         this.seenBy = seenBy;
+        Random rand = new Random();
+        this.playerTurn=  (rand.nextInt(3));
+
     }
 
     public Manches(Integer id, Sentence sentence, List<Integer> seenBy, Integer[] playerWallet, ArrayList<Actions> actions) {
