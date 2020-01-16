@@ -59,7 +59,10 @@ public class LoginController {
 			System.out.println("prima instnce");
 			
 			if(check.loginCheck(u.getEmail(),u.getPassword())) {
-				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+				System.out.println("utente: "+ check.getUser().getName());
+				Parent root = FXMLLoader.load(getClass().getResource("/adminRDF/HomePage.fxml"));
+				root.getStylesheets().add("/resources/PrimaryTheme.css");
+				Main.getStage().setScene(new Scene(root));
 				//Client.setUser(u);
 				
 			} else{

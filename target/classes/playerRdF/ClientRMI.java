@@ -13,6 +13,7 @@ import util.Match;
 import util.User;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,10 +21,10 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserverInterface {
+public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserverInterface , Serializable {
     private Registry registry;
     private ServerInterface stub;
-    private Match match;
+    private static Match match= new Match();
     private HashMap<String, Match> activeMatch;
     private static final long serialVersionUID = 1L;
     User user;
@@ -61,8 +62,13 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
 
     @Override
     public void update(Object observable, Object updateMsg) throws RemoteException {
+        if(ClientRMI.match!=null){
+            System.out.println("match NOT null ClientRMI OVRR Update");
         getMatchFromHash(match.getMatchName());
+        match.notifyObserver();
+        }
         System.out.println("updated object");
+
     }
 
     public boolean loginCheck(String email, String password) {
@@ -87,22 +93,12 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
         }
     }
 
-    //TODO METODO DA ELIMINARE
-    public boolean matchNameCheck(String name) {
-        try {
-            return stub.matchNameCheck(name);
-
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public boolean createMatch(Match match) {
         try {
-            match = stub.createMatch(match);
-            if (match != null) {
-                stub.addObserver(match, this);
+
+            ClientRMI.match = stub.createMatch(match);
+            if (ClientRMI.match != null) {
+                stub.addObserver(match, this, user);
                 return true;
             } else return false;
 
@@ -124,7 +120,7 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
 
     public void updateActiveMatch(Match match) {
         try {
-            this.match.setMatch(match);
+            ClientRMI.match.setMatch(match);
             stub.updateActiveMatch(match);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -133,7 +129,8 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
 
     public void addObserver(Match match) {
         try {
-            stub.addObserver(match, this);
+            ClientRMI.match.setMatch(match);
+            stub.addObserver(match, this, user);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -141,8 +138,11 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
 
     public Match getMatchFromHash(String matchName) {
         try {
-            this.match = stub.getMatchFromHash(matchName);
-            return this.match;
+            Match temp = stub.getMatchFromHash(matchName);
+            if(temp!=null){
+                match.setMatch(temp);
+                return temp;}
+            else return null;
         } catch (RemoteException e) {
             e.printStackTrace();
             return null;
@@ -159,9 +159,10 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
 
     public boolean addPlayer(Match match) {
         try {
-            match = stub.addPlayer(match);
+            match = stub.addPlayer(match,user);
             if (match != null) {
-                stub.addObserver(match, this);
+                stub.addObserver(match, this, user);
+                ClientRMI.match.setMatch(match);
                 return true;
             } else return false;
         } catch (RemoteException e) {
@@ -170,7 +171,19 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
         }
 
     }
+    public void removeObserver(){
+        try {
+            stub.removeObserver(match.getMatchName(),this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
 
+        }
+
+    }
+
+    public HashMap<String, Match> getLocalActiveMatch(){
+        return activeMatch;
+    }
     public HashMap<String, Match> getActiveMatch() {
         try {
             this.activeMatch = stub.getActiveMatch();

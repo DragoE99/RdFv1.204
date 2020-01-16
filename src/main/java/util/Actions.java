@@ -1,6 +1,8 @@
 package util;
 
-public class Actions {
+import java.io.Serializable;
+
+public class Actions implements Serializable {
     Integer id;
     int moveNumber;
     String actionName;

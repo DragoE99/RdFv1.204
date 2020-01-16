@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -68,7 +69,14 @@ public class SettingsController {
 	}
 	
 	public void back(ActionEvent e) throws IOException {
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+		Parent root = null;
+		try {
+			root = FXMLLoader.load(getClass().getResource("/adminRDF/HomePage.fxml"));
+			root.getStylesheets().add("/resources/PrimaryTheme.css");
+			Main.getStage().setScene(new Scene(root));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 }

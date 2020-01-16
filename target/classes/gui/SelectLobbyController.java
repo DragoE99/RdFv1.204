@@ -5,9 +5,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -125,7 +122,7 @@ public class SelectLobbyController implements Initializable{
 		
 	}
 	public void create(ActionEvent e) throws IOException {
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("CreateLobby.fxml"))));
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("CreateMatch.fxml"))));
 		
 	}
 	public void play(ActionEvent e) throws IOException {

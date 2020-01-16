@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import playerRdF.ClientRMI;
 
 /**
  * Our main javafx class
@@ -25,7 +26,7 @@ public class Main extends Application {
 		
 		//avviamo la prima finestra, Login
 		Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
-
+		root.getStylesheets().add("/resources/PrimaryTheme.css");
 		stage.setScene(new Scene(root));
 
 		//stage.setResizable(false);

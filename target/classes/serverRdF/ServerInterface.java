@@ -25,13 +25,15 @@ public interface ServerInterface extends Remote {
     boolean matchNameCheck(String name) throws RemoteException;
     Match createMatch(Match match) throws RemoteException;
     Match updateMatch(Match match) throws RemoteException;
-    Match addPlayer(Match match) throws RemoteException;
+    Match addPlayer(Match match, User userToAdd) throws RemoteException;
     HashMap<String,  Match> getActiveMatch() throws RemoteException;
 
     /* Active Match related*/
     void updateActiveMatch(Match match) throws RemoteException;
     Match getMatchFromHash(String matchName) throws RemoteException;
-    void addObserver(Match match, RemoteGameObserverInterface o) throws RemoteException;
+    void addObserver(Match match, RemoteGameObserverInterface o, User observer) throws RemoteException;
+    void removePlayer(User player, Match match, RemoteGameObserverInterface o) throws  RemoteException;
+    void removeObserver(String matchName, RemoteGameObserverInterface o) throws  RemoteException;
 
 
     void insertSentences(List<Sentence> sentences, User user) throws RemoteException;

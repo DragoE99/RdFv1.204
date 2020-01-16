@@ -1,5 +1,6 @@
 package adminRDF;
 
+import gui.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,12 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import playerRdF.ClientRMI;
 import util.Match;
-import util.User;
 
 import java.io.IOException;
 
@@ -29,48 +28,48 @@ public class WatchPlayController {
     Label SelectedMatch;
 
     static String response="";
-
-   /* Match toShow;
-    User current;
-
-    public String response() throws IOException {
-
-        Stage window= new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("WatchPlayDialog.fxml"));
-        root.getStylesheets().add("/resources/PrimaryTheme.css");
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setScene(new Scene(root));
-        window.show();
-        return response;
-    }
-
-    public void initialize(){
-        if(match.getState().equals("r")|| current.getRole().equals("a")){
-            PlayButton.setDisable(true);
-            PlayButton.setVisible(false);
-        }
-    }*/
+    Match current;
    public void setSelectedMatch(Match match){
+       current=match;
        SelectedMatch.setText("Selected Match "+match.getMatchName());
-       if(match.getState().equals("r")){
+       if(match.getState().equals("R")){
            PlayButton.setDisable(true);
            PlayButton.setVisible(false);
        }
    }
     private void closeStage(ActionEvent event) {
         System.out.println(response);
-        HomePageController.actionOnMatch=response;
+        try {
+            HomePageController.setActionOnMatch(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response.equals("PLAY")||response.equals("WATCH")){
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(getClass().getResource("/gui/WaitingRoom.fxml"));
+                root.getStylesheets().add("/resources/PrimaryTheme.css");
+                Main.getStage().setScene(new Scene(root));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
         Node  source = (Node)  event.getSource();
         Stage stage  = (Stage) source.getScene().getWindow();
         stage.close();
+
+
     }
     @FXML
     public void setPlay(ActionEvent event){
         response="PLAY";
+        if(ClientRMI.getInstance().addPlayer(current))System.out.println("Aggiunto: "+ClientRMI.getInstance().getUser().getName() );
         closeStage(event);
     }
     @FXML
     public void setWatch(ActionEvent event){
+       ClientRMI.getInstance().addObserver(current);
         response="WATCH";
         closeStage(event);
     }

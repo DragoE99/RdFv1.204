@@ -1,11 +1,14 @@
 package adminRDF;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -14,6 +17,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 import playerRdF.ClientRMI;
 import serverRdF.RemoteGameObserverInterface;
 import util.Match;
@@ -41,74 +46,15 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
     private static Match currentMatch;
     ClientRMI currentClient;
     private static final long serialVersionUID = 1L;
-
     private static final int NUM_OF_ROW = 4;
     private static final int NUM_PER_ROW = 15;
     Pane pane;
-   /* public static void main(String[] args) {
 
-       launch(args);
-    }*/
-
-  /*  public GameController(){
-    }*/
     @Override
     public void update(Object observable, Object updateMsg) throws RemoteException {
         System.out.println("updated object from gameController");
         currentMatch=currentClient.getMatch();
     }
-  /*  @Override
-    public void start(Stage primaryStage) throws IOException {
-        //sentenceTokenizer("VINSERO BATTAGLIE GRAZIE ALLA LORO FUGA");
-        ArrayList<Integer> creatorId = new ArrayList<>();
-        creatorId.add(3);
-        Match match= new Match(creatorId,"secondoMatch");
-        ClientRMI client;
-        try {
-
-            client = ClientRMI.getInstance();
-            currentClient=client;
-            client.setMatch(match);
-            if(client.createMatch(match)){
-                System.out.println("nome esistente");
-                *//*TODO durante il check del nome inserire in active match un match vuoto con tale key
-                 *  e fare il check con active match e non il DB *//*
-                match=client.getMatch();
-
-            }else {
-                match= client.updateMatch(match);
-                match.addPlayer(4);
-                System.out.println("aggiunto player 4 lunghezza: "+match.getId_players().size());
-                client.addObserver(match);
-                client.getMatch().addObserver(this);
-                client.updateActiveMatch(match);
-                match= client.updateMatch(match);
-                System.out.println("match updated");
-            }
-            //TODO when adding a player do this
-            *//*
-            currentMatch.getCurrentManche().setPlayers(me);
-            currentMatch.getId_players().add(myID); // variabile 'myId' sta per il l-id dell'utente corrente
-            if(client.addPlayer(match)){
-                client.getMatch().addObserver(this);
-                currentMatch=client.getMatch();
-                //go to waiting room
-            }*//*
-
-
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        if(match!=null)
-            System.out.println("match id: "+ match.getIdMatch());
-
-        Parent root = FXMLLoader.load(getClass().getResource("GameGui.fxml"));
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
-        //new Scene(createContent())
-
-    }*/
-
 
     public void initialize() {
         /*
@@ -119,7 +65,6 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         System.out.println("entrato nella funzione");
         pane=createContent();
         sentencePane.getChildren().addAll(pane);
-        //labelTest = new Label();
         currentlyPlaying.setText("Jotaro");
         nextPlayer.setText("Dio");
         lastPlayer.setText("Joseph");
@@ -168,14 +113,46 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
                 text.setText(value);
                 text.setFont(Font.font(30));
                 text.setFill(Color.WHITE);
+                text.setOpacity(0);
                 System.out.println("valore: "+value);
             }
 
             setAlignment(Pos.CENTER);
             getChildren().addAll(border, text);
 
-            //setOnMouseClicked(this::handleMouseClick);
-            //close();
+            setOnMouseClicked(this::handleMouseClick);
+            close();
+        }
+
+        public void handleMouseClick(MouseEvent event) {
+            if (isOpen())close();
+            else open(() -> {});
+        }
+
+        public boolean isOpen() {
+            return text.getOpacity() == 1;
+        }
+        public void open(Runnable action) {
+            RotateTransition rt = new RotateTransition(Duration.seconds(0.5), this);
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.7), text);
+            rt.setAxis(Rotate.Y_AXIS);
+            rt.setByAngle(180);
+            rt.setCycleCount(1);
+            ft.setToValue(1);
+            ft.setOnFinished(e -> action.run());
+            rt.play();
+            ft.play();
+        }
+
+        public void close() {
+            RotateTransition rt = new RotateTransition(Duration.seconds(0.5), this);
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), text);
+            rt.setAxis(Rotate.Y_AXIS);
+            rt.setByAngle(180);
+            rt.setCycleCount(1);
+            ft.setToValue(0);
+            rt.play();
+            ft.play();
         }
 
         public Text getText() {

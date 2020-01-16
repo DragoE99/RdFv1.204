@@ -16,27 +16,124 @@ public class DatabasePopulator {
     public DatabasePopulator() {
     }
 
+    static ArrayList<Sentence> sentences = new ArrayList<>();
+
     public static void main(String args[]) throws IOException {
         DatabasePopulator test = new DatabasePopulator();
         User mio = test.getUserById(2);
-        ArrayList<Sentence> sentences = test.getAllSentence();
+        sentences = test.getAllSentence();
         ArrayList<User> users = test.getAllPlayer();
-        System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
+      /*  System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
         System.out.println("lista user " + users.size() + " lista frasi " + sentences.size());
         Integer[] iduser = new Integer[3];
         for (int i = 4; i < 7; i++) {
             iduser[i - 4] = users.get(i).getId();
-        }
+        }*/
         //test.updateSeenByUserSentence(74,iduser);
-        System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());
+        //System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());
         //test.createMatch(iduser,"match1");
-
+       /* DataBaseConnection perMatch = new DataBaseConnection();
+        Match mioMatch = perMatch.getDbActiveMatch().get(0);
+        mioMatch.setMancheSentences(sentences);
+        System.out.println("test inserimento e ritorno Manches prima frase:\n " + sentences.get(0).getSentence() + "\n");
+        Manches nuovaManche = new Manches();
+        nuovaManche.setSentence(sentences.get(0));
+        mioMatch.addManche(nuovaManche);
+        nuovaManche = test.insertManches(mioMatch);
+        if (nuovaManche != null) {
+            System.out.println("nuova manche ritornata id: " + nuovaManche.getId());
+            System.out.println("frase " + nuovaManche.getSentence().getSentence());
+        }*/
+        test.checkVerificationTime("de@de.it");
         /*Match provaRmiGame= new Match(iduser,"match1");
         GameServer testGame = new GameServer(provaRmiGame);
         testGame.start();
         System.out.println("match name "+ provaRmiGame.getMatchName());
         GameRmi giocatore = new GameRmi(provaRmiGame.getMatchName());*/
 
+    }
+
+    /* *********************************Query da testare************************************************/
+
+
+    public void checkVerificationTime(String mail){
+        String qry= "SELECT * FROM users WHERE mail = '"+mail+"'";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            Timestamp tempo = rs.getTimestamp("last_change_date");
+            System.out.println("ultima modifica: "+tempo);
+            long timeDifference = new Timestamp(System.currentTimeMillis()).getTime() - tempo.getTime() ;
+            System.out.println("in minuti: "+(timeDifference/60000));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //return null;
+        }
+    }
+    public Manches insertManches(Match match) {
+        String qry = "INSERT INTO manches(match_id, sentence_id) VALUES(?,?)";
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+
+            pstmt.setInt(1, match.getIdMatch());   // Set id match
+            pstmt.setInt(2, match.getCurrentManche().getSentence().getId()); //set sentence id
+            pstmt.executeUpdate();  // Execute the query
+
+            return getManche(match);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Manches getManche(Match match) {
+        String qry = "SELECT* FROM manches WHERE match_id='"
+                + match.getIdMatch()
+                + "' AND sentence_id='"
+                + match.getCurrentManche().getSentence().getId() + "'";
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(qry);
+            rs.next();
+            Manches temp = null;
+            int i = rs.getInt("sentence_id");
+            for (Sentence s : sentences) {
+                if (s.getId() == i) {
+                    temp = new Manches(rs.getInt("id"), s);
+                    System.out.println("trovata frase");
+                }
+            }
+            return temp;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void updateManche(Manches manches) {
+        String qry = "UPDATE manches " +
+                "SET " +
+                "seenByUser= ? " +
+                "manche_wallet = ? " +
+                "WHERE id = ? ";
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+
+            Array array = conn.createArrayOf("INTEGER", manches.getSeenBy().toArray());
+            Array wallets= conn.createArrayOf("INTEGER", manches.playerWallet);
+            pstmt.setArray(1, array);           // Set ID watchers
+            pstmt.setArray(2, wallets);         //set playerWallet
+            pstmt.setInt(3, manches.getId());   // Set id manches
+            pstmt.executeUpdate();  // Execute the query
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private String ipAddress = "localhost";
@@ -333,35 +430,35 @@ public class DatabasePopulator {
                 " state = ? " +
                 "WHERE id = ?";
         Match toUpdate = new Match();
-            try (Connection conn = getConnectionInstance();
-                 PreparedStatement pstmt = conn.prepareStatement(qry)) {
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
 
-                Array array = conn.createArrayOf("INTEGER", playerId);
-                pstmt.setArray(1, array);  // Set ID palyers
-                if (playerId.length == 3) {
-                    pstmt.setString(2, "r");
-                } else pstmt.setString(2, "c");  // Set state
-                pstmt.setInt(3, machId); //set creator id
+            Array array = conn.createArrayOf("INTEGER", playerId);
+            pstmt.setArray(1, array);  // Set ID palyers
+            if (playerId.length == 3) {
+                pstmt.setString(2, "r");
+            } else pstmt.setString(2, "c");  // Set state
+            pstmt.setInt(3, machId); //set creator id
 
 
-                ResultSet rs = pstmt.executeQuery();  // Execute the query
-                rs.next();
-                toUpdate = new Match();     //da aggingere i campi qui sotto commentati per inizializzarlo
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            rs.next();
+            toUpdate = new Match();     //da aggingere i campi qui sotto commentati per inizializzarlo
                 /*
                 rs.getString("match_name");
                 rs.getInt("id");
                 rs.getArray("user_id");
                  */
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         return toUpdate;
     }
 
-    public void endMatch(int matchId){
+    public void endMatch(int matchId) {
         String qry = "UPDATE matches " +
                 "SET  state = ? " +
                 "WHERE id = ?";
@@ -376,7 +473,8 @@ public class DatabasePopulator {
             e.printStackTrace();
         }
     }
-    public boolean matchNameCheck(String matchName){
+
+    public boolean matchNameCheck(String matchName) {
         String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'r') OR (match_name = '" + matchName + "' AND state = 'c')";
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();

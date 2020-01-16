@@ -11,17 +11,20 @@
          <children>
             <VBox alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
                <children>
-                  <Label opacity="0.8" text="New Game" textFill="WHITE">
+                  <Label fx:id="newGameLabel" onMouseClicked="#newGameDialog" opacity="0.8" text="New Game" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <Label opacity="0.8" text="Settings" textFill="WHITE">
+                  <Label onMouseClicked="#goToSettings" opacity="0.8" prefHeight="33.0" prefWidth="100.0" text="Settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                     </VBox.margin>
                   </Label>
-                  <Label opacity="0.8" text="Quit" textFill="WHITE">
+                  <Label onMouseClicked="#quitApplication" opacity="0.8" prefHeight="27.0" prefWidth="102.0" text="Quit" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -50,6 +53,7 @@
                         <TableColumn fx:id="playOrWatch" prefWidth="96.0" text="Play/Watch" />
                     </columns>
                   </TableView>
+                  <Button mnemonicParsing="false" onAction="#refreshMatch" text="Refresh" />
                </children>
             </VBox>
          </children>

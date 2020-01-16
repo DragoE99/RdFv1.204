@@ -1,9 +1,10 @@
 package util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Manches {
+public class Manches implements Serializable {
     Integer id;
     Sentence sentence;
     List<Integer> seenBy;
@@ -13,6 +14,11 @@ public class Manches {
     private ArrayList<User> players;
 
     public Manches() {
+    }
+
+    public Manches(Sentence sentence, List<Integer> seenBy) {
+        this.sentence = sentence;
+        this.seenBy = seenBy;
     }
 
     public Manches(Integer id, Sentence sentence, List<Integer> seenBy, Integer[] playerWallet, ArrayList<Actions> actions) {

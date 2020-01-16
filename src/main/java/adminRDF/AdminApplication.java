@@ -19,8 +19,8 @@ public class AdminApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         stage = primaryStage;
-        //Parent root = FXMLLoader.load(getClass().getResource("GameGui.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("HomePage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("GameGui.fxml"));
+        //Parent root = FXMLLoader.load(getClass().getResource("HomePage.fxml"));
         root.getStylesheets().add("/resources/PrimaryTheme.css");
 
         stage.setScene(new Scene(root));
