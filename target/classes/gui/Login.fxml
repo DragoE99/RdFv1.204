@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.LoginController">
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LoginController">
    <children>
       <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Login" textFill="#c2d3e4">
+            <Label text="Login" >
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
@@ -23,18 +17,14 @@
                   <Insets bottom="30.0" />
                </padding>
             </Label>
-            <TextField fx:id="user" maxWidth="-Infinity" prefWidth="300.0" promptText="Username" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </TextField>
-            <PasswordField fx:id="psw" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="user" maxWidth="300.0" promptText="Mail" />
+            <PasswordField fx:id="psw" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" >
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </PasswordField>
             <Hyperlink onAction="#passwordReset" text="Forgot your password?" />
-            <Button fx:id="enterButton" mnemonicParsing="false" onAction="#login" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Enter" textFill="#c2d3e4">
+            <Button fx:id="enterButton" mnemonicParsing="false" onAction="#login" prefHeight="70.0" prefWidth="150.0"  text="Enter" >
                <VBox.margin>
                   <Insets top="20.0" />
                </VBox.margin>
@@ -44,11 +34,14 @@
             </Button>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label text="Not registered yet?" textFill="#c2d3e4" />
+                  <Label text="Not registered yet?" />
                   <Hyperlink fx:id="signUp" onAction="#signUp" text="Create an account" />
                </children>
             </HBox>
          </children>
+         <padding>
+            <Insets left="80.0" right="80.0" />
+         </padding>
       </VBox>
    </children>
 </AnchorPane>

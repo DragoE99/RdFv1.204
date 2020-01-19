@@ -107,13 +107,13 @@ public class Match extends Observable implements Serializable {
 		notifyObservers();
 	}
 	public void removePlayer(User player){
-		User toRemove = null;
+		ArrayList<User> toRemove = new ArrayList<>();
 		for (User u: players
 			 ) {
-			if(u.getId()==player.getId())toRemove=u;
+			if(u.getId().equals(player.getId()))toRemove.add(u);
 		}
 		if (toRemove!=null)
-		players.remove(toRemove);
+		players.removeAll(toRemove);
 	}
 
 	public String getMatchName() {
@@ -184,6 +184,16 @@ public class Match extends Observable implements Serializable {
 	}
 	public Manches getCurrentManche(){
 		return manches.get(manches.size()-1);
+	}
+
+	public Integer[] getGlobalWallets(){
+		Integer[] valueToreturn= {0,0,0};
+		for(int i=0; i<= getManches().size()-1; i++){
+			for(int j=0; j<3;j++){
+				valueToreturn[j] +=getManches().get(i).getPlayerWallet()[j];
+			}
+		}
+		return valueToreturn;
 	}
 
 

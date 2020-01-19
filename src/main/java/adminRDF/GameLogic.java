@@ -16,9 +16,9 @@ public class GameLogic {
         Random rand = new Random();
          spinResult = (rand.nextInt(9)-1)*100;
         if(spinResult<0){
-            action.setActionName("LOSE");
+            action.setActionName("LOSE ALL");
             //TODO completare inizializzazione action infilarla in match e chiamare il DB
-            // controllare se si può usere il jolly
+            // controllare se si puo' usere il jolly
         }
         if(spinResult==0)action.setActionName("PASS");
     }

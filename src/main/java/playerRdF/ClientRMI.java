@@ -178,7 +178,14 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
             e.printStackTrace();
 
         }
+    }
+    public void removePlayer(){
+        try {
+            stub.removePlayer(user,match.getMatchName(),this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
 
+        }
     }
 
     public HashMap<String, Match> getLocalActiveMatch(){

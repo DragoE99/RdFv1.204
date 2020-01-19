@@ -32,7 +32,7 @@ public interface ServerInterface extends Remote {
     void updateActiveMatch(Match match) throws RemoteException;
     Match getMatchFromHash(String matchName) throws RemoteException;
     void addObserver(Match match, RemoteGameObserverInterface o, User observer) throws RemoteException;
-    void removePlayer(User player, Match match, RemoteGameObserverInterface o) throws  RemoteException;
+    void removePlayer(User player, String matchName, RemoteGameObserverInterface o) throws  RemoteException;
     void removeObserver(String matchName, RemoteGameObserverInterface o) throws  RemoteException;
 
 

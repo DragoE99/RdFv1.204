@@ -7,15 +7,14 @@ import serverRdF.DataBaseConnection;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class DatabasePopulator {
     public DatabasePopulator() {
     }
 
+    private HashMap<String, Match> activeMatch = new HashMap<>();
+    private HashMap<Match, ArrayList<User>> createdMatchObserver = new HashMap();
     static ArrayList<Sentence> sentences = new ArrayList<>();
 
     public static void main(String args[]) throws IOException {
@@ -45,16 +44,35 @@ public class DatabasePopulator {
             System.out.println("frase " + nuovaManche.getSentence().getSentence());
         }*/
         test.checkVerificationTime("de@de.it");
-        /*Match provaRmiGame= new Match(iduser,"match1");
-        GameServer testGame = new GameServer(provaRmiGame);
-        testGame.start();
-        System.out.println("match name "+ provaRmiGame.getMatchName());
-        GameRmi giocatore = new GameRmi(provaRmiGame.getMatchName());*/
 
     }
 
     /* *********************************Query da testare************************************************/
 
+
+    public void insertAction(String matchName, Actions action){
+        String qry="INSERT INTO actions(turn, manche_id, player_id, action_name," +
+                "jolly, action_wallet, player_number, letter_called) VALUES(?,?,?,?,?,?,?,?)";
+        Match temp = activeMatch.get(matchName);
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+
+            pstmt.setInt(1, action.getCurrentPlayerTurn());   // Set id match
+            pstmt.setInt(2, temp.getCurrentManche().getId());
+            pstmt.setInt(3, temp.getIdsPlayer().get(temp.getPlayerTurn()));//set current player id
+            pstmt.setString(4,action.getActionName());
+            pstmt.setBoolean(5,action.isJolly());
+            pstmt.setInt(6, action.getActionWallet());
+            pstmt.setInt(7,temp.getPlayerTurn());
+            pstmt.setString(8, action.getLetter());
+
+            pstmt.executeUpdate();  // Execute the query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     public void checkVerificationTime(String mail){
         String qry= "SELECT * FROM users WHERE mail = '"+mail+"'";
@@ -475,7 +493,7 @@ public class DatabasePopulator {
     }
 
     public boolean matchNameCheck(String matchName) {
-        String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'r') OR (match_name = '" + matchName + "' AND state = 'c')";
+        String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'R') OR (match_name = '" + matchName + "' AND state = 'C')";
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(qry);

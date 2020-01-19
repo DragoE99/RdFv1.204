@@ -10,6 +10,8 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
 
+	private String role;
+	private Integer id;
 	private String name;
 	private String surname;
 	private String email;
@@ -78,8 +80,7 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	private String role;
-	private Integer id;
+
 	
 	/**
 	 * 

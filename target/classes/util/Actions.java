@@ -3,31 +3,31 @@ package util;
 import java.io.Serializable;
 
 public class Actions implements Serializable {
-    Integer id;
-    int moveNumber;
-    String actionName;
-    String letter;
-    boolean jolly;
-    int actionWallet;
-    int playerId;// basta il turno
+    private Integer id;
+    private int moveNumber;
+    private String actionName;
+    private String letter;
+    private boolean jolly;
+    private int actionWallet;
+    private int currentPlayerTurn;// basta il turno
 
     public Actions() {
     }
 
-    public Actions(String actionName, boolean jolly, int actionWallet, int playerId) {
+    public Actions(String actionName, boolean jolly, int actionWallet, int currentPlayerTurn) {
         this.actionName = actionName;
         this.jolly = jolly;
         this.actionWallet = actionWallet;
-        this.playerId = playerId;
+        this.currentPlayerTurn = currentPlayerTurn;
     }
 
-    public Actions(Integer id, int moveNumber, String actionName, boolean jolly, int actionWallet, int playerId) {
+    public Actions(Integer id, int moveNumber, String actionName, boolean jolly, int actionWallet, int currentPlayerTurn) {
         this.id = id;
         this.moveNumber = moveNumber;
         this.actionName = actionName;
         this.jolly = jolly;
         this.actionWallet = actionWallet;
-        this.playerId = playerId;
+        this.currentPlayerTurn = currentPlayerTurn;
     }
 
     public Integer getId() {
@@ -79,11 +79,11 @@ public class Actions implements Serializable {
     }
 
 
-    public int getPlayerId() {
-        return playerId;
+    public int getCurrentPlayerTurn() {
+        return currentPlayerTurn;
     }
 
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
+    public void setCurrentPlayerTurn(int currentPlayerTurn) {
+        this.currentPlayerTurn = currentPlayerTurn;
     }
 }

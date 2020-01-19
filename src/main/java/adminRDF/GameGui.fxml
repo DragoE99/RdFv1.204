@@ -2,38 +2,130 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="adminRDF.GameController">
    <children>
-      <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="800.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER_LEFT" prefHeight="400.0" prefWidth="800.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="20.0" prefWidth="300.0" spacing="60.0">
+            <HBox alignment="CENTER_LEFT" spacing="300.0">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
+                  <Button fx:id="quitButton" alignment="CENTER" mnemonicParsing="false" onAction="#quit" text="Quit" />
+                  <Label fx:id="resultLabel" text="RESULT" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="106.0" prefWidth="778.0" spacing="20.0">
+               <children>
+                  <VBox prefHeight="108.0" prefWidth="183.0">
                      <children>
-                        <Label fx:id="nextPlayer" text="Label">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font></Label>
-                        <Label fx:id="lastPlayer" text="Label">
+                        <!--nextPlayer-->
+                        <HBox alignment="CENTER" prefHeight="54.0" prefWidth="349.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <Label fx:id="nextPlayerGlobalWallet" text="Label" />
+                                    <ImageView fitHeight="19.0" fitWidth="26.0" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/userIcon.png" />
+                                       </image></ImageView>
+                                    <Label fx:id="nextPlayerLocalWallet" text="Label" />
+                                 </children>
+                              </VBox>
+                              <Label fx:id="nextPlayerName" text="Label">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font></Label>
+                           </children>
+                        </HBox>
+                        <!--LastPlayer-->
+                        <HBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <Label fx:id="lastPlayerGlobalWallet" text="Label" />
+                                    <ImageView fitHeight="19.0" fitWidth="26.0" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/userIcon.png" />
+                                       </image></ImageView>
+                                    <Label fx:id="lastPlayerLocalWallet" text="Label" />
+                                 </children>
+                              </VBox>
+                              <Label fx:id="lastPlayerName" text="Label">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font></Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <!--CurrentPlayer-->
+                  <HBox alignment="CENTER" prefHeight="108.0" prefWidth="207.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label fx:id="currentPlayerGlobalWallet" text="Label" />
+                              <ImageView fitHeight="40" fitWidth="28.0" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../resources/userIcon.png" />
+                                 </image></ImageView>
+                              <Label fx:id="currentPalyerLocalWallet" text="Label" />
+                           </children>
+                        </VBox>
+                        <Label fx:id="currentlyPlayingName" text="Label">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font></Label>
                      </children>
+                  </HBox>
+                  <VBox alignment="CENTER" spacing="8.0">
+                     <children>
+                        <Button fx:id="spinButton" mnemonicParsing="false" onAction="#spinWheel" prefHeight="30.0" prefWidth="85.0" text="Spin" />
+                        <Button fx:id="buyVowelButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="Buy Vowel" />
+                     </children>
                   </VBox>
-                  <Label fx:id="currentlyPlaying" text="Label">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font></Label>
+                  <VBox alignment="CENTER" prefHeight="106.0" prefWidth="143.0" spacing="10.0">
+                     <children>
+                        <Label fx:id="pointVariationLabel" alignment="CENTER" prefHeight="35.0" prefWidth="120.0" text="Points Variation" textAlignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <TextField />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="70.0" text="LETTER" />
+                        <TextField fx:id="letterTextField" prefHeight="84.0" prefWidth="72.0">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </VBox>
                </children>
                </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Label fx:id="hintLabel" prefHeight="20.0" prefWidth="387.0" text="hint">
+                     <font>
+                        <Font name="System Italic" size="14.0" />
+                     </font>
+                  </Label>
+                  <Button mnemonicParsing="false" onAction="#getTestText" text="Solution" />
+                  <TextField fx:id="testTextField" />
+               </children>
+            </HBox>
             <Pane fx:id="sentencePane" prefHeight="300.0" prefWidth="640.0" />
-            <Button mnemonicParsing="false" onAction="#rotatePlayer" text="SwitchPlayer" />
+
          </children>
          <padding>
-            <Insets bottom="80.0" left="80.0" right="80.0" top="20.0" />
+            <Insets bottom="80.0" left="80.0" right="50.0" top="20.0" />
          </padding>
       </VBox>
    </children>

@@ -5,6 +5,13 @@
     -fx-background:#21232F;
     -fx-control-inner-background: derive(-fx-base,20%);/*derive(-fx-base,50%)  #424967*/
     -fx-control-inner-background-alt: #424967;/*derive(-fx-control-inner-background, 30%);*/
+     -fx-default-button: #424967;
+     /*-fx-light-text-color: white;*/
+
+     -fx-dark-text-color: black;
+     -fx-mid-text-color: #ffffff;
+     -fx-light-text-color: white;
+
 }
 
 /* color set
@@ -18,11 +25,20 @@ light #9699c7
 dark #3b4068
 
 */
+    -fx-text-inner-color: ladder(
+        -fx-control-inner-background,
+        -fx-light-text-color 45%,
+        -fx-dark-text-color  46%,
+        -fx-dark-text-color  59%,
+        -fx-mid-text-color   60%
+    );
 
 .label{
-    -fx-text-fill: lightgray;
+    -fx-text-fill: #ffffff;
 }
-
+.text-field{
+    -fx-prompt-text-fill: gray;
+}
 .separator *.line { 
     -fx-background-color: #3C3C3C;
     -fx-border-style: solid;
@@ -33,9 +49,15 @@ dark #3b4068
     -fx-background-color: derive(-fx-base,45%)
 }
 
-.button:default {
+.button {
     -fx-background-color: #424967
-} 
+}
+.button:focused{
+    -fx-background-color: #343745;
+}
+.button:hover{
+   -fx-background-color: #343745;
+}
 
 .table-view{
     -fx-background-color: derive(-fx-base, 10%);

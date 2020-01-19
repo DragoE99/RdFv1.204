@@ -134,6 +134,14 @@ public class DataBaseConnection extends Thread implements ServerInterface {
      */
     @Override
     public boolean logInCheck(String mail, String password) {
+        if(verificationMailCheck(mail)){
+            if(checkVerificationTime(mail)){
+                deleteQuery(StringManager.getString("usersTableName"),
+                        new String[] {StringManager.getString("users_column_mail")},
+                        new String[] {mail});
+                return false;
+            }
+        }
         String[] column = {StringManager.getString("users_column_mail"), StringManager.getString("users_column_password")};
         return checkQuery(
                 StringManager.getString("usersTableName"),
@@ -142,8 +150,29 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         );
     }
 
-    //TODO FAR INIZIALIZZARE L'UTENTE SERVE NEL LOGIN. IL SERVER THREAD DEVE AVERE UN UTENTE STATIC?
-
+    /**
+     * Check if a non verified user is in the database more than 10 minutes
+     * @param mail
+     * */
+    public boolean checkVerificationTime(String mail){
+        String qry= "SELECT * FROM users WHERE mail = '"+mail+"'";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            Timestamp tempo = rs.getTimestamp("last_change_date");
+            System.out.println("ultima modifica: "+tempo);
+            long timeDifference =( new Timestamp(System.currentTimeMillis()).getTime() - tempo.getTime())/600000;
+            System.out.println("in minuti: "+timeDifference);
+            if(timeDifference>10){
+                return true;
+            }else return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //return null;
+        }
+        return false;
+    }
     /**
      * Method that return a User from the database identified by his email and password
      */
@@ -217,6 +246,10 @@ public class DataBaseConnection extends Thread implements ServerInterface {
      *****************SIGN IN ********************
      */
 
+    /**
+     * Method that insert a new User in the database
+     * @param newUser
+     */
     public int insertUser(User newUser) {
         String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
         int affectedrows = 0;
@@ -229,13 +262,24 @@ public class DataBaseConnection extends Thread implements ServerInterface {
             pstmt.setString(3, newUser.getEmail());
             pstmt.setString(4, newUser.getPassword());
             pstmt.setString(5, newUser.getNickname());
-               /* if(newUser.getRole().equals("a")){
+               if(newUser.getRole().equals("a")){
                     pstmt.setString(6, "t");
                 }else if(newUser.getRole().equals("p")){
                     pstmt.setString(6, "v");
                 }else {
                     pstmt.setString(6, "u");
-                }*/
+                }
+            new Thread(() -> {
+                try {
+                    Thread.sleep(600000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(verificationMailCheck(newUser.getEmail()))deleteQuery(
+                        StringManager.getString("usersTableName"),
+                        new String[] {StringManager.getString("users_column_mail")},
+                        new String[] {newUser.getEmail()});
+            }).start();
 
             affectedrows = pstmt.executeUpdate();
 
@@ -375,7 +419,9 @@ public class DataBaseConnection extends Thread implements ServerInterface {
     }
 
 
-    public boolean matchNameCheck(String matchName) {
+    /**Check if a Match name is already in use return true if it is
+     * @param matchName*/
+    public synchronized boolean matchNameCheck(String matchName) {
         if (activeMatch.containsKey(matchName)) return false;
         String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '"
                 + matchName
@@ -466,6 +512,7 @@ public class DataBaseConnection extends Thread implements ServerInterface {
     /**
      * Method that update the information of a match in the local hashMap and in the database
      */
+    //todo modificare
     public Match updateMatch(Match match) {
         match = getMatchbyName(match);
         activeMatch.put(match.getMatchName(), match);
@@ -637,6 +684,9 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         }
     }
 
+    /**
+     * Method that verify the presence of at least one Admin in the database
+     */
     public boolean checkAdminExistence() {
         return checkQuery(
                 StringManager.getString("usersTableName"),
@@ -742,7 +792,10 @@ public class DataBaseConnection extends Thread implements ServerInterface {
 
     public int deleteMatch(Match match) {
         //todo ricrearla con l'id se serve al posto del nome forse
-        return deleteQuery("matches", new String[]{"match_name"}, new String[]{match.getMatchName()});
+        int i =deleteQuery("matches", new String[]{"match_name"}, new String[]{match.getMatchName()});
+        createdMatchObserver.remove(activeMatch.get(match.getMatchName()));
+        activeMatch.remove(match.getMatchName());
+        return i;
     }
 
     /*
@@ -802,19 +855,6 @@ public class DataBaseConnection extends Thread implements ServerInterface {
         return activeMatch.get(match.getMatchName());
     }
 
-    public synchronized void removePlayer(Match match, User userToRemove) {
-        activeMatch.get(match.getMatchName()).removePlayer(userToRemove);
-        if (activeMatch.get(match.getMatchName()).getPlayers().size() == 0) {
-            /*TODO definire metodo end match che elimini il match se non è mai cominciato o
-             *  lo faccia concludere se è finito normalmente.*/
-
-           /*cose da fare: cambiare lo stato del match avvisando tutti di conseguenza
-           update nel al DB
-             eliminarlo dalla lista di quelli attivi
-               eliminare gli observer?*/
-            //activeMatch.get(match.getMatchName()).endMatch;
-        }
-    }
 
     /**
      * Method that return the list of active match from the local HasMap
@@ -851,9 +891,18 @@ public class DataBaseConnection extends Thread implements ServerInterface {
     }
 
     @Override
-    public void removePlayer(User player, Match match, RemoteGameObserverInterface o) {
-        activeMatch.get(match.getMatchName()).removePlayer(player);
-        activeMatch.get(match.getMatchName()).removeObserver(o);
+    public synchronized void removePlayer(User player, String matchName, RemoteGameObserverInterface o) {
+        activeMatch.get(matchName).removePlayer(player);
+        if(activeMatch.get(matchName).getPlayers().size()==0){
+            if(activeMatch.get(matchName)
+                    .getState()
+                    .equals(StringManager.getString("match_state_created_convention"))){
+                deleteMatch(activeMatch.get(matchName));
+                return;
+            }else activeMatch.get(matchName)
+                    .setState(StringManager.getString("match_state_interrupted_convention"));
+        }
+        activeMatch.get(matchName).removeObserver(o);
 
     }
 
