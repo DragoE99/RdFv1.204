@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" prefHeight="248.0" prefWidth="306.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.SignUpController">
+<AnchorPane prefHeight="248.0" prefWidth="306.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SignUpController">
    <children>
       <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Sign up" textFill="#c2d3e4">
+            <Label fx:id="title" text="Sign up" textFill="#c2d3e4">
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
@@ -23,42 +23,45 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="name" focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="name" maxWidth="-Infinity" prefWidth="300.0" promptText="Name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="surname" focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="surname" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
+            <TextField fx:id="surname" maxWidth="-Infinity" prefWidth="300.0" promptText="Surname" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="nickname" focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="nickname" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="nickname" maxWidth="-Infinity" prefWidth="300.0" promptText="Nickname" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="email" focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="e-mail" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <Label fx:id="errorNick" text="This nickname already exists" textFill="#c21818" visible="false" />
+            <TextField fx:id="email" maxWidth="-Infinity" prefWidth="300.0" promptText="E-mail" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets />
                </VBox.margin>
             </TextField>
-            <PasswordField fx:id="password" focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <Label fx:id="errorEmail" text="This e-mail is already registered" textFill="#c21818" visible="false" />
+            <PasswordField fx:id="password" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </PasswordField>
+            <PasswordField fx:id="passwordCheck" maxWidth="-Infinity" prefWidth="300.0" promptText="Confirm password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </PasswordField>
-            <PasswordField fx:id="passwordCheck" focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="confirm password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </PasswordField>
+            <Label fx:id="errorPsw" text="Password and confirm password are different" textFill="#c21818" visible="false" />
             <Button mnemonicParsing="false" onAction="#register" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Register" textFill="#c2d3e4">
                <font>
                   <Font size="30.0" />
                </font>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </Button>
          </children>

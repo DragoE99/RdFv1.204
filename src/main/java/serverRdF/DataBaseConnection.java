@@ -39,6 +39,14 @@ public class DataBaseConnection {
         this.dbPassword = dbPassword;
     }
 
+    /**
+     * Constructor
+     * @param ipAddress
+     * @param port
+     * @param dbName
+     * @param dbUser
+     * @param dbPassword
+     * */
     public DataBaseConnection(String ipAddress, String port, String dbName, String dbUser, String dbPassword) {
         this.ipAddress = ipAddress;
         this.port = port;
@@ -87,7 +95,12 @@ public class DataBaseConnection {
     }
 
     /* ******************** Query users table *************************/
-    //TODO FAR INIZIALIZZARE L'UTENTE SERVE NEL LOGIN. IL SERVER THREAD DEVE AVERE UN UTENTE STATIC?
+
+      /**
+     * Method that return a User from the database identified by his email and password if present
+       * @param email
+       * @param password
+     */
     public User getOneUser(String email, String password) {
 
         User temp;
@@ -108,9 +121,10 @@ public class DataBaseConnection {
                 if(!verificationMailCheck(email)){
                     changeUserRole(temp,"a");
                     return temp;
-                }
-            }else return null;
+                }else return null;
+            }
             if(role.equals("v")){
+            	System.out.println("ruolo v");
                  temp = new Player(rs.getString("name"),
                         rs.getString("surname"),
                         rs.getString("mail"),
@@ -120,24 +134,26 @@ public class DataBaseConnection {
                 if(!verificationMailCheck(email)){
                     changeUserRole(temp,"p");
                     return temp;
-                }
-            }else return null;
+                }else return null;
+            }
 
             if(role.equals("a")){
-                return temp = new Admin(rs.getString("name"),
+                temp = new Admin(rs.getString("name"),
                         rs.getString("surname"),
                         rs.getString("mail"),
                         rs.getString("nickname"),
                         password,
                         rs.getInt("id"));
+                return temp;
             }
             if(role.equals("p")){
-                return temp = new Admin(rs.getString("name"),
+                 temp = new Player(rs.getString("name"),
                         rs.getString("surname"),
                         rs.getString("mail"),
                         rs.getString("nickname"),
                         password,
                         rs.getInt("id"));
+                 return temp;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -145,7 +161,12 @@ public class DataBaseConnection {
         }
         return null;
     }
-    
+
+    //TODO getUserByID da eliminare?
+    /**
+     * Method that return a User from the database identified by his userId
+     * @param id
+     */
     public User getUserById(int id){
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
@@ -174,7 +195,40 @@ public class DataBaseConnection {
 
     }
 
+    /**
+     * Method that return a User from the database identified by his mail
+     * @param mail
+     */
+    public User getUserByMail(String mail){
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail= '" + mail + "'");
+            rs.next();
+            System.out.println(rs.getString("name") + " " + rs.getString("surname"));
+            if(rs.getString("role")=="p"){
+            return new Player(rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("mail"),
+                    rs.getString("nickname"),
+                    rs.getString("password"),
+                    rs.getInt("id"));
+            }else {
+                return new Admin(rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getString("mail"),
+                        rs.getString("nickname"),
+                        rs.getString("password"),
+                        rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     //FUNZIONE che stampa tutti gli utenti presenti nel server utile più che altro per test
+    //TODO da elimimare
     public void getAllUsers() throws SQLException {
         Connection conn = getConnectionInstance();
         Statement st = conn.createStatement();
@@ -191,6 +245,10 @@ public class DataBaseConnection {
         st.close();
     }
 
+    /**
+     * Method that update the information associated with a user on the database
+     * @param newUser
+     */
     public int modifyUser(User newUser) {
         String SQL = "UPDATE users "
                 + "SET name = ?,"
@@ -220,8 +278,12 @@ public class DataBaseConnection {
             ex.printStackTrace();
         }
         return affectedrows;
-
     }
+    /**
+     * Method that update the role of an User on the database
+     * @param user
+     * @param role
+     */
     public int changeUserRole(User user, String role) {
         String SQL = "UPDATE users "
                 + "SET role = ? "
@@ -245,7 +307,10 @@ public class DataBaseConnection {
 
     }
 
-
+    /**
+     * Method that insert a new User in the database
+     * @param newUser
+     */
     public int insertUser(User newUser) {
         String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
         int affectedrows = 0;
@@ -258,17 +323,33 @@ public class DataBaseConnection {
             pstmt.setString(3, newUser.getEmail());
             pstmt.setString(4, newUser.getPassword());
             pstmt.setString(5, newUser.getNickname());
+            //TODO cambiare ruolo 'a' in 't' e 'p' in 'v'
                 if(newUser instanceof Admin){
-                    pstmt.setString(6, "a");
+                    pstmt.setString(6, "t");
                 }else if(newUser instanceof Player){
-                    pstmt.setString(6, "p");
+                    pstmt.setString(6, "v");
                 }else {
                     pstmt.setString(6, "u");
                 }
+                new Thread(() -> {
+                    try {
+                        System.out.println("vado a dormire ");
+                        Thread.sleep(600000);
+                        System.out.println("Buongiornisimo ");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if(verificationMailCheck(newUser.getEmail()))deleteQuery(
+                            StringManager.getString("usersTableName"),
+                            new String[] {StringManager.getString("users_column_mail")},
+                            new String[] {newUser.getEmail()});
+                }).start();
+
 
             affectedrows = pstmt.executeUpdate();
 
         } catch (SQLException ex) {
+        	ex.printStackTrace();
             System.out.println(ex.getMessage());
         }
 
@@ -276,29 +357,12 @@ public class DataBaseConnection {
     }
 
 
-    /* ********************query match table********************************/
-
-    public void insertMatch() {
-
-        Integer[] id = {3, 4, 5};
-
-        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
-        try (Connection conn = getConnectionInstance();
-             PreparedStatement pstmt = conn.prepareStatement(sql);) {
-
-            Array array = conn.createArrayOf("INTEGER", id);
-            pstmt.setString(1, "e");   // Set state
-            pstmt.setInt(2, 2); //set creator id
-            pstmt.setArray(3, array);  // Set ID palyers
-
-            pstmt.executeUpdate();  // Execute the query
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     /* ******************************** query sentence table****************************************/
+    /**
+     * Method that add a list of sentence to the database and return the number of sentence added
+     * @param sentences
+     * @param user creator
+     */
     public void insertSentences(List<Sentence> sentences, User user) throws SQLException {
 
         Connection conn = getConnectionInstance();
@@ -324,6 +388,9 @@ public class DataBaseConnection {
     }
 
     //todo cambiare la classe sentence from List<User> to List<Integer>
+    /**
+     * Method that update the list associated with a sentence that represent who have seen that sentence
+     */
     public void updateSeenByUserSentence(int sentenceId, Integer[] seenBy) {
         String qry = "UPDATE sentences " +
                 "SET    seen_by_user = (select array_agg(distinct e) from unnest(seen_by_user || ?) e) " +
@@ -343,6 +410,10 @@ public class DataBaseConnection {
         }
     }
     /* ************************* Check Query **********************************/
+    /**
+     * General query for checking an element from a specific table column,
+     * return true in case of success, else return false
+     */
     private boolean checkQuery(String tableName, String[] column, String[] valueToCheck) {
         String qry = "SELECT COUNT(*) FROM " + tableName + " WHERE " + column[0] + " = '" + valueToCheck[0] + "'";
         for (int i = 1; i < valueToCheck.length; i++) {
@@ -360,6 +431,9 @@ public class DataBaseConnection {
         }
     }
 
+    /**
+     * Method that verify the presence of at least one Admin in the database
+     */
     public boolean checkAdminExistence() {
         return checkQuery(
                 StringManager.getString("usersTableName"),
@@ -368,6 +442,11 @@ public class DataBaseConnection {
         );
     }
 
+    /**
+     * Method that verify that the mail passed like parameter is present in the column mail in the users table\
+     * return true if mail is present
+     * @param mail
+     */
     public boolean checkMailExistence(String mail) {
         return checkQuery(
                 StringManager.getString("usersTableName"),
@@ -376,7 +455,11 @@ public class DataBaseConnection {
         );
     }
 
-    public boolean checkNicknameExistence(String nickname) {
+    /**
+     * Method that verify if a nickname is already used return true if it is
+     * @param nickname
+     */
+    public synchronized boolean checkNicknameExistence(String nickname) {
         return checkQuery(
                 StringManager.getString("usersTableName"),
                 new String[]{StringManager.getString("nickname_column")},
@@ -384,7 +467,20 @@ public class DataBaseConnection {
         );
     }
 
+    /**
+     *  check if a user is present in the database through mail and password
+     * @param mail
+     * @param password
+     */
     public boolean logInCheck(String mail, String password) {
+        if(verificationMailCheck(mail)){
+        if(checkVerificationTime(mail)){
+            deleteQuery(StringManager.getString("usersTableName"),
+                   new String[] {StringManager.getString("users_column_mail")},
+                    new String[] {mail});
+            return false;
+        }
+        }
         String[] column = {StringManager.getString("users_column_mail"), StringManager.getString("users_column_password")};
         return checkQuery(
                 StringManager.getString("usersTableName"),
@@ -393,20 +489,52 @@ public class DataBaseConnection {
         );
     }
 
-    /* ritorna true se la mail e' presente nella tabella verifications**/
-    public boolean verificationMailCheck(String mail) {
+    /**
+     * Method that return true if the user mail is present in the database's verification table
+     * @param mail
+     */
+    public synchronized boolean verificationMailCheck(String mail) {
+
         return checkQuery(
                 StringManager.getString("verifications_table_name"),
                 new String[]{StringManager.getString("user_mail_ver.table_name")},
                 new String[]{mail}
         );
     }
-
-    /* verifica se il codice di verifica e' presente e in caso positivo elimina tale riga e ritorna true */
-    public boolean verificationCodeCheck(String verificationCode) {
+    /**
+     * Check if a non verified user is in the database more than 10 minutes
+     * @param mail
+     * */
+    public boolean checkVerificationTime(String mail){
+        String qry= "SELECT * FROM users WHERE mail = '"+mail+"'";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            Timestamp tempo = rs.getTimestamp("last_change_date");
+            System.out.println("ultima modifica: "+tempo);
+            long timeDifference =( new Timestamp(System.currentTimeMillis()).getTime() - tempo.getTime())/600000;
+            System.out.println("in minuti: "+timeDifference);
+            if(timeDifference>10){
+                return true;
+            }else return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //return null;
+        }
+        return false;
+    }
+    /**
+     * method that check if there is the  passed like parameter and if found delete that string and return true
+     * else return false
+     * @param verificationCode
+     * @param mail
+     * @return boolean
+     */
+    public boolean verificationCodeCheck(String verificationCode, String mail) {
         if (checkQuery(StringManager.getString("verifications_table_name"),
-                new String[]{StringManager.getString("verification.code_column_name")},
-                new String[]{verificationCode}
+                new String[]{StringManager.getString("verification.code_column_name"),"user_mail"},
+                new String[]{verificationCode, mail}
                 )
         ) {
             int affectedRow = deleteQuery(
@@ -420,6 +548,8 @@ public class DataBaseConnection {
 
         return false;
     }
+
+    /**Insert a new verification code associated with a user in the database*/
     public void insertVerificationCode(User user, String verificationCode){
         String SQL = "INSERT INTO verifications (user_mail, verification_code) VALUES(?, ?)";
 
@@ -437,8 +567,9 @@ public class DataBaseConnection {
 
     /* ************************* Delete Query **********************************/
     /* query generale per delete ritorna il numero di righe eliminate oppure -1 in caso di errore*/
+    /**General method for deleting something from the database */
     private int deleteQuery(String tableName, String[] column, String[] valueToDelete) {
-        String qry = "DELETE * FROM " + tableName + " WHERE " + column[0] + " = '" + valueToDelete[0] + "'";
+        String qry = "DELETE FROM " + tableName + " WHERE " + column[0] + " = '" + valueToDelete[0] + "'";
         for (int i = 1; i < valueToDelete.length; i++) {
             qry = qry + " AND " + column[i] + " = '" + valueToDelete[i] + "'";
         }
@@ -452,17 +583,10 @@ public class DataBaseConnection {
         }
     }
 
-    public int deleteUser(User user){
-        //TODO pensare se voler identificare tramite mail o id
-        return deleteQuery(
-                StringManager.getString("usersTableName"),
-                new String[]{StringManager.getString("user_id_column_name")},
-                new String[]{user.getEmail()}
-        );
-    }
-
     /**********************match query***********************/
-    public boolean matchNameCheck(String matchName) {
+    /**Check if a Match name is already in use return true if it is
+     * @param matchName*/
+    public synchronized boolean matchNameCheck(String matchName) {
         String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'r') OR (match_name = '" + matchName + "' AND state = 'c')";
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
@@ -475,18 +599,24 @@ public class DataBaseConnection {
             return false;
         }
     }
+
+    /** Create a new match in the database
+     * @param id creator id
+     * @param matchName
+     * */
     public void createMatch(Integer[] id, String matchName) {
 
         //id = new Integer[]{3, 4, 5};
 
-        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO matches (state, creator_id, user_id, match_name) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
 
             Array array = conn.createArrayOf("INTEGER", id);
             pstmt.setString(1, "c");   // Set state
-            pstmt.setInt(2, id[1]); //set creator id
+            pstmt.setInt(2, id[0]); //set creator id
             pstmt.setArray(3, array);  // Set ID palyers
+            pstmt.setString(4, matchName);	//set match name
 
             pstmt.executeUpdate();  // Execute the query
         } catch (SQLException e) {
@@ -494,6 +624,11 @@ public class DataBaseConnection {
         }
 
     }
+    /**
+     * Method that update the information of a match in the database
+     * @param machId
+     * @param playerId
+     */
     public Match updateMatch(Integer[] playerId, int machId) {
         String qry = "UPDATE matches " +
                 "SET user_id = ? ," +
@@ -528,6 +663,10 @@ public class DataBaseConnection {
         return toUpdate;
     }
 
+    /**
+     * Method that change the state of a match to ended on the database
+     * @param matchId
+     */
     public void endMatch(int matchId){
         String qry = "UPDATE matches " +
                 "SET  state = ? " +
@@ -578,10 +717,6 @@ public class DataBaseConnection {
         }
         return playableSentence;
     }
-
-
-
-
 
     public ArrayList<Match> getPlayableMatch() {
         String qry = "SELECT * FROM matches WHERE state = 'c'";

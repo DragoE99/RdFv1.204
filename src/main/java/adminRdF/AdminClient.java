@@ -1,11 +1,10 @@
-package playerRdF;
+package adminRdF;
 
 import java.io.IOException;
 
 import gui.Main;
 import javafx.application.Application;
 import util.Match;
-import util.Player;
 import util.User;
 
 /**
@@ -14,25 +13,24 @@ import util.User;
  * @author gruppo aelv
  *
  */
-public class Client {
+public class AdminClient {
 
-	private static Proxy proxy;
+	private static AdminProxy proxy;
 	private static User me;																	//dovrebbe essere final, oppure non modificabile
-	private static Match myMatch;
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		
-		proxy = new Proxy();							
+	public static void main(String[] args) throws IOException {
+		proxy = new AdminProxy();							
 		proxy.start();																		//launching the proxy thread
-		
+
 		Application.launch(Main.class, args);												//launching the GUI
+		
 	}
 
 	/**
 	 * Getter for the proxy thread
 	 * @return the thread handling server connection
 	 */
-	public static Proxy getProxy() {
+	public static AdminProxy getProxy() {
 		return proxy;
 	}
 
@@ -41,14 +39,7 @@ public class Client {
 	 * @return
 	 */
 	public static Match getMatch() {
-		return myMatch;
-	}
-	
-	/**
-	 * 
-	 */
-	public static void setMatch(Match match) {
-		myMatch = match;		
+		return new Match();
 	}
 	
 	/**
@@ -66,8 +57,6 @@ public class Client {
 	public static void setUser(User u) {
 		me = u;
 	}
-
-	
 
 
 

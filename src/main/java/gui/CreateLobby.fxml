@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.CreateLobbyController">
+<AnchorPane fx:id="pane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CreateLobbyController">
    <children>
       <VBox alignment="CENTER" layoutX="-9.0" layoutY="-8.0" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#back" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Create a lobby" textFill="#c2d3e4">
+            <Label fx:id="title" text="Create a lobby" textFill="#c2d3e4">
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
@@ -22,7 +22,7 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </Label>
-            <TextField focusTraversable="false" maxWidth="-Infinity" prefWidth="300.0" promptText="lobby name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="name" maxWidth="-Infinity" prefWidth="300.0" promptText="lobby name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>

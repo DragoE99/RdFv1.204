@@ -22,7 +22,4 @@ public class Player extends User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Player(String name, String surname, String email, String nickname, String password, String role, Integer id) {
-		super(name, surname, email, nickname, password, role, id);
-	}
 }

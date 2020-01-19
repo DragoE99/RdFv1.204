@@ -1,9 +1,6 @@
 package util;
 
 public class Admin extends User {
-	public Admin(String name, String surname, String email, String nickname, String password, String role, Integer id) {
-		super(name, surname, email, nickname, password, role, id);
-	}
 
 	public Admin(String name, String surname, String email, String nickname, String password) {
 		super(name, surname, email, nickname, password);

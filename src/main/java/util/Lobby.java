@@ -1,10 +1,7 @@
 package util;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import serverRdF.ServerThread;
+import java.util.ArrayList;
 
 /**
  * Lobby is used to keep track of the active and "waiting" games, the server
@@ -17,14 +14,13 @@ import serverRdF.ServerThread;
 @SuppressWarnings("serial")
 public class Lobby implements Serializable {
 
-	private Set<ServerThread> threadList = new HashSet<ServerThread>();
+	private ArrayList<Integer> threads = new ArrayList<Integer>();
 	private Match match;
 	private final String lobbyName;
-	private final Integer nPlayers;
-	private final Integer nSpectators;
-	private final Boolean isActive;
+	private Integer nPlayers;
+	private Integer nSpectators;
+	private Boolean isActive;
 	private final User creator;
-
 	/**
 	 * 
 	 * @param lobbyName
@@ -33,12 +29,13 @@ public class Lobby implements Serializable {
 	 * @param isActive
 	 * @param creator
 	 */
-	public Lobby(String lobbyName, int nPlayers, int nSpectators, boolean isActive, User creator) {
+	public Lobby(String lobbyName, int nPlayers, int nSpectators, boolean isActive, User creator, Match match) {
 		this.lobbyName = lobbyName;
 		this.nPlayers = nPlayers;
 		this.nSpectators = nSpectators;
 		this.isActive = isActive;
 		this.creator = creator;
+		this.match = match;
 
 	}
 
@@ -103,13 +100,13 @@ public class Lobby implements Serializable {
 		return nPlayers;
 	}
 
-//	/**
-//	 * 
-//	 * @param nPlayers
-//	 */
-//	public void setnPlayers(int nPlayers) {
-//		this.nPlayers = nPlayers;
-//	}
+	/**
+	 * 
+	 * @param nPlayers
+	 */
+	public void setNPlayers(int nPlayers) {
+		this.nPlayers = nPlayers;
+	}
 
 	/**
 	 * 
@@ -117,6 +114,10 @@ public class Lobby implements Serializable {
 	 */
 	public Integer getNSpectators() {
 		return nSpectators;
+	}
+	
+	public void setNSpectators(int nSpecs) {
+		this.nSpectators = nSpecs;
 	}
 
 //	/**
@@ -149,5 +150,21 @@ public class Lobby implements Serializable {
 	 */
 	public User getCreator() {
 		return this.creator;
+	}
+	
+	/**
+	 * 
+	 * @param serverThread
+	 */
+	public void addThread(Integer id) {
+
+		threads.add(id); 
+		
+		
+	}
+
+	public ArrayList<Integer> getThreads() {
+
+		return threads;
 	}
 }

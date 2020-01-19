@@ -20,14 +20,17 @@ public class InsertableLobby extends Lobby{
 		private final SimpleIntegerProperty nPlayers;
 		private final SimpleIntegerProperty nSpectators;
 		private final SimpleBooleanProperty status;
+		private Match match;
+		private Lobby lobby;
 		
 		public InsertableLobby(Lobby lobby){
 			//super();
-			
+			this.lobby = lobby;
 			this.lobbyName = new SimpleStringProperty(lobby.getLobbyName());
 			this.nPlayers = new SimpleIntegerProperty(lobby.getNPlayers());
 			this.nSpectators = new SimpleIntegerProperty(lobby.getNSpectators());
 			this.status = new SimpleBooleanProperty(lobby.isActive());
+			this.match = lobby.getMatch();
 		}
 
 		
@@ -45,5 +48,15 @@ public class InsertableLobby extends Lobby{
 
 		public Boolean getStatus() {
 			return status.get();
+		}
+		
+		public Match getMatch() {
+			return match;
+		}
+
+
+		public Lobby getLobby() {
+
+			return lobby;
 		}
 	}

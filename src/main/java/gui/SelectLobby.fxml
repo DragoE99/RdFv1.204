@@ -24,7 +24,7 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </Label>
-            <TableView fx:id="tab" style="-fx-background-color: #151720;">
+            <TableView fx:id="tab" onMouseClicked="#checkIfIsPlayable" style="-fx-background-color: #151720;">
               <columns>
                 <TableColumn fx:id="lobbyName" prefWidth="187.5" text="Name" />
                 <TableColumn fx:id="nPlayers" prefWidth="187.5" text="Players" />
@@ -50,7 +50,15 @@
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#play" style="-fx-background-color: #424967;" text="Play" textFill="#c2d3e4">
+                  <Button fx:id="spectateButton" mnemonicParsing="false" onAction="#create" style="-fx-background-color: #424967;" text="Spectate" textFill="#c2d3e4">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="playButton" mnemonicParsing="false" onAction="#play" style="-fx-background-color: #424967;" text="Play" textFill="#c2d3e4">
                      <font>
                         <Font size="20.0" />
                      </font>

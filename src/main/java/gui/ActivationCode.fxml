@@ -2,35 +2,56 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.ActivationCodeController">
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ActivationCodeController">
    <children>
       <VBox alignment="CENTER" layoutX="-37.0" layoutY="-163.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Account activation" textFill="#c2d3e4">
+            <Label fx:id="title" text="Account activation" textFill="#c2d3e4">
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
             </Label>
-            <TextField maxWidth="-Infinity" prefWidth="300.0" promptText="activation code" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <Label text="You'll receive a mail containing your verification code, please validate your account within 10 min" textFill="#c2d3e4" />
+            <TextField fx:id="code" maxWidth="-Infinity" prefWidth="300.0" promptText="activation code" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
+            <Label fx:id="errLabel" text="Wrong verification code" textFill="#c21818" visible="false" />
+            <Hyperlink onAction="#sendAgain" text="Send again">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Hyperlink>
             <Button mnemonicParsing="false" onAction="#confirm" style="-fx-background-color: #424967;" text="Confirm" textFill="#c2d3e4">
                <font>
                   <Font size="30.0" />
                </font>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </Button>
          </children>
       </VBox>
+      <ImageView fx:id="back" fitHeight="49.0" fitWidth="64.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@backIcon1.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
