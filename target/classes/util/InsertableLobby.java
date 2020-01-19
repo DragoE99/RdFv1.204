@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 /**
  * 
  * @author achil
- * Classe che in sostanza trasforma i campi di Lobby in property, così da poter
+ * Classe che in sostanza trasforma i campi di Lobby in property, cosi' da poter
  * essere inseriti nella TableView.
  * Azione necessaria per via del fatto che i campi property non implementano 
  * serializable e quindi se avessimo lasciato Lobby con i campi SimpleXProperty
@@ -20,14 +20,17 @@ public class InsertableLobby extends Lobby{
 		private final SimpleIntegerProperty nPlayers;
 		private final SimpleIntegerProperty nSpectators;
 		private final SimpleBooleanProperty status;
+		private Match match;
+		private Lobby lobby;
 		
 		public InsertableLobby(Lobby lobby){
 			//super();
-			
+			this.lobby = lobby;
 			this.lobbyName = new SimpleStringProperty(lobby.getLobbyName());
 			this.nPlayers = new SimpleIntegerProperty(lobby.getNPlayers());
 			this.nSpectators = new SimpleIntegerProperty(lobby.getNSpectators());
 			this.status = new SimpleBooleanProperty(lobby.isActive());
+			this.match = lobby.getMatch();
 		}
 
 		
@@ -45,5 +48,15 @@ public class InsertableLobby extends Lobby{
 
 		public Boolean getStatus() {
 			return status.get();
+		}
+		
+		public Match getMatch() {
+			return match;
+		}
+
+
+		public Lobby getLobby() {
+
+			return lobby;
 		}
 	}

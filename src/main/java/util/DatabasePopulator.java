@@ -33,20 +33,20 @@ public class DatabasePopulator {
     }
     public static void main(String args[]) throws IOException {
         DatabasePopulator test = new DatabasePopulator();
-        User mio = test.getUserById(2);
+      /*  User mio = test.getUserById(2);
         ArrayList<Sentence> sentences = test.getAllSentence();
         ArrayList<User> users = test.getAllPlayer();
-        System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
+        //System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
         System.out.println("lista user " + users.size() + " lista frasi " + sentences.size());
         Integer[] iduser = new Integer[3];
         for (int i = 4; i < 7; i++) {
             iduser[i - 4] = users.get(i).getId();
         }
         //test.updateSeenByUserSentence(74,iduser);
-        System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());
+        System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());*/
     }
 
-    public Match createManche(Match match){
+  /*  public Match createManche(Match match){
         String sql = "INSERT INTO matches (match_id, sentence_id, seen_by_user) VALUES(?, ?, ?)";
 
         try (Connection conn = getConnectionInstance();
@@ -168,7 +168,7 @@ public class DatabasePopulator {
         }
     }
 
-    public User getUserById(int id) {
+   /* public User getUserById(int id) {
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM users WHERE id= " + id);
@@ -197,9 +197,9 @@ public class DatabasePopulator {
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 
-    public ArrayList<User> getAllPlayer() {
+    /*public ArrayList<User> getAllPlayer() {
 
         ArrayList<User> userList = new ArrayList<User>();
         Connection conn = null;
@@ -209,17 +209,17 @@ public class DatabasePopulator {
             ResultSet rs = st.executeQuery("SELECT * FROM users");
             //ciclo while che ritorna una COLONNA cioè lo stesso campo per tutte le righe
             // tipo tutti i nomi degli utenti
-            /*se vuoi fare la get dell'id devi usare gli int*/
+            se vuoi fare la get dell'id devi usare gli int
             int i = 0;
-            while (rs.next()) {
+            /*while (rs.next()) {
 
                 if (rs.getString("role").equals("p")) {
                     System.out.println("player");
                     Player temp = new Player(rs.getString("name"),
                             rs.getString("surname"),
                             rs.getString("mail"),
-                            rs.getString("nickname"),
-                            rs.getString("password"),
+                            rs.getString("nickname"),*/
+                           /* rs.getString("password"),
                             rs.getString("role"),
                             rs.getInt("id"));
                     userList.add(temp);
@@ -233,7 +233,7 @@ public class DatabasePopulator {
             e.printStackTrace();
         }
         return userList;
-    }
+    }*/
 
 
     public ArrayList<Sentence> getAllSentence() {

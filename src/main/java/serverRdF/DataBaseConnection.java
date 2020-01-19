@@ -58,7 +58,7 @@ public class DataBaseConnection {
     public DataBaseConnection() {
         setIpAddress("localhost");
         setPort("5432");
-        setDbName("postgres");
+        setDbName("brandodb");
         setDbUser("postgres");
         setDbPassword("postgres");
 
@@ -587,7 +587,13 @@ public class DataBaseConnection {
     /**Check if a Match name is already in use return true if it is
      * @param matchName*/
     public synchronized boolean matchNameCheck(String matchName) {
-        String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" + matchName + "' AND state = 'r') OR (match_name = '" + matchName + "' AND state = 'c')";
+        String qry = "SELECT COUNT(*) FROM matches WHERE  (match_name = '" +
+                matchName + "' AND state = '"+StringManager.getString("match_state_running_convention")+
+                "') OR (match_name = '" +
+                matchName +
+                "' AND state = '"+StringManager.getString("match_state_created_convention")+
+                "')";
+
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(qry);
@@ -613,7 +619,7 @@ public class DataBaseConnection {
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
 
             Array array = conn.createArrayOf("INTEGER", id);
-            pstmt.setString(1, "c");   // Set state
+            pstmt.setString(1, StringManager.getString("match_state_created_convention"));   // Set state
             pstmt.setInt(2, id[0]); //set creator id
             pstmt.setArray(3, array);  // Set ID palyers
             pstmt.setString(4, matchName);	//set match name
@@ -641,8 +647,8 @@ public class DataBaseConnection {
             Array array = conn.createArrayOf("INTEGER", playerId);
             pstmt.setArray(1, array);  // Set ID palyers
             if (playerId.length == 3) {
-                pstmt.setString(2, "r");
-            } else pstmt.setString(2, "c");  // Set state
+                pstmt.setString(2, StringManager.getString("match_state_running_convention"));
+            } else pstmt.setString(2, StringManager.getString("match_state_created_convention"));  // Set state
             pstmt.setInt(3, machId); //set creator id
 
 
@@ -673,7 +679,7 @@ public class DataBaseConnection {
                 "WHERE id = ?";
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
-            pstmt.setString(1, "e");
+            pstmt.setString(1, StringManager.getString("match_state_ended_convention"));
             pstmt.setInt(2, matchId);
 
             pstmt.executeUpdate();  // Execute the query
@@ -719,7 +725,9 @@ public class DataBaseConnection {
     }
 
     public ArrayList<Match> getPlayableMatch() {
-        String qry = "SELECT * FROM matches WHERE state = 'c'";
+        String qry = "SELECT * FROM matches WHERE state = '"+
+                StringManager.getString("match_state_created_convention")+
+                "' OR state = '"+StringManager.getString("match_state_running_convention")+"'";
         ArrayList<Match> playableMatch = new ArrayList();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {

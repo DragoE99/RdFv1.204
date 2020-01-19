@@ -16,21 +16,6 @@ public class DatabasePopulator {
     public DatabasePopulator() {
     }
 
-    public static void main(String args[]) throws IOException {
-        DatabasePopulator test = new DatabasePopulator();
-        User mio = test.getUseById(2);
-        ArrayList<Sentence> sentences= test.getAllSentence();
-        ArrayList<User> users = test.getAllPlayer();
-        System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
-        System.out.println("lista user "+ users.size()+ " lista frasi "+ sentences.size());
-        Integer[] iduser= new Integer[3];
-        for(int i=4;i<7;i++){
-            iduser[i-4]= users.get(i).getId();
-        }
-        //test.updateSeenByUserSentence(74,iduser);
-        System.out.println("numero frasi giocabili: "+test.getMatchSentence(iduser).size());
-    }
-
     private String ipAddress = "localhost";
     private String port = "5432";
     private String dbName = "postgres";
@@ -46,6 +31,65 @@ public class DatabasePopulator {
         System.out.println("connessione avvenuta");
         return connection;
     }
+    public static void main(String args[]) throws IOException {
+        DatabasePopulator test = new DatabasePopulator();
+      /*  User mio = test.getUserById(2);
+        ArrayList<Sentence> sentences = test.getAllSentence();
+        ArrayList<User> users = test.getAllPlayer();
+        //System.out.println(mio.getName() + " cognome " + mio.getSurname() + " ruolo " + mio.getRole() + " altro");
+        System.out.println("lista user " + users.size() + " lista frasi " + sentences.size());
+        Integer[] iduser = new Integer[3];
+        for (int i = 4; i < 7; i++) {
+            iduser[i - 4] = users.get(i).getId();
+        }
+        //test.updateSeenByUserSentence(74,iduser);
+        System.out.println("numero frasi giocabili: " + test.getMatchSentence(iduser).size());*/
+    }
+
+  /*  public Match createManche(Match match){
+        String sql = "INSERT INTO matches (match_id, sentence_id, seen_by_user) VALUES(?, ?, ?)";
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            Array array = conn.createArrayOf("INTEGER", match.getId_players());
+            pstmt.setInt(1, match.getId());   // Set state possible state running, ended, created, interrupted
+            pstmt.setInt(2, match.getSentence().getId()); //set creator id
+            pstmt.setArray(3, array);  // Set ID palyers
+
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            rs.next();
+
+            return new Match(rs.getInt("id"),
+                    match.getId_players(),
+                    match.getName(),match.getMancheScore(),match.getCurrentTurn(),match.getSentence());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+   /* public void updateManche(Match match){
+        String sql = "UPDATE matches " +
+                "SET seen_by_user = ?, " +
+                "manche_wallet_p1 = ? " +
+                "manche_wallet_p2 = ? " +
+                "manche_wallet_p3 = ? " +
+                "WHERE id = ?";
+
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            Array array = conn.createArrayOf("INTEGER", match.getId_players());
+            pstmt.setArray(1, array);  // Set ID palyers
+            pstmt.setInt(2, match.getMancheScore()[]);   // Set state possible state running, ended, created, interrupted
+            pstmt.setInt(2, match.getSentence().getId()); //set creator id
+
+            pstmt.executeUpdate();  // Execute the query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }*/
 
     public void insertUser() {
 
@@ -124,7 +168,7 @@ public class DatabasePopulator {
         }
     }
 
-    public User getUseById(int id) {
+   /* public User getUserById(int id) {
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM users WHERE id= " + id);
@@ -153,9 +197,9 @@ public class DatabasePopulator {
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 
-    public ArrayList<User> getAllPlayer() {
+    /*public ArrayList<User> getAllPlayer() {
 
         ArrayList<User> userList = new ArrayList<User>();
         Connection conn = null;
@@ -165,17 +209,17 @@ public class DatabasePopulator {
             ResultSet rs = st.executeQuery("SELECT * FROM users");
             //ciclo while che ritorna una COLONNA cioè lo stesso campo per tutte le righe
             // tipo tutti i nomi degli utenti
-            /*se vuoi fare la get dell'id devi usare gli int*/
+            se vuoi fare la get dell'id devi usare gli int
             int i = 0;
-            while (rs.next()) {
+            /*while (rs.next()) {
 
                 if (rs.getString("role").equals("p")) {
                     System.out.println("player");
                     Player temp = new Player(rs.getString("name"),
                             rs.getString("surname"),
                             rs.getString("mail"),
-                            rs.getString("nickname"),
-                            rs.getString("password"),
+                            rs.getString("nickname"),*/
+                           /* rs.getString("password"),
                             rs.getString("role"),
                             rs.getInt("id"));
                     userList.add(temp);
@@ -189,39 +233,39 @@ public class DatabasePopulator {
             e.printStackTrace();
         }
         return userList;
-    }
+    }*/
 
 
-    public ArrayList<Sentence> getAllSentence(){
+    public ArrayList<Sentence> getAllSentence() {
         String SQL = "SELECT * FROM sentences";
         ArrayList<Sentence> sentenceList = new ArrayList<>();
-        try(Connection conn = getConnectionInstance()){
+        try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(SQL);
-            while (rs.next()){
-                Array userid=rs.getArray("seen_by_user");
+            while (rs.next()) {
+                Array userid = rs.getArray("seen_by_user");
 
                 Sentence temp;
-                if(userid!=null){
+                if (userid != null) {
                     Integer[] nullable = (Integer[]) userid.getArray();
-                 temp = new Sentence(rs.getString("sentence"),
-                        rs.getString("hint"),
-                        rs.getInt("id"),
-                        rs.getInt("create_by_user"),
-                         Arrays.asList(nullable));
-                }else {
-                     temp = new Sentence(rs.getString("sentence"),
+                    temp = new Sentence(rs.getString("sentence"),
                             rs.getString("hint"),
                             rs.getInt("id"),
                             rs.getInt("create_by_user"),
-                             (List<Integer>) userid);
+                            Arrays.asList(nullable));
+                } else {
+                    temp = new Sentence(rs.getString("sentence"),
+                            rs.getString("hint"),
+                            rs.getInt("id"),
+                            rs.getInt("create_by_user"),
+                            (List<Integer>) userid);
 
                 }
 
                 sentenceList.add(temp);
             }
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -229,7 +273,7 @@ public class DatabasePopulator {
     }
 
 
-    public ArrayList<Sentence> getMatchSentence(Integer[] idPlayer){
+    public ArrayList<Sentence> getMatchSentence(Integer[] idPlayer) {
         String qry = "SELECT * FROM sentences EXCEPT ( " +
                 "SELECT * " +
                 "FROM sentences WHERE ? = ANY(seen_by_user)" +
@@ -240,7 +284,7 @@ public class DatabasePopulator {
                 "SELECT * " +
                 "FROM sentences WHERE ? = ANY(seen_by_user)" +
                 " )";
-        ArrayList<Sentence> playableSentence= new ArrayList<>();
+        ArrayList<Sentence> playableSentence = new ArrayList<>();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {
 
@@ -249,8 +293,8 @@ public class DatabasePopulator {
             pstmt.setInt(2, idPlayer[1]); // Set ID palyers
             pstmt.setInt(3, idPlayer[2]);  // Set ID palyers
 
-            ResultSet rs =pstmt.executeQuery();  // Execute the query
-            while (rs.next()){
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            while (rs.next()) {
                 playableSentence.add(new Sentence(rs.getString("sentence"),
                         rs.getString("hint"),
                         rs.getInt("id"),
@@ -261,10 +305,11 @@ public class DatabasePopulator {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-             return playableSentence;
+        return playableSentence;
     }
 
-    public void updateSeenByUserSentence(int sentenceId, Integer[] seenBy){
+    //todo cambiare la classe sentence from List<User> to List<Integer>
+    public void updateSeenByUserSentence(int sentenceId, Integer[] seenBy) {
         String qry = "UPDATE sentences " +
                 "SET    seen_by_user = (select array_agg(distinct e) from unnest(seen_by_user || ?) e) " +
                 "WHERE  id = ?";
@@ -282,6 +327,83 @@ public class DatabasePopulator {
             e.printStackTrace();
         }
     }
+
+    public void createMatch(Integer[] id, String matchName) {
+
+        id = new Integer[]{3, 4, 5};
+
+        String sql = "INSERT INTO matches (state, creator_id, user_id) VALUES (?, ?, ?)";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            Array array = conn.createArrayOf("INTEGER", id);
+            pstmt.setString(1, "c");   // Set state
+            pstmt.setInt(2, id[1]); //set creator id
+            pstmt.setArray(3, array);  // Set ID palyers
+
+            pstmt.executeUpdate();  // Execute the query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Match updateMatch(Integer[] playerId, int machId) {
+        String qry = "UPDATE matches " +
+                "SET user_id = ? ," +
+                " state = ? " +
+                "WHERE id = ?";
+        Match toUpdate = new Match();
+        if (playerId.length == 3)
+            try (Connection conn = getConnectionInstance();
+                 PreparedStatement pstmt = conn.prepareStatement(qry)) {
+
+                Array array = conn.createArrayOf("INTEGER", playerId);
+                pstmt.setArray(1, array);  // Set ID palyers
+                if (playerId.length == 3) {
+                    pstmt.setString(2, "r");
+                } else pstmt.setString(2, "c");  // Set state
+                pstmt.setInt(3, machId); //set creator id
+
+
+                ResultSet rs = pstmt.executeQuery();  // Execute the query
+                rs.next();
+                toUpdate = new Match();     //da aggingere i campi qui sotto commentati per inizializzarlo
+                /*
+                rs.getString("match_name");
+                rs.getInt("id");
+                rs.getArray("user_id");
+                 */
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        return toUpdate;
+    }
+
+    public ArrayList<Match> getPlayableMatch() {
+        String qry = "SELECT * FROM matches WHERE state = 'c'";
+        ArrayList<Match> playableMatch = new ArrayList();
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+            while (rs.next()) {
+                playableMatch.add(new Match());     //da aggingere i campi qui sotto commentati per inizializzarlo
+                /*
+                rs.getString("match_name");
+                rs.getInt("id");
+                rs.getArray("user_id");
+                 */
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playableMatch;
+    }
+
 
 
 }

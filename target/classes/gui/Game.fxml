@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane style="-fx-background-color: #21232F;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.GameController">
+<AnchorPane style="-fx-background-color: #21232F;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GameController">
    <children>
       <VBox alignment="CENTER" layoutX="3.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -81,7 +81,7 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </ImageView>
-                        <Label alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="26.0" prefWidth="72.0" text="Achi98" textFill="#c2d3e4">
+                        <Label fx:id="userName" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="26.0" prefWidth="72.0" textFill="#c2d3e4">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -104,7 +104,7 @@
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#spin" style="-fx-background-color: #424967;" text="Spin" textFill="#c2d3e4">
+                  <Button fx:id = "spinButton" alignment="CENTER" disable = "true" contentDisplay="CENTER" mnemonicParsing="false" onAction="#spin" style="-fx-background-color: #424967;" text="Spin" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -112,7 +112,7 @@
                         <Insets left="10.0" right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Label fx:id="multiplier" text="" textFill="#c2d3e4">
+                  <Label fx:id="randVal" text="" textFill="#c2d3e4">
                      <font>
                         <Font size="35.0" />
                      </font>
@@ -535,7 +535,7 @@
             </Label>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Buy vowel" textFill="#c2d3e4">
+                <Button fx:id = "buyVowelButton" alignment="CENTER" disable="true" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Buy vowel" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -546,7 +546,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Jolly" textFill="#c2d3e4">
+                  <Button fx:id = "jollyButton" alignment="CENTER" disable="true" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Jolly" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -554,7 +554,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Give solution" textFill="#c2d3e4">
+                  <Button fx:id = "giveSolutionButton" alignment="CENTER" disable="true" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Give solution" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>

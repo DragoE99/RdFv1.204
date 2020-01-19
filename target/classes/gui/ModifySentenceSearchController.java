@@ -13,7 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The controller for modifySentence window
+ * The controller for sentenceSearch window
  * 
  * @author Achille Lambrughi
  * @author Emanuele Drago
@@ -21,8 +21,8 @@ import javafx.scene.input.MouseEvent;
  * @author Elisabeth Veronika Venturino
  *
  */
-public class ModifySentenceController implements Initializable{
-	
+public class ModifySentenceSearchController implements Initializable{
+
 	@FXML private ImageView back;
 	@FXML private Label title;
 
@@ -47,13 +47,13 @@ public class ModifySentenceController implements Initializable{
 	}
 
 	/**
-	 * Modifies sentence and returns to manage sentence.
-	 * @param e Action on "Modify" button.
+	 * Sends to modify sentence window and memorizes the sentence searched.
+	 * @param e Action on "search" button.
 	 * @throws IOException .
 	 */
-	public void modify(ActionEvent e) throws IOException{
-		//TODO modificare la frase, devo aggiungere sia hint che sentence? mettere caso solo un texfield compilato
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
+	public void search(ActionEvent e) throws IOException {
+		//TODO deve cercare e salvare la frase da modificare da qualche parte
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ModifySentence.fxml"))));
 	}
 
 }
