@@ -583,7 +583,7 @@ public class DataBaseConnection {
         }
     }
 
-    /**********************match query***********************/
+    /* ********************match query***********************/
     /**Check if a Match name is already in use return true if it is
      * @param matchName*/
     public synchronized boolean matchNameCheck(String matchName) {
@@ -745,6 +745,55 @@ public class DataBaseConnection {
             e.printStackTrace();
         }
         return playableMatch;
+    }
+
+    /*
+    * *************************manches query
+    * */
+    //da chiamare appena creata la manche
+    public void insertManches(Match match){
+        /*campi Manche on database:
+         number= number of mache frmon 1 to 5,
+         match_id,
+         sentence_id,
+         seen_by_user[]= user that have seen that manche,
+         manche_wallets[] = global wallet for that manche*/
+        String qry= "INSERT INTO manches(number, match_id, sentence_id) VALUES (?,?,?)";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+            pstmt.setInt(1, 1); //TODO metodo che ritorna la manche Corrente
+            pstmt.setInt(2,match.getId());
+            pstmt.setInt(3,4); //TODO metodo che ritorna la frase associata al match corrente (o almeno il suo id)
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // da chiamare idealmente a fine manche
+    public void updateManches(Match match){
+        String qry= "UPDATE manches SET " +
+                "seen_by_user = ? " +
+                "manche_wallets = ? " +
+                "WHERE (match_id = ?) AND (number = ?)";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+
+            pstmt.setInt(1, 1); //TODO qualcosa per ritornare chi ha visto la manche
+            pstmt.setInt(2, 1);
+            pstmt.setInt(3,match.getId());
+            pstmt.setInt(4,4); //da agiornare qundo fatto i todos di prima
+            ResultSet rs = pstmt.executeQuery();  // Execute the query
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void deleteManche(Integer match_id, Integer numberOfManche){
+        deleteQuery("manches", new String[]{"match_id", "number"}, new String[]{match_id.toString(), numberOfManche.toString()});
     }
 
 }

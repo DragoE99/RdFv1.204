@@ -113,7 +113,7 @@ public class Match implements Serializable {
 
 	/**
 	 * 
-	 * @param currentTurn
+	 * @param user
 	 */
 	public void setCurrentPlayingUser(User user) {
 		this.currentPlayingUser = user;

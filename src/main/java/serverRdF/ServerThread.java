@@ -457,7 +457,7 @@ public class ServerThread extends Thread {
 	}
 
 	/**
-	 * @param gameTableUpdate
+	 * @param gameUpdate
 	 * @param command
 	 * @throws IOException
 	 */

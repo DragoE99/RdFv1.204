@@ -67,11 +67,9 @@ public class Proxy extends Thread {									//cambiare nome?
 
 	/**
 	 * Method that sends user data to be checked by the server at the moment of authentication
-	 * @param usr String, the username/mail
-	 * @param psw String, password
+	 * @param u String, the username/mail
 	 * @return 
 	 * @throws IOException
-	 * @throws ClassNotFoundException 
 	 */
 	public Commands sendLoginData(User u) throws IOException {
 		//out.writeObject(usr);
@@ -137,7 +135,7 @@ public class Proxy extends Thread {									//cambiare nome?
 	
 	/**
 	 * 
-	 * @param name
+	 * @param newLobby
 	 * @return
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 

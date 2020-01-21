@@ -60,6 +60,7 @@ public class Proxy extends Thread {									//cambiare nome?
 	public Proxy() throws IOException {
 		super();
 
+
 		addr = InetAddress.getByName(null);
 		s = new Socket(addr, 8080);
 
