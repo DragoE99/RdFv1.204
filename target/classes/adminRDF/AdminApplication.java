@@ -13,6 +13,10 @@ public class AdminApplication extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+	
+	/*TODO per differenziare admin e user creare variabile static all'interno di main.java che indichi
+	 da dove provviene la chiamata a main v player o t admin e poi attraverso tale variabie si crea la variabile role
+	durante l'iscrizione e se possibile anche le differenze tra schermate home */
 
     private static Stage stage;
 

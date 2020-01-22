@@ -14,10 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import playerRdF.Client;
 import playerRdF.ClientRMI;
-import util.Commands;
-import util.Lobby;
 import util.Match;
 import util.User;
 

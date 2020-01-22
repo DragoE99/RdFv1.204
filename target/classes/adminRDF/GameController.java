@@ -369,7 +369,7 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
     @FXML
     TextField testTextField;
     public void getTestText(){
-        if(currentMatch.getCurrentSentence().equals(testTextField.getText().toUpperCase()))System.out.println("uguali");
+        if(currentMatch.getCurrentSentence().equals(testTextField.getText().toUpperCase())){System.out.println("uguali");}
 
     }
 

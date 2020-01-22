@@ -14,7 +14,7 @@ public class DatabasePopulator {
     }
 
     private HashMap<String, Match> activeMatch = new HashMap<>();
-    private HashMap<Match, ArrayList<User>> createdMatchObserver = new HashMap();
+    private HashMap<Match, ArrayList<User>> createdMatchObserver = new HashMap<Match, ArrayList<User>>();
     static ArrayList<Sentence> sentences = new ArrayList<>();
 
     public static void main(String args[]) throws IOException {
@@ -423,7 +423,7 @@ public class DatabasePopulator {
 
     public ArrayList<Match> getPlayableMatch() {
         String qry = "SELECT * FROM matches WHERE state = 'c'";
-        ArrayList<Match> playableMatch = new ArrayList();
+        ArrayList<Match> playableMatch = new ArrayList<Match>();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {
 

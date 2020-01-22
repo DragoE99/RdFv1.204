@@ -89,16 +89,14 @@
                         <Button fx:id="buyVowelButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="Buy Vowel" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="106.0" prefWidth="143.0" spacing="18.0">
+                  <VBox alignment="CENTER" prefHeight="106.0" prefWidth="143.0" spacing="10.0">
                      <children>
-                        <Label fx:id="pointVariationLabel" alignment="CENTER" prefHeight="52.0" prefWidth="120.0" text="Points Variation" textAlignment="CENTER">
+                        <Label fx:id="pointVariationLabel" alignment="CENTER" prefHeight="35.0" prefWidth="120.0" text="Points Variation" textAlignment="CENTER">
                            <font>
                               <Font size="14.0" />
                            </font></Label>
+                        <TextField />
                      </children>
-                     <padding>
-                        <Insets top="5.0" />
-                     </padding>
                   </VBox>
                   <VBox>
                      <children>
@@ -119,17 +117,12 @@
                         <Font name="System Italic" size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="solutionButton" mnemonicParsing="false" onAction="#giveSolution" prefHeight="30.0" prefWidth="85.0" text="Solution">
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Label fx:id="solutionLabel" text="solutiongiven" />
+                  <Button mnemonicParsing="false" onAction="#getTestText" text="Solution" />
+                  <TextField fx:id="testTextField" />
                </children>
             </HBox>
             <Pane fx:id="sentencePane" prefHeight="300.0" prefWidth="640.0" />
-            <Button mnemonicParsing="false" onAction="#getTestText" text="SwitchPlayer" />
-            <TextField fx:id="testTextField" />
+
          </children>
          <padding>
             <Insets bottom="80.0" left="80.0" right="50.0" top="20.0" />
