@@ -31,6 +31,7 @@ public class Main extends Application {
 
 		stage.setTitle("Ruota della Fortuna");
 
+		
 		loader = new FXMLLoader(getClass().getResource("Login.fxml"));
 		//avviamo la prima finestra, Login
 		Parent root = loader.load();
