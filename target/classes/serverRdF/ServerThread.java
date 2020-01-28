@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -18,11 +20,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import javafx.scene.control.Label;
-import util.Commands;
-import util.Lobby;
-import util.Match;
-import util.Player;
-import util.User;
+import util.*;
 
 
 /**
@@ -129,6 +127,8 @@ public class ServerThread extends Thread {
 			case QUIT: quit();
 			break;
 			case ENDACTION : ServerListener.updateCurrentPlayerOfMatch(myLobby.getMatch());
+			break;
+			case INSERTSENTENCES:insertSentences();
 			default:
 				break;
 			}
@@ -503,5 +503,19 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public void insertSentences(){
+		try {
+			List<Sentence> sentences = (List<Sentence>) in.readObject();
+			User u = (User) in.readObject();
+			ServerListener.getDB().insertSentences(sentences,u);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -24,7 +24,7 @@ public class Client {
 		
 		proxy = new Proxy();							
 		proxy.start();																		//launching the proxy thread
-		gui.Main.setUserType("v");
+		gui.Main.setUserType(false);
 		Application.launch(Main.class, args);												//launching the GUI
 	}
 
@@ -67,8 +67,9 @@ public class Client {
 		me = u;
 	}
 
-	
-
+	public static void setProxy(Proxy newProxy){
+		proxy=newProxy;
+	}
 
 
 }

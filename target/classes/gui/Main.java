@@ -1,10 +1,13 @@
 package gui;
 
+import adminRdF.AdminClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import playerRdF.Client;
+import playerRdF.Proxy;
 
 /**
  * Main javafx class
@@ -20,14 +23,13 @@ public class Main extends Application {
 	//TODO forse e' meglio cambiare il nome da main a qualcosa tipo starterWindow
 	private static Stage stage;
 	private static FXMLLoader loader;
-	private static String userType;
+	private static boolean isAdmin;
 
 	/**
 	 * Opens Login screen. Sets window title to "Ruota della Fortuna" and resizable is false.
 	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		System.out.println("il tipo è:" + userType);
 
 		Main.stage = primaryStage;
 
@@ -61,12 +63,12 @@ public class Main extends Application {
 		return loader;
 	}
 
-	public static void setUserType(String userType) {
-		Main.userType = userType;
+	public static void setUserType(boolean userType) {
+		Main.isAdmin = userType;
 	}
 
-	public static String getUserType() {
-		return userType;
+	public static boolean getUserType() {
+		return isAdmin;
 	}
 
 	/**

@@ -29,7 +29,8 @@ public enum Commands implements Serializable {
 	QUIT, 
 	ENDACTION, 
 	PLAY, 
-	ALREADYON;
+	ALREADYON,
+	INSERTSENTENCES;
 	//tutti gli altri comandi
 
 }

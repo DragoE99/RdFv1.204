@@ -3,6 +3,8 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import adminRdF.AdminClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -59,7 +61,7 @@ public class LoginController implements Initializable{
 	public void login(ActionEvent event) throws IOException {
 		//TODO implementare caso admin, togliere il booleano fasullo
 		boolean isAdmin = false;
-		if(Main.getUserType().equals("t")) isAdmin=true;
+		if(Main.getUserType()) isAdmin=true;
 
 
 
@@ -72,11 +74,12 @@ public class LoginController implements Initializable{
 
 		} else {
 			User u = new Player(user.getText(), psw.getText());
-			Commands reply = Client.getProxy().sendLoginData(u);
+
+			Commands reply = isAdmin? AdminClient.getProxy().sendLoginData(u):Client.getProxy().sendLoginData(u);
 			//TODO if user go in Menu else if admin go in MenuAdmin
 			if(reply == Commands.OK) {
 				if(isAdmin) {
-					u = (Admin)u;
+					u = new Admin(user.getText(), psw.getText());
 					Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("MenuAdmin.fxml"))));
 					//Client.setUser(u);
 				} else {

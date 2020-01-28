@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,10 +17,7 @@ import gui.Main;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import serverRdF.ServerListener;
-import util.Commands;
-import util.Lobby;
-import util.Match;
-import util.User;
+import util.*;
 
 
 /**
@@ -389,6 +387,13 @@ public class Proxy extends Thread {									//cambiare nome?
 	public void endAction() throws IOException {
 		// TODO Auto-generated method stub
 		out.writeObject(Commands.ENDACTION);
+	}
+
+	public void insertSentence(List<Sentence> sentences, User u) throws IOException {
+		out.writeObject(Commands.INSERTSENTENCES);
+		out.writeObject(sentences);
+		out.writeObject(u);
+
 	}
 
 }

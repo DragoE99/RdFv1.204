@@ -19,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import playerRdF.Client;
 import util.Sentence;
 
 /**
@@ -98,6 +99,7 @@ public class CSVfileController implements Initializable {
 					sentences.add(sentence);
 				}
 			}
+			Client.getProxy().insertSentence(sentences,Client.getUser());
 			//TODO PASSARE LA LISTA A SERVER THREAD E POI A DATABASECONNECTION
 			/*DataBaseConnection query =new DataBaseConnection();
 			try {

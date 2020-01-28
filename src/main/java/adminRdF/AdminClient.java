@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import gui.Main;
 import javafx.application.Application;
+import playerRdF.Client;
+import playerRdF.Proxy;
 import util.Match;
 import util.User;
 
@@ -15,14 +17,15 @@ import util.User;
  */
 public class AdminClient {
 
-	private static AdminProxy proxy;
+	private static Proxy proxy;
 	private static User me;																	//dovrebbe essere final, oppure non modificabile
 
-	public static void main(String[] args) throws IOException {
-		proxy = new AdminProxy();							
-		proxy.start();																		//launching the proxy thread
 
-		gui.Main.setUserType("t");
+	public static void main(String[] args) throws IOException {
+		proxy = new Proxy();
+		proxy.start();
+		Client.setProxy(proxy);
+		gui.Main.setUserType(true);
 		Application.launch(Main.class, args);												//launching the GUI
 		
 	}
@@ -31,7 +34,7 @@ public class AdminClient {
 	 * Getter for the proxy thread
 	 * @return the thread handling server connection
 	 */
-	public static AdminProxy getProxy() {
+	public static Proxy getProxy() {
 		return proxy;
 	}
 
@@ -56,6 +59,7 @@ public class AdminClient {
 	 * @param u
 	 */
 	public static void setUser(User u) {
+		Client.setUser(u);
 		me = u;
 	}
 
