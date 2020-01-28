@@ -4,7 +4,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class StringManager {
-    private static final String BUNDLE_NAME = "util.string"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "util/string_it"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

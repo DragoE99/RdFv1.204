@@ -22,6 +22,7 @@ public class AdminClient {
 		proxy = new AdminProxy();							
 		proxy.start();																		//launching the proxy thread
 
+		gui.Main.setUserType("t");
 		Application.launch(Main.class, args);												//launching the GUI
 		
 	}
