@@ -65,6 +65,10 @@ public class Main extends Application {
 		Main.userType = userType;
 	}
 
+	public static String getUserType() {
+		return userType;
+	}
+
 	/**
 	 * Sets the FXMLLoader with the one in parameter.
 	 * @param newLoader the new loader you want to set.

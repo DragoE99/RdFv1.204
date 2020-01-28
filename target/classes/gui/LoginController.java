@@ -59,6 +59,9 @@ public class LoginController implements Initializable{
 	public void login(ActionEvent event) throws IOException {
 		//TODO implementare caso admin, togliere il booleano fasullo
 		boolean isAdmin = false;
+		if(Main.getUserType().equals("t")) isAdmin=true;
+
+
 
 		if (psw.getText().equals("") || user.getText().equals("")) {
 			errorLabel.setText("insert email and password");
