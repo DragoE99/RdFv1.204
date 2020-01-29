@@ -48,7 +48,11 @@ public class StatisticsController {
 	public void back(MouseEvent e) throws IOException {
 
 		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
-			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+			if(Main.getIsAdmin()) {
+				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("MenuAdmin.fxml"))));
+			} else {
+				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));				
+			}
 		}
 	}
 

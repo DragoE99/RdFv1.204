@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.Commands;
@@ -28,10 +29,10 @@ import util.Lobby;
  */
 public class CreateLobbyController implements Initializable{
 
-	@FXML private Node pane;
 	@FXML private TextField name;
 	@FXML private ImageView back;
 	@FXML private Label title;
+	@FXML private Label errMsg;
 
 	/**
 	 * Sets the label window title focus traversable. It's used to set the first prompt text field visible.
@@ -41,25 +42,48 @@ public class CreateLobbyController implements Initializable{
 		title.setFocusTraversable(true);
 	}
 
-	
 	/**
-	 * Sends to the waiting room screen if the name doesn't already exist.
-	 * @param e Action on "Confirm" button.
-	 * @throws ClassNotFoundException 
+	 * Utility method that creates a lobby.
 	 * @throws IOException .
+	 * @throws ClassNotFoundException .
 	 */
-	public void create(ActionEvent e) throws IOException, ClassNotFoundException {
-
-		Commands reply = Client.getProxy().createLobby(new Lobby(name.getText(), false, Client.getUser()));
+	private void create() throws ClassNotFoundException, IOException {
+		
+		Lobby newLobby = new Lobby(name.getText(), false, Client.getUser());
+		Commands reply = Client.getProxy().createLobby(newLobby);
 
 		if(reply == Commands.OK) {
 
+			Client.getProxy().sendChosenMatch(Commands.CHOSENMATCH, newLobby);
+			Client.getProxy().setInWaitingRoom(true);
 			//manda alla waiting room
-			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("WaitingRoom.fxml"))));
+			FXMLLoader newLoader = new FXMLLoader(getClass().getResource("WaitingRoom.fxml"));
+			Main.getStage().setScene(new Scene(newLoader.load()));
+			Main.setLoader(newLoader);
 
 		} else if(reply == Commands.NO){
-			//TODO messaggio di errore su GUI
-			System.err.println("Nome gia' esistente");
+			errMsg.setText("Nome gia' esistente");
+		}
+	}
+	/**
+	 * Sends to the waiting room screen if the name doesn't already exist.
+	 * @param e Action on "Confirm" button.
+	 * @throws ClassNotFoundException .
+	 * @throws IOException .
+	 */
+	public void create(ActionEvent e) throws IOException, ClassNotFoundException {
+		create();
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws ClassNotFoundException . 
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException, ClassNotFoundException {
+		if(e.getCode().toString().equals("ENTER")) {
+			create();
 		}
 	}
 

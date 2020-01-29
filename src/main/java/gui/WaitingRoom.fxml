@@ -20,18 +20,13 @@
             </Label>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label text="number players x/3" textFill="#c2d3e4">
+                  <Label text="Waiting for players..." textFill="#c2d3e4">
                      <font>
                         <Font size="30.0" />
                      </font>
                   </Label>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#begin" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Begin" textFill="#c2d3e4">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Button>
          </children>
       </VBox>
       <ImageView fx:id="back" fitHeight="49.0" fitWidth="64.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true">

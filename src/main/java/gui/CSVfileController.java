@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -57,14 +58,21 @@ public class CSVfileController implements Initializable {
 	}
 
 	/**
+	 * Utility method that imports a CSV file.
+	 * @throws IOException .
+	 */
+	private void importCSV() throws IOException {
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
+	}
+
+	/**
 	 * Imports CSV file and returns to manage sentence screen.
 	 * @param e Action on "Import".
 	 * @throws IOException .
 	 */
-
 	//TODO inviare CSV file
 	public void importCSV(ActionEvent e) throws IOException {
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
+		importCSV();
 	}
 
 	/**
@@ -84,6 +92,17 @@ public class CSVfileController implements Initializable {
 	}
 
 	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException {
+		if(e.getCode().toString().equals("ENTER")) {
+			importCSV();
+		}
+	}
+
+	/**
 	 * Adds sentences in the csv file to database.
 	 * @param filePath Path of the csv file.
 	 */
@@ -94,19 +113,13 @@ public class CSVfileController implements Initializable {
 			String[] nextLine = new String[2];
 			List<Sentence> sentences = new ArrayList<Sentence>();
 			while ((nextLine = reader.readNext()) != null) {
-				Sentence sentence = new Sentence(nextLine[0], nextLine[1]);
+				Sentence sentence = new Sentence(nextLine[0].toUpperCase(), nextLine[1].toUpperCase());
 				if(sentence.getSentence().length()<60 && sentence.getHint().length()<60){
 					sentences.add(sentence);
 				}
 			}
 			Client.getProxy().insertSentence(sentences,Client.getUser());
-			//TODO PASSARE LA LISTA A SERVER THREAD E POI A DATABASECONNECTION
-			/*DataBaseConnection query =new DataBaseConnection();
-			try {
-				query.insertSentences(sentences);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}*/
+
 
 		} catch (IOException | CsvValidationException e) {
 			e.printStackTrace();

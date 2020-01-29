@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -60,10 +61,37 @@ public class LoginController implements Initializable{
 	 */
 	public void login(ActionEvent event) throws IOException {
 		//TODO implementare caso admin, togliere il booleano fasullo
+		login();
+	}
+
+	/**
+	 * Sends you to the sign up window.
+	 * @param e Action on "Create an account" hypertext.
+	 * @throws IOException .
+	 */
+	public void signUp(ActionEvent e) throws IOException {
+
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SignUp.fxml"))));
+	}
+
+	/**
+	 * Sends you to the password reset window.
+	 * @param e Action on "Forgot your password?" hypertext.
+	 * @throws IOException .
+	 */
+	public void passwordReset(ActionEvent e) throws IOException {
+
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ResetPassword.fxml"))));
+
+	}
+
+	/**
+	 * Utility method that does login.
+	 * @throws IOException .
+	 */
+	private void login() throws IOException {
 		boolean isAdmin = false;
-		if(Main.getUserType()) isAdmin=true;
-
-
+		if(Main.getIsAdmin()) isAdmin=true;
 
 		if (psw.getText().equals("") || user.getText().equals("")) {
 			errorLabel.setText("insert email and password");
@@ -74,7 +102,6 @@ public class LoginController implements Initializable{
 
 		} else {
 			User u = new Player(user.getText(), psw.getText());
-
 			Commands reply = isAdmin? AdminClient.getProxy().sendLoginData(u):Client.getProxy().sendLoginData(u);
 			//TODO if user go in Menu else if admin go in MenuAdmin
 			if(reply == Commands.OK) {
@@ -102,14 +129,14 @@ public class LoginController implements Initializable{
 				user.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
 				psw.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
 				System.err.println("Account not verified");
-				
+
 				//setUser temporaneo
 				Client.setUser((User)new Player(user.getText(), psw.getText()));
 				//mando alla verifica
 				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ActivationCode.fxml"))));
-				
+
 			} else if (reply == Commands.ALREADYON) {
-				
+
 				errorLabel.setText("User already online");
 				errorLabel.setVisible(true);
 				user.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
@@ -120,25 +147,14 @@ public class LoginController implements Initializable{
 	}
 
 	/**
-	 * Sends you to the sign up window.
-	 * @param e Action on "Create an account" hypertext.
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
 	 * @throws IOException .
 	 */
-	public void signUp(ActionEvent e) throws IOException {
-
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SignUp.fxml"))));
+	public void buttonPressed(KeyEvent e) throws IOException {
+		if(e.getCode().toString().equals("ENTER")) {
+			login();
+		}
 	}
-
-	/**
-	 * Sends you to the password reset window.
-	 * @param e Action on "Forgot your password?" hypertext.
-	 * @throws IOException .
-	 */
-	public void passwordReset(ActionEvent e) throws IOException {
-
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ResetPassword.fxml"))));
-
-	}
-
 
 }

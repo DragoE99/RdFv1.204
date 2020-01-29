@@ -15,16 +15,18 @@ import java.util.logging.Logger;
 
 import gui.GameController;
 import gui.Main;
+import gui.WaitingRoomController;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
-import serverRdF.ServerListener;
 import util.*;
 
 
 /**
  * Proxy is our client-side thread that handles the connection with the server
  * 
- * @author gruppo aelv
+ * @author Achille Lambrughi
+ * @author Emanuele Drago
+ * @author Lorenzo Ottaviani
+ * @author Elisabeth Veronika Venturino
  *
  */
 public class Proxy extends Thread {									//cambiare nome?
@@ -44,6 +46,8 @@ public class Proxy extends Thread {									//cambiare nome?
 	private boolean isRunning;
 	
 	private boolean inGameWindow = false;
+	
+	private boolean inWaitingRoom = false;
 
 
 
@@ -53,12 +57,11 @@ public class Proxy extends Thread {									//cambiare nome?
 
 
 	/**
-	 * Constructor
+	 * Create a new instance of Proxy, which is a thread that manage the connection with the server on the Client side
 	 * @throws IOException 
 	 */
 	public Proxy() throws IOException {
 		super();
-
 
 		addr = InetAddress.getByName(null);
 		s = new Socket(addr, 8080);
@@ -68,6 +71,7 @@ public class Proxy extends Thread {									//cambiare nome?
 
 	}
 
+	
 	@Override
 	public void run() {
 
@@ -84,9 +88,18 @@ public class Proxy extends Thread {									//cambiare nome?
 				sleep(1000);
 
 
+				
+				
+				if(inWaitingRoom) {
+					startGame();
+				}
+				
 				if (inGameWindow) {
+					System.out.println("ingamewindow " + Instant.now());
 					listen();
 				}
+				
+				sleep(100);
 
 			}
 
@@ -99,6 +112,39 @@ public class Proxy extends Thread {									//cambiare nome?
 
 
 	}
+	
+	/**
+	 * Check if the server send the start notification and then opens the Game window
+	 */
+	private void startGame() {
+		 try {
+			if((Commands)in.readObject() == Commands.START) {
+				
+				inWaitingRoom = false;
+				
+				Client.setMatch((Match) in.readObject());
+				
+				Platform.runLater(new Runnable() {
+					@Override public void run() {System.out.println("inizio partita");
+					try {
+						((WaitingRoomController)(Main.getLoader().getController())).begin();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					}
+				});
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+			
+		}
 
 	/**
 	 * Method that sends user data to be checked by the server at the moment of authentication
@@ -142,7 +188,7 @@ public class Proxy extends Thread {									//cambiare nome?
 
 
 	/**
-	 * 
+	 * Loop that listen commands and choose the right method for a specific command
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
@@ -187,13 +233,34 @@ public class Proxy extends Thread {									//cambiare nome?
 					});
 				}
 				break;
-				case QUIT : inGameWindow = false;
+				case QUIT : {inGameWindow = false; inWaitingRoom = false;}
 				break;
 				case PLAY : {
 
 					Platform.runLater(new Runnable() {
-						@Override public void run() {System.out.println("qua ci entro" + s);
+						@Override public void run() {System.out.println("proxy riceve comando play");
 						((GameController)(Main.getLoader().getController())).play();
+						}
+					});
+				}
+				break;
+				case CURRENTPLAYERLABEL : {
+					String s = (String)in.readObject();
+
+					Platform.runLater(new Runnable() {
+						@Override public void run() {System.out.println("proxy riceve comando CURRENTPLAYERLABEL");
+						((GameController)(Main.getLoader().getController())).setCurrentPlayer(s);
+						}
+					});
+				}
+				break;
+				case MANCHEWON: {
+					String s = (String)in.readObject();
+
+					Platform.runLater(new Runnable() {
+						@Override public void run() {System.out.println("qua ci entro" + s);
+						((GameController)(Main.getLoader().getController())).setHint(s);
+						((GameController)(Main.getLoader().getController())).setSentenceVisible();
 						}
 					});
 				}
@@ -213,8 +280,8 @@ public class Proxy extends Thread {									//cambiare nome?
 	
 	
 	/**
-	 * 
-	 * @param u
+	 * Sends updates of user's data to the server
+	 * @param u The actual value for the user to modify
 	 * @throws IOException
 	 */
 	public void updateUser(User u) throws IOException {
@@ -232,10 +299,10 @@ public class Proxy extends Thread {									//cambiare nome?
 	
 	
 	/**
-	 * 
-	 * @param user
-	 * @param code
-	 * @return
+	 * Sends the code to the server to check if is right
+	 * @param user The user that has inserted the code
+	 * @param code The String inserted by user
+	 * @return The commands returned by the server (OK if the code is right, NO if the code is wrong)
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
@@ -252,8 +319,8 @@ public class Proxy extends Thread {									//cambiare nome?
  
 	
 	/**
-	 * 
-	 * @return
+	 * Ask to the server the updated lobby hashmap 
+	 * @return The lobby hashmap
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
@@ -274,9 +341,11 @@ public class Proxy extends Thread {									//cambiare nome?
 	}
 
 	/**
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
-	 * 
+	 * Sends a sign up request to the server
+	 * @param u The user that needs to be signed up
+	 * @return The reply from the server
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 */
 	public Commands signup(User u) throws IOException, ClassNotFoundException {
 
@@ -290,9 +359,9 @@ public class Proxy extends Thread {									//cambiare nome?
 	}
 
 	/**
-	 * 
-	 * @param email
-	 * @return
+	 * Sends to the server a request of password reset
+	 * @param email The String that represent the email address  
+	 * @return The reply from the server
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
@@ -308,9 +377,9 @@ public class Proxy extends Thread {									//cambiare nome?
 	}
 
 	/**
-	 * 
-	 * @param name
-	 * @return
+	 * Sends to the server the request to create a new lobby
+	 * @param newLobby The lobby that is going to be created
+ 	 * @return The reply from the server
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
@@ -327,9 +396,9 @@ public class Proxy extends Thread {									//cambiare nome?
 
 
 	/**
-	 * 
-	 * @param obj
-	 * @param command
+	 * Send to the server the change that was made in this client window
+	 * @param s The actual change as string
+	 * @param command The command that identifies the element of the game window that has changed
 	 * @throws IOException
 	 */
 	public void sendGameUpdate(String s, Commands command) throws IOException {
@@ -342,17 +411,51 @@ public class Proxy extends Thread {									//cambiare nome?
 	}
 
 	/**
-	 * 
+	 * Sends to the server a request to exit from the current match
 	 * @throws IOException
 	 */
 	public void quit() throws IOException {
+		
+		out.reset();
+		
 		out.writeObject(Commands.QUIT);
 		
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Request to the server the statistics for the user specified
+	 * @param id The user id 
+	 * @return The statistics for the specified user id
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public ArrayList<String> userStats(Integer id) throws IOException, ClassNotFoundException {
+		//TODO 
+		out.writeObject(Commands.USTATS);
+		out.writeObject(id);
+		
+		ArrayList<String> stats = (ArrayList<String>) in.readObject();
+		return stats;
+	}
+	
+	
+	/**
+	 * Request to the server the global statistics
+	 * @return The global statistics
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public ArrayList<String> globalStats() throws IOException, ClassNotFoundException {
+		//TODO 
+		out.writeObject(Commands.GSTATS);
+		
+		ArrayList<String> stats = (ArrayList<String>) in.readObject();
+		return stats;
+	}
+	
+	/**
+	 * Getter for inGameWindow
+	 * @return if the client is in game window or not
 	 */
 	public boolean isInGameWindow() {
 		return inGameWindow;
@@ -360,13 +463,20 @@ public class Proxy extends Thread {									//cambiare nome?
 
 
 	/**
-	 * 
-	 * @param inGameWindow
+	 * Setter for inGameWindow
+	 * @param inGameWindow The new value for inGameWindow
 	 */
 	public void setInGameWindow(boolean inGameWindow) {
 		this.inGameWindow = inGameWindow;
 	}
 
+	
+	/**
+	 * Sends to the server the match chosen by the client
+	 * @param command The command to inform the server
+	 * @param lobby The chosen lobby
+	 * @throws IOException
+	 */
 	public void sendChosenMatch(Commands command, Lobby lobby) throws IOException {
 
 		out.writeObject(command);
@@ -375,19 +485,47 @@ public class Proxy extends Thread {									//cambiare nome?
 
 	}
 
-	public void resetStream() {
-		try {
-			in.reset();
-			out.reset();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
+	
+	/**
+	 * Inform the server that the client has finished his action
+	 * @throws IOException
+	 */
 	public void endAction() throws IOException {
 		// TODO Auto-generated method stub
 		out.writeObject(Commands.ENDACTION);
+	}
+	
+	/**
+	 * Getter for isRunning
+	 * @return The value of isRunning
+	 */
+	public boolean isRunning() {
+		return isRunning;
+	}
+
+	/**
+	 * Setter for isRunning
+	 * @param isRunning the new value for isRunning
+	 */
+	public void setRunning(boolean isRunning) {
+		this.isRunning = isRunning;
+	}
+
+	
+	/**
+	 * Getter for inWaitingRoom
+	 * @return The value of inWaitingRoom
+	 */
+	public boolean isInWaitingRoom() {
+		return inWaitingRoom;
+	}
+
+	/**
+	 * Setter for inWaitingRoom
+	 * @param inWaitingRoom the new value for inWaitingRoom
+	 */
+	public void setInWaitingRoom(boolean inWaitingRoom) {
+		this.inWaitingRoom = inWaitingRoom;
 	}
 
 	public void insertSentence(List<Sentence> sentences, User u) throws IOException {
@@ -396,10 +534,18 @@ public class Proxy extends Thread {									//cambiare nome?
 		out.writeObject(u);
 
 	}
-
 	public ArrayList<Sentence> getAllSentences() throws IOException, ClassNotFoundException {
 		out.writeObject(Commands.GETALLSENTENCES);
 		return (ArrayList<Sentence>)in.readObject();
+	}
+
+	public void modifySentence(Sentence sentence){
+		try {
+			out.writeObject(Commands.MODIFYSENTENCE);
+			out.writeObject(sentence);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

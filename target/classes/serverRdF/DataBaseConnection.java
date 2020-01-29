@@ -4,6 +4,7 @@ import util.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -385,6 +386,42 @@ public class DataBaseConnection {
         }
         //TODO OPZIONALE: RITORNARE IL NUMERO DI FRASI INSERITE
         System.out.println("nuove frasi inserite: " + count);
+    }
+
+    public ArrayList<Sentence> getAllSentence() {
+        String SQL = "SELECT * FROM sentences";
+        ArrayList<Sentence> sentenceList = new ArrayList<>();
+        try (Connection conn = getConnectionInstance()) {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+            while (rs.next()) {
+                Array userid = rs.getArray("seen_by_user");
+
+                Sentence temp;
+                if (userid != null) {
+                    Integer[] nullable = (Integer[]) userid.getArray();
+                    temp = new Sentence(rs.getString("sentence"),
+                            rs.getString("hint"),
+                            rs.getInt("id"),
+                            rs.getInt("create_by_user"),
+                            Arrays.asList(nullable));
+                } else {
+                    temp = new Sentence(rs.getString("sentence"),
+                            rs.getString("hint"),
+                            rs.getInt("id"),
+                            rs.getInt("create_by_user"),
+                            (List<Integer>) userid);
+
+                }
+
+                sentenceList.add(temp);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return sentenceList;
     }
 
     //todo cambiare la classe sentence from List<User> to List<Integer>

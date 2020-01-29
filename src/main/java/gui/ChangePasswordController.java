@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -52,12 +53,10 @@ public class ChangePasswordController implements Initializable{
 	}
 
 	/**
-	 * Changes password. It controls if the old password is right, if the new password is different from the old one and if the new password is equal to confirm password , if so proceeds and sets the new one.
-	 * @param e action on button "Confirm".
+	 * Utility method that changes password.
 	 * @throws IOException .
 	 */
-	public void confirm(ActionEvent e) throws IOException {
-
+	private void confirm() throws IOException {
 		//se la password vecchia e' sbagliata
 		if(!oldPwd.getText().equals(Client.getUser().getPassword())) {
 			errOldPwd.setVisible(true);
@@ -88,7 +87,26 @@ public class ChangePasswordController implements Initializable{
 
 				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Settings.fxml"))));
 
-			}		
+			}	
+	}
+	/**
+	 * Changes password. It controls if the old password is right, if the new password is different from the old one and if the new password is equal to confirm password , if so proceeds and sets the new one.
+	 * @param e action on button "Confirm".
+	 * @throws IOException .
+	 */
+	public void confirm(ActionEvent e) throws IOException {
+		confirm();
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException {
+		if(e.getCode().toString().equals("ENTER")) {
+			confirm();
+		}
 	}
 
 	/**

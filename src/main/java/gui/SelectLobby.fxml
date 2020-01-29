@@ -50,8 +50,8 @@
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="spectateButton" mnemonicParsing="false" onAction="#create" style="-fx-background-color: #424967;" text="Spectate" textFill="#c2d3e4">
-                     <font>
+                  <Button fx:id="spectateButton" mnemonicParsing="false" onAction="#spectate" style="-fx-background-color: #424967;" text="Spectate" textFill="#c2d3e4">
+                  <font>
                         <Font size="20.0" />
                      </font>
                      <HBox.margin>

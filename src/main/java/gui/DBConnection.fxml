@@ -11,7 +11,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DBConnectionController">
    <children>
-      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label fx:id="title" text="Database connection" textFill="#c2d3e4">
                <font>
@@ -21,32 +21,32 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="name" maxWidth="-Infinity" prefWidth="300.0" promptText="IP" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="ip" maxWidth="-Infinity" prefWidth="300.0" promptText="IP" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="surname" maxWidth="-Infinity" prefWidth="300.0" promptText="Port" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
+            <TextField fx:id="port" maxWidth="-Infinity" prefWidth="300.0" promptText="Port" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="nickname" maxWidth="-Infinity" prefWidth="300.0" promptText="Database name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="name" maxWidth="-Infinity" prefWidth="300.0" promptText="Database name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="email" maxWidth="-Infinity" prefWidth="300.0" promptText="User" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="user" maxWidth="-Infinity" prefWidth="300.0" promptText="User" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <PasswordField fx:id="password" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <PasswordField fx:id="pwd" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </PasswordField>
-            <Button mnemonicParsing="false" onAction="#login" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Login" textFill="#c2d3e4">
+            <Button mnemonicParsing="false" onAction="#login" onKeyPressed="#buttonPressed" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Login" textFill="#c2d3e4">
                <font>
                   <Font size="30.0" />
                </font>

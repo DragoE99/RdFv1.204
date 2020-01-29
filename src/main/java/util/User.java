@@ -62,6 +62,10 @@ public abstract class User implements Serializable {
 		this.id = u.id;
 	}
 	
+	public User(Integer id) {
+		this.id = id;
+	}
+	
 	//=========================NON SO SE SERVE O SE E' GIUSTO===============================
 	/**
 	 * 

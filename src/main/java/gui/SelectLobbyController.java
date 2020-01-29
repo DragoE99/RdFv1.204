@@ -103,9 +103,13 @@ public class SelectLobbyController implements Initializable{
 	 * @throws IOException .
 	 */
 	public void back(MouseEvent e) throws IOException {
-
+		
 		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
-			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+			if(Main.getIsAdmin()) {
+				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("MenuAdmin.fxml"))));
+			} else {
+				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));				
+			}
 		}
 	}
 
@@ -132,9 +136,35 @@ public class SelectLobbyController implements Initializable{
 		Lobby lobby = lobbies.get(l.getMatch().getName());
 		lobby.setNPlayers(lobby.getNPlayers() + 1);
 		Client.getProxy().sendChosenMatch(Commands.CHOSENMATCH, lobby);
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("WaitingRoom.fxml")))); 
+		Client.getProxy().setInWaitingRoom(true); //TODO pensare meglio a come gestire questa cosa
+		FXMLLoader newLoader = new FXMLLoader(getClass().getResource("WaitingRoom.fxml"));
+		Main.getStage().setScene(new Scene(newLoader.load()));
+		Main.setLoader(newLoader);
 	}
+	
+	
+	public void spectate(ActionEvent e) throws IOException, ClassNotFoundException {
 
+		
+		Client.setSpectator(true);
+		InsertableLobby l = tab.getSelectionModel().getSelectedItem();
+		HashMap<String, Lobby> lobbies = Client.getProxy().demandLobbyList();
+		Lobby lobby = lobbies.get(l.getMatch().getName());
+		lobby.setNSpectators(lobby.getNSpectators() + 1);
+		Client.getProxy().sendChosenMatch(Commands.SPECTATE, lobby);
+		Client.getProxy().setInWaitingRoom(true); //TODO pensare meglio a come gestire questa cosa
+		
+		FXMLLoader newLoader;
+		if(lobby.isActive()) {
+			newLoader = new FXMLLoader(getClass().getResource("Game.fxml"));
+		} else {
+			newLoader = new FXMLLoader(getClass().getResource("WaitingRoom.fxml"));
+		}
+		Main.getStage().setScene(new Scene(newLoader.load()));
+		Main.setLoader(newLoader);
+	}
+	
+	
 	/**
 	 * Refreshes lobby list.
 	 * @throws ClassNotFoundException .
@@ -143,7 +173,7 @@ public class SelectLobbyController implements Initializable{
 	public void refreshLobbyList() throws ClassNotFoundException, IOException {
 		data.removeAll(data);
 		lobbyList = new HashMap<String, Lobby>(Client.getProxy().demandLobbyList());
-		System.out.println(lobbyList.get("match").getNPlayers());
+		//System.out.println(lobbyList.get("match").getNPlayers());
 		
 		for (String key : lobbyList.keySet()) { 
 			lobbyList.put(key, new InsertableLobby(lobbyList.get(key)));
@@ -156,9 +186,14 @@ public class SelectLobbyController implements Initializable{
 	
 	public void checkIfIsPlayable() {
 		
-		if(tab.getSelectionModel().getSelectedItem().getNPlayers() < 3) {
-			playButton.setDisable(false);
+		
+		try {
+			if(tab.getSelectionModel().getSelectedItem().getNPlayers() < 3) {
+				playButton.setDisable(false);
+			}
+		} catch (Exception e) {
 		}
+		
 		
 		
 	}

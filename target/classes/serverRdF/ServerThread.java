@@ -6,10 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -129,12 +126,24 @@ public class ServerThread extends Thread {
 			case ENDACTION : ServerListener.updateCurrentPlayerOfMatch(myLobby.getMatch());
 			break;
 			case INSERTSENTENCES:insertSentences();
+			break;
+			case GETALLSENTENCES:getAllSentences();
+			break;
 			default:
 				break;
 			}
 		}
 		} catch (SocketException e) {
 			ServerListener.addClient(me.getId(), null);
+		}
+	}
+
+	private void getAllSentences() {
+		ArrayList<Sentence> sentences = ServerListener.getDB().getAllSentence();
+		try {
+			out.writeObject(sentences);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

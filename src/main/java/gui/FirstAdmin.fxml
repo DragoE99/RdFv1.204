@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gui.FirstAdminController"
+            prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label fx:id="title" text="Sign up" textFill="#c2d3e4">
+                    <font>
+                        <Font name="System Bold" size="50.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="30.0" />
+                    </VBox.margin>
+                </Label>
+                <TextField fx:id="name" maxWidth="-Infinity" prefWidth="300.0" promptText="Name" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </TextField>
+                <TextField fx:id="surname" maxWidth="-Infinity" prefWidth="300.0" promptText="Surname" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </TextField>
+                <TextField fx:id="nickname" maxWidth="-Infinity" prefWidth="300.0" promptText="Nickname" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </TextField>
+                <Label fx:id="errorNick" text="This nickname already exists" textFill="#c21818" visible="false" />
+                <TextField fx:id="email" maxWidth="-Infinity" prefWidth="300.0" promptText="E-mail" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </TextField>
+                <Label fx:id="errorEmail" text="This e-mail is already registered" textFill="#c21818" visible="false" />
+                <PasswordField fx:id="password" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </PasswordField>
+                <PasswordField fx:id="passwordCheck" maxWidth="-Infinity" prefWidth="300.0" promptText="Confirm password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </PasswordField>
+                <Label fx:id="errorPsw" text="Password and confirm password are different" textFill="#c21818" visible="false" />
+                <Button mnemonicParsing="false" onAction="#register" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Register" textFill="#c2d3e4">
+                    <font>
+                        <Font size="30.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+        <ImageView fx:id="back" fitHeight="49.0" fitWidth="64.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="15.0">
+            <image>
+                <Image url="@backIcon1.png" />
+            </image>
+        </ImageView>
+    </children>
+
+</AnchorPane>

@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -44,13 +45,11 @@ public class ActivationCodeController implements Initializable{
 	}
 
 	/**
-	 * Controls if the inserted activation code is right, if is wrong displays an error message, if is right sends to Login screen.
-	 * @param e Action on button "Confirm".
+	 * Utility method that activate account.
 	 * @throws IOException .
 	 * @throws ClassNotFoundException .
 	 */
-	public void confirm(ActionEvent e) throws IOException, ClassNotFoundException {
-
+	private void confirm() throws IOException, ClassNotFoundException {
 		Commands reply = Client.getProxy().activationCode(Client.getUser(), code.getText());
 		//successful
 		if(reply == Commands.OK) {
@@ -62,7 +61,28 @@ public class ActivationCodeController implements Initializable{
 			System.err.println("Codice errato");
 		}
 	}
-	
+	/**
+	 * Controls if the inserted activation code is right, if is wrong displays an error message, if is right sends to Login screen.
+	 * @param e Action on button "Confirm".
+	 * @throws IOException .
+	 * @throws ClassNotFoundException .
+	 */
+	public void confirm(ActionEvent e) throws IOException, ClassNotFoundException {
+		confirm();
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws ClassNotFoundException .
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException, ClassNotFoundException {
+		if(e.getCode().toString().equals("ENTER")) {
+			confirm();
+		}
+	}
+
 	/**
 	 * Goes to the previous window.
 	 * @param e Action on back icon.

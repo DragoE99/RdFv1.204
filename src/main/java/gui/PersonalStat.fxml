@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -16,6 +17,7 @@
                   <Font name="System Bold" size="50.0" />
                </font>
             </Label>
+            <ListView fx:id="list" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </VBox>
       <ImageView fx:id="back" fitHeight="49.0" fitWidth="64.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="15.0">

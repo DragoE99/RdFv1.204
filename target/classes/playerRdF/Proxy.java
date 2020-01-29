@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -394,6 +395,11 @@ public class Proxy extends Thread {									//cambiare nome?
 		out.writeObject(sentences);
 		out.writeObject(u);
 
+	}
+
+	public ArrayList<Sentence> getAllSentences() throws IOException, ClassNotFoundException {
+		out.writeObject(Commands.GETALLSENTENCES);
+		return (ArrayList<Sentence>)in.readObject();
 	}
 
 }
