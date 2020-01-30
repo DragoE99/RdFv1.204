@@ -7,7 +7,7 @@ public class Actions implements Serializable {
     private int moveNumber;
     private String actionName;
     private String letter;
-    private boolean jolly;
+    private boolean jolly=false;
     private int actionWallet;
     private int currentPlayerTurn;// basta il turno
 

@@ -89,6 +89,9 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
     Pane pane;
     User currentlyPlaying;
 
+    Actions action = new Actions();
+    private static boolean playerSol;
+
     @Override
     public void update(Object observable, Object updateMsg) throws RemoteException {
         System.out.println("updated object from gameController");
@@ -96,7 +99,7 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         Platform.runLater(
                 () -> {
                     // Update UI here.
-                    currentMatch=currentClient.getMatch();
+                    currentMatch=ClientRMI.getInstance().getMatch();
                     setPlayer();
 
 
@@ -117,6 +120,7 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
 
 
         currentMatch= ClientRMI.getInstance().getMatch();
+        ClientRMI.getInstance().getMatch().addObserver(this);
         setPlayer();
         pane=createContent();
         sentencePane.getChildren().addAll(pane);
@@ -125,6 +129,8 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
     }
 
     private void setPlayer(){
+        System.out.println("match State"+currentMatch.getState());
+
         int i= currentMatch.getPlayerTurn();
         currentlyPlaying=currentMatch.getPlayers().get(currentMatch.getPlayerTurn());
         currentlyPlayingName.setText(currentMatch.getPlayers().get(currentMatch.getPlayerTurn()).getName());
@@ -182,14 +188,12 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
             border.setStroke(Color.BLACK);
 
             if(value.equals("\u0000")|| value.equals(" ")){
-                System.out.println("valorae null dela tile");
                 border.setFill(Paint.valueOf("#9699c7"));
             }else {
                 text.setText(value);
                 text.setFont(Font.font(30));
                 text.setFill(Color.WHITE);
                 text.setOpacity(0);
-                System.out.println("valore: "+value);
             }
 
             setAlignment(Pos.CENTER);
@@ -247,14 +251,20 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         }
 
     }
-    public void revealLetter(String letter){
+    public boolean revealLetter(String letter){
+        boolean letterIsFound= false;
         for(Node n : pane.getChildren()){
             Tile tile = (Tile) n;
             if(tile.getText().getText().equals(letter)){
-                if(!tile.isOpen())tile.open(() -> {});
-                else resultLabel.setText("Letter Already Present");
-            }else resultLabel.setText("Letter not Present");
+                letterIsFound=true;
+                if(!tile.isOpen()){tile.open(() -> {});
+                    resultLabel.setText("Correct Letter");
+
+                }else resultLabel.setText("Letter Already Present");
+            }
         }
+        if(!letterIsFound)resultLabel.setText("Letter not Present");
+        return letterIsFound;
 
     }
 
@@ -302,30 +312,48 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         Main.getStage().setScene(new Scene(root));
     }
 
-    Actions action = new Actions();
+
     @FXML
     public void spinWheel(){
         Random rand = new Random();
-        int spinResult = (rand.nextInt(9)-1)*100;
-        if(spinResult<0){
+        int spinResult = (rand.nextInt(10)-1)*100;
+        if(spinResult==-100){
             action.setActionName("LOSE ALL");
             //set variable currently player tipo user
             pointVariationLabel.setText("");
             //TODO completare inizializzazione action infilarla in match e chiamare il DB
             // controllare se si puo' usere il jolly
         }
+        if(spinResult==900){
+            action.setActionName("RECIVE_JOLLY");
+            pointVariationLabel.setText("JOLLY");
+            action.setJolly(true);
+        }
         if(spinResult==0){
             action.setActionName("PASS");
             pointVariationLabel.setText("PASS");
+            Platform.runLater(
+                    () -> {
+                        // Update UI here.
+                        passTurn();
+
+                    }
+            );
+
         }else{
             pointVariationLabel.setText(""+spinResult);
             String consonant = openInsertDialog("Insert Consonant").toUpperCase();
             if(consonant.equals("")){
                 action.setActionName("PASS");
                 resultLabel.setText("PASS");
+                pointVariationLabel.setText(""+0);
+                action.setActionWallet(0);
+                passTurn();
             }else{
                 if(consonant.length()>1)consonant=consonant.substring(0,1);
-                revealLetter(consonant);
+                if(revealLetter(consonant))action.setActionWallet(spinResult);
+                else action.setActionWallet(0);
+                action.setActionName("CONSONANT");
                 action.setLetter(consonant);
             }
 
@@ -343,20 +371,31 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         }));
     }
 
+    private void passTurn(){
+        currentMatch.setNextPlayerTurn();
+        if(action!=null)
+        currentMatch.getCurrentManche().addActions(action);
+        ClientRMI.getInstance().updateMatch(currentMatch);
+    }
+
     @FXML
     public void giveSolution(){
-        solutionLabel.setText(openInsertDialog("Insert Solution").toUpperCase());
+
+        String testSol =""+ openInsertDialog("Insert Solution");
+        solutionLabel.setText(testSol);
+        testTextField.setText(testSol);
        String rightSolution =new String(currentMatch.getCurrentSentence());
         System.out.println("frase immessa ");
         System.out.println("frase attuale "+rightSolution);
 
-        if(currentMatch.getCurrentSentence().equals(solutionLabel.getText())){
+        if(currentMatch.getCurrentSentence().equals(testSol)){
             action.setActionName("SOLUTION");
             resultLabel.setText("Correct solution "+currentlyPlaying.getName()+" WINS");
             //finire la manche
-        }else action.setActionName("PASS");
+        }else{ action.setActionName("PASS");
         resultLabel.setText("Wrong solution "+currentlyPlaying.getName()+" PASS");
-        resultLabel.setTextFill(Color.RED);
+        resultLabel.setTextFill(Color.RED);}
+        action.setLetter(testSol);
     }
 
     public void buyVowel(){
@@ -390,5 +429,12 @@ public class GameController extends Pane implements RemoteGameObserverInterface 
         }
         return null;
 
+    }
+
+    public static void setPlayerSol(boolean playerSol) {
+        GameController.playerSol = playerSol;
+        if(playerSol){
+            System.out.println("setato a true");
+        }
     }
 }

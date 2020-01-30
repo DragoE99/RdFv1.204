@@ -514,9 +514,9 @@ public class DataBaseConnection extends Thread implements ServerInterface {
      */
     //todo modificare
     public Match updateMatch(Match match) {
-        match = getMatchbyName(match);
-        activeMatch.put(match.getMatchName(), match);
-
+        /*match = getMatchbyName(match);
+        activeMatch.put(match.getMatchName(), match);*/
+        activeMatch.get(match.getMatchName()).setNextPlayerTurn();
         //activeMatch.replace(match.getMatchName(),match);
         String qry = "UPDATE matches " +
                 "SET user_id = ? ," +
@@ -894,12 +894,16 @@ public class DataBaseConnection extends Thread implements ServerInterface {
     public synchronized void removePlayer(User player, String matchName, RemoteGameObserverInterface o) {
         activeMatch.get(matchName).removePlayer(player);
         if(activeMatch.get(matchName).getPlayers().size()==0){
-            if(activeMatch.get(matchName)
+            activeMatch.get(matchName)
                     .getState()
-                    .equals(StringManager.getString("match_state_created_convention"))){
+                    .equals(StringManager.getString("match_state_created_convention"));
                 deleteMatch(activeMatch.get(matchName));
                 return;
-            }else activeMatch.get(matchName)
+        }
+        if(activeMatch.get(matchName)
+                .getState()
+                .equals(StringManager.getString("match_state_running_convention"))){
+            activeMatch.get(matchName)
                     .setState(StringManager.getString("match_state_interrupted_convention"));
         }
         activeMatch.get(matchName).removeObserver(o);

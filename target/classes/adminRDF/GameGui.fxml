@@ -117,7 +117,8 @@
                         <Font name="System Italic" size="14.0" />
                      </font>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#getTestText" text="Solution" />
+                  <Button fx:id="solutionButton" mnemonicParsing="false" onAction="#giveSolution" text="Solution" />
+                  <Label fx:id="solutionLabel" text="Label" />
                   <TextField fx:id="testTextField" />
                </children>
             </HBox>

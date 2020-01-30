@@ -65,7 +65,7 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
         if(ClientRMI.match!=null){
             System.out.println("match NOT null ClientRMI OVRR Update");
         getMatchFromHash(match.getMatchName());
-        match.notifyObserver();
+        //match.notifyObserver();
         }
         System.out.println("updated object");
 
@@ -110,8 +110,8 @@ public class ClientRMI extends UnicastRemoteObject implements RemoteGameObserver
 
     public Match updateMatch(Match match) {
         try {
-            match = stub.updateMatch(match);
-            return match;
+            stub.updateMatch(match);
+            return ClientRMI.match;
         } catch (RemoteException e) {
             e.printStackTrace();
             return null;

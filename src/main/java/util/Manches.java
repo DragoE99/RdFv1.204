@@ -10,7 +10,7 @@ public class Manches implements Serializable {
     Sentence sentence;
     List<Integer> seenBy;
     Integer[] playerWallet = {0,0,0}; //3 wallet at the end of manche
-    ArrayList<Actions> actions;
+    ArrayList<Actions> actions= new ArrayList<>();
     Integer playerTurn; //possible value 1 2 3
     private ArrayList<User> players;
 
@@ -74,8 +74,8 @@ public class Manches implements Serializable {
         return actions;
     }
 
-    public void setActions(ArrayList<Actions> actions) {
-        this.actions = actions;
+    public void addActions(Actions action) {
+        if(action!=null)this.actions.add(action);
     }
 
     public ArrayList<User> getPlayers() {

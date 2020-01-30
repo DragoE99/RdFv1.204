@@ -42,6 +42,7 @@ public class WaitingRoomController implements RemoteGameObserverInterface, Seria
 	}
 
 	public void begin() throws IOException {
+		ClientRMI.getInstance().getMatch().removeObserver(this);
 		Parent root = FXMLLoader.load(getClass().getResource("/adminRDF/GameGui.fxml"));
 		root.getStylesheets().add("/resources/PrimaryTheme.css");
 		Main.getStage().setScene(new Scene(root));

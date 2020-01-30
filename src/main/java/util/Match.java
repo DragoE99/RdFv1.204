@@ -18,7 +18,7 @@ import java.util.*;
 public class Match extends Observable implements Serializable {
 
 	private int idMatch;
-	private ArrayList<User> players;	//3
+	private ArrayList<User> players=new ArrayList<>();	//3
 	private String matchName;
 	private String state;
 	//created after match started
@@ -114,6 +114,8 @@ public class Match extends Observable implements Serializable {
 		}
 		if (toRemove!=null)
 		players.removeAll(toRemove);
+		setChanged();
+		notifyObservers();
 	}
 
 	public String getMatchName() {
@@ -172,6 +174,8 @@ public class Match extends Observable implements Serializable {
 	}
 	public void setNextPlayerTurn(){
 		manches.get(manches.size()-1).setPlayerTurn((getPlayerTurn()+1)%3);
+		setChanged();
+		notifyObservers();
 	}
 
 	public ArrayList<Sentence> getMancheSentences() {

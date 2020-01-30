@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import playerRdF.ClientRMI;
 
 import java.io.IOException;
 
@@ -37,7 +38,11 @@ public class InsertDialogController {
     }
     @FXML
     public void setTextInserted(ActionEvent event){
-        textInserted = textInsertedTextField.getText();
+        textInserted = textInsertedTextField.getText().toUpperCase();
+        if(thingsToInsertLabel.getText().equals("Insert Solution")){
+        GameController.setPlayerSol(ClientRMI.getInstance().getMatch().getCurrentSentence().equals(textInserted));
+
+        }
         Node source = (Node)  event.getSource();
         Stage stage  = (Stage) source.getScene().getWindow();
         stage.close();
