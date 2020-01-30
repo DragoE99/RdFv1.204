@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DBConnectionController">
+<AnchorPane prefHeight="612.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DBConnectionController">
    <children>
-      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="572.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="-110.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label fx:id="title" text="Database connection" textFill="#c2d3e4">
                <font>
@@ -42,6 +42,16 @@
                </VBox.margin>
             </TextField>
             <PasswordField fx:id="pwd" maxWidth="-Infinity" prefWidth="300.0" promptText="Password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </PasswordField>
+            <TextField fx:id="email" maxWidth="-Infinity" prefWidth="300.0" promptText="Email" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </TextField>
+            <PasswordField fx:id="emailPwd" maxWidth="-Infinity" prefWidth="300.0" promptText="Email password" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>

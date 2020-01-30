@@ -143,7 +143,10 @@ public class ServerThread extends Thread {
 			break;
 			case MANCHEWON: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.MANCHEWON, (Integer)in.readObject());
 			break;
-				case MODIFYSENTENCE: modifySentence();
+			case MODIFYSENTENCE: modifySentence();
+			break;
+			case REMOVEME: ServerListener.removeClient(this);
+			break;
 			default: 
 				break;
 			}
@@ -211,7 +214,7 @@ public class ServerThread extends Thread {
 		//in fine controllo se sono il terzo giocatore e quindi il gioco puo' partire
 				if (myLobby.getNPlayers() == 3) {
 					
-					
+					myLobby.setStatus(true);
 					
 					ServerListener.startGame(myLobby);
 					
@@ -241,6 +244,8 @@ public class ServerThread extends Thread {
 				myLobby.addThread(me.getId());
 				
 				Match match = myLobby.getMatch();
+				
+				match.setSentences(ServerListener.getDB().getMatchSentence(match.getPlayersId()));
 				
 				match.addSpectator(me);
 
@@ -406,7 +411,7 @@ public class ServerThread extends Thread {
 			
 			
 			// metterlo nella lista di lobby
-			addMeToLobby(newLobby);		//non so se funziona
+			addMeToMatch(newLobby);		//non so se funziona
 			
 			//TODO metterlo sul database
 			
@@ -500,8 +505,8 @@ public class ServerThread extends Thread {
 		String text = "Your new password is: '" + newPwd + "'.\n Please remember it or change it.";
 		String subject = "Password reset";
 
-		String from = "ruotadellafortuna321@gmail.com";		//i dati di un nostro account? Pero' non si dovrebbe fare, non so come
-		String pwd = "Rdfaccount9";
+		String from = ServerListener.getEmail();		//i dati di un nostro account? Pero' non si dovrebbe fare, non so come
+		String pwd = ServerListener.getEmailPwd();
 
 		sendMail(from, pwd, to, subject, text);
 	}

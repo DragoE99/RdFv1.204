@@ -287,7 +287,16 @@ public class GameController implements Initializable {
 
 		if(!GameLogic.handleSpinResult(randVal.getText())) { //Se deve passare il turno
 			disable();
+			if(Client.getUser().hasJolly()) {
+				jollyButton.setDisable(false);
+			}
+			disable();
 		} else {
+			if (randVal.getText().equals("JOLLY")) {
+				spinButton.setDisable(false);
+
+				insertConsonant.setDisable(true);
+			}
 			//spinButton.setDisable(false); TODO
 		}
 
@@ -300,6 +309,7 @@ public class GameController implements Initializable {
 		giveSolutionButton.setDisable(true);
 		spinButton.setDisable(true);
 		insertConsonant.setDisable(true);
+		jollyButton.setDisable(true);
 
 	}
 

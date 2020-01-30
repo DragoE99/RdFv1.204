@@ -44,6 +44,9 @@ public class ServerListener {
 	private static int id = -1;
 
 	private static DataBaseConnection DB;
+	
+	private static String email;
+	private static String emailPwd;
 
 
 	public static void main(String args[]) throws IOException {
@@ -328,5 +331,40 @@ public class ServerListener {
 	 */
 	public static boolean AdminPresent() {
 		return DB.checkAdminExistence();
+	}
+
+
+	public static void setMailAndPassword(String mail, String pwd) {
+		
+		setEmail(mail);
+		
+		setEmailPwd(pwd);
+	}
+
+
+	public static String getEmail() {
+		return email;
+	}
+
+
+	public static void setEmail(String email) {
+		ServerListener.email = email;
+	}
+
+
+	public static String getEmailPwd() {
+		return emailPwd;
+	}
+
+
+	public static void setEmailPwd(String emailPwd) {
+		ServerListener.emailPwd = emailPwd;
+	}
+
+
+	public synchronized static void removeClient(ServerThread thread) {
+		
+		clients.remove(thread.getUser().getId());
+		
 	}
 }

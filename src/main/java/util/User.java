@@ -12,7 +12,7 @@ public abstract class User implements Serializable {
 
 	private String name, surname, email, nickname, password;
 	private Integer id;
-	
+	private boolean jolly;
 	/**
 	 * 
 	 * @param name
@@ -126,5 +126,15 @@ public abstract class User implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public void setJolly(boolean b) {
+		this.jolly = b;
+		
+	}
+	
+	
+	public boolean hasJolly() {
+		return jolly;
 	}
 }

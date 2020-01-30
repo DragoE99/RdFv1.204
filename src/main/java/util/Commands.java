@@ -38,7 +38,8 @@ public enum Commands implements Serializable {
 	INSERTSENTENCES,
 	GETALLSENTENCES, 
 	MANCHEWON,
-	MODIFYSENTENCE;
+	MODIFYSENTENCE, 
+	REMOVEME;
 
 
 }

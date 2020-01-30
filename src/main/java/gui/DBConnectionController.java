@@ -35,6 +35,8 @@ public class DBConnectionController implements Initializable{
 	@FXML private TextField name;
 	@FXML private TextField user;
 	@FXML private TextField pwd;
+	@FXML private TextField email;
+	@FXML private TextField emailPwd;
 
 	/**
 	 * Sets the label window title focus traversable. It's used to set the first prompt text field visible.
@@ -54,6 +56,8 @@ public class DBConnectionController implements Initializable{
 		DataBaseConnection DB = new DataBaseConnection(ip.getText(),port.getText(), name.getText(), user.getText(), pwd.getText());
 		
 		ServerListener.setDB(DB);
+		
+		ServerListener.setMailAndPassword(email.getText(), emailPwd.getText());
 		
 		if(ServerListener.AdminPresent()) {
 			//TODO

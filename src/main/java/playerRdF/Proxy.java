@@ -548,4 +548,15 @@ public class Proxy extends Thread {									//cambiare nome?
 		}
 	}
 
+
+	public void removeMe() {
+
+		try {
+			out.writeObject(Commands.REMOVEME);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

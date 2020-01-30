@@ -138,13 +138,13 @@ public class Lobby implements Serializable {
 		return isActive;
 	}
 
-//	/**
-//	 * 
-//	 * @param status
-//	 */
-//	public void setStatus(boolean status) {
-//		this.status = status;
-//	}
+	/**
+	 * 
+	 * @param status
+	 */
+	public void setStatus(boolean status) {
+		this.isActive = status;
+	}
 	
 	/**
 	 * Getter

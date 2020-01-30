@@ -86,6 +86,9 @@ public class GameLogic {
 	 */
 	public static Boolean handleSpinResult(String spinResult) {
 		
+		if (spinResult.equals("JOLLY")) {
+			Client.getUser().setJolly(true);
+		}
 		if(spinResult.equals("PASSA")) {
 			//TODO dare l'opzione di giocare il jolly se ce l'ha
 			yieldTurn();
