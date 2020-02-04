@@ -10,9 +10,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import gui.ServerStarter;
 import javafx.application.Application;
+import playerRdF.Client;
 import util.Admin;
 import util.Commands;
 import util.Lobby;
@@ -44,9 +47,11 @@ public class ServerListener {
 	private static int id = -1;
 
 	private static DataBaseConnection DB;
-	
+
 	private static String email;
 	private static String emailPwd;
+	private static HashMap<String, TimerTask> tasks = new HashMap<String, TimerTask>();
+	private static Timer timer = new Timer();
 
 
 	public static void main(String args[]) throws IOException {
@@ -248,9 +253,19 @@ public class ServerListener {
 
 		putLobby(lobby);
 
-
 		sendNotificationToNextPlayer(match);
+
+		ServerListener.startTimer(10, lobby);
 	}
+
+
+
+
+	public static void stopTask(Lobby lobby) {
+		tasks.get(lobby.getMatch().getName()).cancel();
+
+	}
+
 
 	/**
 	 * Sends a notification to the next player of the specified match
@@ -335,9 +350,9 @@ public class ServerListener {
 
 
 	public static void setMailAndPassword(String mail, String pwd) {
-		
+
 		setEmail(mail);
-		
+
 		setEmailPwd(pwd);
 	}
 
@@ -363,8 +378,156 @@ public class ServerListener {
 
 
 	public synchronized static void removeClient(ServerThread thread) {
-		
+
 		clients.remove(thread.getUser().getId());
-		
+
+	}
+
+
+	/**
+	 * Starts the needed timer
+	 * @param seconds The duration of the timer in seconds
+	 * @param lobby The lobby on which the timer needs to be applied
+	 */
+	public synchronized static void startTimer(int seconds, Lobby lobby) {
+
+		TimerTask tt = new TimerTask() {
+			int i = seconds;
+			@Override
+			public void run() {
+
+				for (Integer th : lobby.getThreads()) {
+
+					clients.get(th).sendTimer(i); //TODO catchare nullpoint gotta catch 'em all!
+
+				}
+				i--;
+				if(i < 0) {
+					clients.get(lobby.getMatch().getCurrentPlayingUser().getId()).sendTimeOut();
+					this.cancel();
+				}
+			}		
+		};
+
+		timer.schedule(tt, 0, 1000); //timerTask, dopo quanto avvio, ogni quanto esegue
+
+		tasks.put(lobby.getMatch().getName(), tt);
+	}
+
+
+	public synchronized static void displayWinnerTimer(Lobby lobby) {
+
+		TimerTask tt = new TimerTask() {
+			int i = 5;
+			@Override
+			public void run() {
+
+				for (Integer th : lobby.getThreads()) {
+
+					clients.get(th).sendTimer(i);//TODO catchare nullpoint gotta catch 'em all!
+
+				}
+				i--;
+				if(i < 0) {
+					if(lobby.getMatch().getManche() <= 5) {
+						for (Integer th : lobby.getThreads()) {
+							clients.get(th).sendNewManche(lobby.getMatch().getManche());
+						}
+						startTimer(0, lobby);
+					} else {
+						endMatch(lobby);
+					}
+					this.cancel();
+				}
+			}		
+		};
+
+		timer.schedule(tt, 0, 1000); //timerTask, dopo quanto avvio, ogni quanto esegue
+
+		tasks.put(lobby.getMatch().getName(), tt);
+	}
+
+
+	protected synchronized static void endMatch(Lobby lobby) { 
+		String winner;
+
+		Map<Integer, Integer> scores = lobby.getMatch().getTotScores();
+		int max = 0;
+		int winnerId = 0;
+
+		for (Integer key : scores.keySet()) {
+			if (max <= scores.get(key)) {
+				max = scores.get(key);
+				winnerId = key;
+			}
+		}
+
+		winner = clients.get(winnerId).getUser().getNickname();
+
+		for (Integer th : lobby.getThreads()) {
+
+			clients.get(th).sendEndMatch(winner);
+		}
+
+		//TODO match sul db(con stato E), rimuovere la lobby da lobbies, rimuovere i giocatori dalla lobby, farpartire endmatchtimer
+		endMatchTimer(lobby);
+
+	}
+
+	public synchronized static void endMatchTimer(Lobby lobby) {
+
+		TimerTask tt = new TimerTask() {
+
+			@Override
+			public void run() {
+				int i= 0;
+				this.cancel();
+
+				for (Integer th : lobby.getThreads()) {
+
+					clients.get(th).sendExitMatch();
+
+
+				}
+
+				lobbies.remove(lobby.getMatch().getName());
+				
+				DB.endMatch(lobby.getMatch().getId());
+
+			}		
+		};
+
+		timer.schedule(tt, 3000); //timerTask, dopo quanto avvio, ogni quanto esegue
+
+		tasks.put(lobby.getMatch().getName(), tt);
+	}
+
+	public synchronized static void resetTimerTask(int i, Lobby lobby) {
+
+		stopTask(lobby);
+
+		startTimer(i, lobby);
+
+	}
+
+
+	public synchronized static void updateManche(Lobby lobby) {
+
+		Match m = lobby.getMatch();
+
+		m.setManche(m.getManche() + 1);
+
+		lobby.setMatch(m);
+
+	}
+
+
+	public static void updateScores(Lobby lobby, Integer senderId, Integer amount) {
+
+		Match match = lobby.getMatch();
+
+		match.setScore(senderId, amount);
+
+
 	}
 }

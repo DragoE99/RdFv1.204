@@ -108,7 +108,7 @@ public class GameLogic {
 	private static void yieldTurn() {
 
 		try {
-			Client.getProxy().endAction();
+			Client.getProxy().endTurn();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -131,10 +131,7 @@ public class GameLogic {
 		
 		if (!consonants.contains(insertedValue)) {
 			
-			Action action = new Action();
-			action.setActionName("PASS");
-			action.setActionWallet(0);
-			action.setLetterCalled(insertedValue);
+			//
 			
 			yieldTurn();
 			

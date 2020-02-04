@@ -17,6 +17,8 @@ import gui.GameController;
 import gui.Main;
 import gui.WaitingRoomController;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import util.*;
 
 
@@ -84,10 +86,6 @@ public class Proxy extends Thread {									//cambiare nome?
 			isRunning = true;
 
 			while (isRunning) {
-
-				sleep(1000);
-
-
 				
 				
 				if(inWaitingRoom) {
@@ -256,15 +254,62 @@ public class Proxy extends Thread {									//cambiare nome?
 				break;
 				case MANCHEWON: {
 					String s = (String)in.readObject();
-
 					Platform.runLater(new Runnable() {
 						@Override public void run() {System.out.println("qua ci entro" + s);
 						((GameController)(Main.getLoader().getController())).setHint(s);
 						((GameController)(Main.getLoader().getController())).setSentenceVisible();
+						
 						}
 					});
 				}
-				default: System.out.println("Non so perche' ma sono qui");
+				break;
+				case TIMER : {
+					String s = (String)in.readObject();
+
+					Platform.runLater(new Runnable() {
+						@Override public void run() {System.out.println("proxy riceve comando timer");
+						((GameController)(Main.getLoader().getController())).setTimer(s);
+						}
+					});
+				}
+				break;
+				case TIMEOUT : {
+					Platform.runLater(new Runnable() {
+						@Override public void run() {System.out.println("proxy riceve comando timeout");
+						((GameController)(Main.getLoader().getController())).disable();
+						}
+					});
+				}
+				break;
+				case NEWMANCHE : {
+					int newManche = (int)in.readObject();
+					Client.getMatch().setManche(newManche);
+					Platform.runLater(new Runnable() {	
+						@Override public void run() {System.out.println("proxy riceve comando NEWMANCHE");
+						((GameController)(Main.getLoader().getController())).resetScreen();
+						}
+					});
+				}
+				break;
+				case ENDMATCH : {
+					String s = (String)in.readObject();
+					Platform.runLater(new Runnable() {	
+						@Override public void run() {System.out.println("proxy riceve comando endmatch");
+						((GameController)(Main.getLoader().getController())).setHint("Partita vinta da " + s + "!");
+						}
+					});
+				}
+				break;
+				case EXITMATCH : {
+					setInGameWindow(false);
+					Platform.runLater(new Runnable() {	
+						@Override public void run() {System.out.println("proxy riceve comando EXITmatch");
+						((GameController)(Main.getLoader().getController())).exitMatch();
+						}
+					});
+				}
+				break;
+				default: 
 				break;
 				}
 			} catch (Exception e) {
@@ -327,7 +372,13 @@ public class Proxy extends Thread {									//cambiare nome?
 	@SuppressWarnings("unchecked")
 	public HashMap<String, Lobby> demandLobbyList() throws IOException, ClassNotFoundException {
 		out.writeObject(Commands.NEEDLOBBYLIST);
-		HashMap<String, Lobby> map = (HashMap<String, Lobby>) in.readObject();
+		Object obj = in.readObject();
+		HashMap<String, Lobby> map = new HashMap<String, Lobby>();
+		try {
+		map = (HashMap<String, Lobby>) obj;
+		} catch(ClassCastException e) {
+			System.out.println(obj.toString());
+		}
 		
 		//print di controllo
 		System.out.print("Proxy:");
@@ -490,9 +541,9 @@ public class Proxy extends Thread {									//cambiare nome?
 	 * Inform the server that the client has finished his action
 	 * @throws IOException
 	 */
-	public void endAction() throws IOException {
+	public void endTurn() throws IOException {
 		// TODO Auto-generated method stub
-		out.writeObject(Commands.ENDACTION);
+		out.writeObject(Commands.ENDTURN);
 	}
 	
 	/**
@@ -547,6 +598,16 @@ public class Proxy extends Thread {									//cambiare nome?
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void deleteSentence(Sentence sentence){
+		try {
+			out.writeObject(Commands.DELETESENTENCE);
+			out.writeObject(sentence);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 
 	public void removeMe() {
@@ -557,6 +618,51 @@ public class Proxy extends Thread {									//cambiare nome?
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+
+	public void buttonPressedNotification(Commands command) {
+
+		try {
+			out.writeObject(command);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+			try {
+				out.reset();
+				in.reset();
+			} catch (IOException e) {
+				System.out.println("Non e' stato possibile fare il reset dello stream, Proxy:599");
+			}
+			
+		
+		
+	}
+
+
+	public void activateJolly() {
+		
+		try {
+			out.writeObject(Commands.ACTIVATEJOLLY);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	public void sendDeposit(int deposit) {
+		
+		try {
+			out.writeObject(Commands.DEPOSIT);
+			out.writeObject(deposit);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

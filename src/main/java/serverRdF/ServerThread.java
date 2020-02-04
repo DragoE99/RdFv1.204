@@ -172,6 +172,7 @@ public class ServerThread extends Thread {
 				break;
 				case ACTIVATEJOLLY: ServerListener.resetTimerTask(3, ServerListener.getLobbies().get(myLobby.getMatch().getName()));
 				break;
+				case QUITWR: quitWR();
 				default: 
 					break;
 				}
@@ -181,12 +182,52 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * 
+	 */
+	private synchronized void quitWR() {
+		
+		Lobby lobby = ServerListener.getLobbies().get(myLobby.getMatch().getName());
+		Match match = lobby.getMatch();
+		
+		//rimuovi da lobby e match
+		lobby.removeThread(getUser().getId());
+		lobby.setNPlayers(lobby.getNPlayers() - 1);
+		boolean last = match.removePlayer(getUser());
+		
+		if(lobby.getNPlayers() < 1 && last) {
+			//elimina da lobbies
+			ServerListener.getLobbies().remove(match.getName());
+			
+			//elimina il match dal DB
+			ServerListener.getDB().deleteMatchFromName(match);
+		}
+		try {
+			out.reset();
+			out.writeObject(Commands.QUITWR);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		myLobby = null;
+	}
+
+
+	/*Deletes the sentence from the database 
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private void deleteSentence() throws ClassNotFoundException, IOException {
 		Sentence sentence =(Sentence)in.readObject();
 		ServerListener.getDB().deleteSentence(sentence);
 	}
 
 
+	/**
+	 * Modifies the sentence on the database
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private void modifySentence() throws IOException, ClassNotFoundException {
 		Sentence sentence =(Sentence)in.readObject();
 		ServerListener.getDB().modifySentence(sentence);
@@ -677,6 +718,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public synchronized void insertSentences(){
 		try {
 			List<Sentence> sentences = (List<Sentence>) in.readObject();
@@ -690,6 +734,10 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 
+	 */
 	private synchronized void getAllSentences() {
 		ArrayList<Sentence> sentences = ServerListener.getDB().getAllSentence();
 		try {
@@ -699,7 +747,10 @@ public class ServerThread extends Thread {
 		}
 	}
 
-
+	/**
+	 * 
+	 * @param i
+	 */
 	public synchronized void sendTimer(int i) {
 		try {
 			out.writeObject(Commands.TIMER);
@@ -711,7 +762,9 @@ public class ServerThread extends Thread {
 
 	}
 
-
+	/**
+	 * 
+	 */
 	public synchronized void sendTimeOut() {
 
 		try {
@@ -741,7 +794,10 @@ public class ServerThread extends Thread {
 
 	}
 
-
+	/**
+	 * 
+	 * @param winner
+	 */
 	public synchronized void sendEndMatch(String winner) {
 
 		
@@ -755,7 +811,9 @@ public class ServerThread extends Thread {
 		
 	}
 
-
+	/**
+	 * 
+	 */
 	public synchronized void sendExitMatch() {
 
 		try {

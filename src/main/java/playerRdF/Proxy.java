@@ -115,8 +115,11 @@ public class Proxy extends Thread {									//cambiare nome?
 	 * Check if the server send the start notification and then opens the Game window
 	 */
 	private void startGame() {
+		
+		
 		 try {
-			if((Commands)in.readObject() == Commands.START) {
+			 Commands c = (Commands) in.readObject();
+			if(c == Commands.START) {
 				
 				inWaitingRoom = false;
 				
@@ -132,6 +135,8 @@ public class Proxy extends Thread {									//cambiare nome?
 					}
 					}
 				});
+			} else if(c == Commands.QUITWR) {
+				
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -579,17 +584,34 @@ public class Proxy extends Thread {									//cambiare nome?
 		this.inWaitingRoom = inWaitingRoom;
 	}
 
+	/**
+	 * Asks the server to add the list of sentences to the database
+	 * @param sentences
+	 * @param u
+	 * @throws IOException
+	 */
 	public void insertSentence(List<Sentence> sentences, User u) throws IOException {
 		out.writeObject(Commands.INSERTSENTENCES);
 		out.writeObject(sentences);
 		out.writeObject(u);
 
 	}
+	
+	/**
+	 * Asks the server for the sentences on the database
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public ArrayList<Sentence> getAllSentences() throws IOException, ClassNotFoundException {
 		out.writeObject(Commands.GETALLSENTENCES);
 		return (ArrayList<Sentence>)in.readObject();
 	}
 
+	/**
+	 * Asks the server to modify the sentence passed as argument on the database
+	 * @param sentence
+	 */
 	public void modifySentence(Sentence sentence){
 		try {
 			out.writeObject(Commands.MODIFYSENTENCE);
@@ -599,7 +621,10 @@ public class Proxy extends Thread {									//cambiare nome?
 		}
 	}
 	
-	
+	/**
+	 * Deletes the sentence passed as argument from the database
+	 * @param sentence
+	 */
 	public void deleteSentence(Sentence sentence){
 		try {
 			out.writeObject(Commands.DELETESENTENCE);
@@ -609,7 +634,9 @@ public class Proxy extends Thread {									//cambiare nome?
 		}
 	}
 
-
+	/**
+	 * Removes the user that sends the request from the connected players on the server
+	 */
 	public void removeMe() {
 
 		try {
@@ -620,7 +647,10 @@ public class Proxy extends Thread {									//cambiare nome?
 		}
 	}
 
-
+	/**
+	 * 
+	 * @param command
+	 */
 	public void buttonPressedNotification(Commands command) {
 
 		try {
@@ -642,7 +672,9 @@ public class Proxy extends Thread {									//cambiare nome?
 		
 	}
 
-
+	/**
+	 * 
+	 */
 	public void activateJolly() {
 		
 		try {
@@ -653,7 +685,10 @@ public class Proxy extends Thread {									//cambiare nome?
 		
 	}
 
-
+	/**
+	 * 
+	 * @param deposit
+	 */
 	public void sendDeposit(int deposit) {
 		
 		try {
@@ -663,6 +698,22 @@ public class Proxy extends Thread {									//cambiare nome?
 			e.printStackTrace();
 		}
 		
+	}
+
+	/**
+	 * 
+	 */
+	public void quitWR() {
+		
+		try {
+			out.writeObject(Commands.QUITWR);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		setInWaitingRoom(false);
 	}
 
 }

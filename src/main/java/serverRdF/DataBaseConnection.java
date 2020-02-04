@@ -1133,10 +1133,10 @@ public class DataBaseConnection {
             ArrayList<Integer> userId= new ArrayList<>();
             while (rs.next()){
                 Integer playerId= rs.getInt("player_id");
-
-                User u =getUserById(playerId);
-                String player = u.getName();
+                
                 if(!userId.contains(playerId)) {
+                	User u =getUserById(playerId);
+                	String player = u.getName();
                     String sentence = rs.getString("sentence");
                     int pointsGained = rs.getInt("max");
                     String letterCalled = rs.getString("letter_called");

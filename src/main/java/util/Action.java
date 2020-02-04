@@ -30,6 +30,9 @@ public class Action {
 	
 	private String letterCalled;
 	
+	public Action() {
+		super();
+	}
 	
 	public Action(Integer turn, Integer playerId, String actionName, boolean jolly, Integer actionWallet, Integer playerNumber,
             		String letterCalled, Integer matchId, Integer mancheNumber) {

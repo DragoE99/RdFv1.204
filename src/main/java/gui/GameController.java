@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import playerRdF.Client;
 import playerRdF.GameLogic;
+import util.Action;
 import util.Commands;
 import util.Sentence;
 
@@ -238,9 +240,9 @@ public class GameController implements Initializable {
 
 		for (int i = 0; i < panes.length; i++) {
 			for (int j = 0; j < panes[0].length; j++) {
-				
+
 				panes[i][j].setBackground(new Background(new BackgroundFill(Paint.valueOf("#21232F"), null, null)));
-				
+
 			}
 		}
 
@@ -249,7 +251,7 @@ public class GameController implements Initializable {
 		insertSentence(sentence);
 
 		hint.setText(sentence.getHint());
-		
+
 		hint.setTextFill(Paint.valueOf("#C2D3E4"));
 
 		wallet.setText(0 + "");
@@ -295,7 +297,7 @@ public class GameController implements Initializable {
 	public void spin(ActionEvent e) throws IOException { 
 
 		Client.getProxy().buttonPressedNotification(Commands.SPINBUTTON);
-		
+
 		spinButton.setDisable(true);
 
 		insertConsonant.setDisable(false);
@@ -361,31 +363,70 @@ public class GameController implements Initializable {
 			disable();
 			Client.getProxy().endTurn();
 
+			createAndSendAction(null, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+					null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+
+
 		} else {
 
 			if (!GameLogic.handleInsertedConsonant(insertConsonant.getText())) {
 				disable();
+
+				createAndSendAction(null, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+						null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+
 				useJollyIfPresent();
 			} else {
 
 				int counter = GameLogic.consonantOccurrences(this.sentence.getSentence(), insertConsonant, labels);
 
 				if(counter > 0) {
-					Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK);
-					spinButton.setDisable(false);
-					sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETABLE);
+					if (isVisibleAsLabel(insertConsonant)) {
+						Client.getProxy().endTurn();
+						disable();
+					} else {
+						Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK);
+						spinButton.setDisable(false);
+						sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETABLE);
+
+						int actionWallet = Integer.parseInt(randVal.getText()) * counter;
+
+						createAndSendAction(null, Client.getUser().getId(), "CONSONANT", Client.getUser().hasJolly(), actionWallet, 
+								null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+
+						wallet.setText((Integer.parseInt(randVal.getText()) * counter + Integer.parseInt(wallet.getText())+""));
+					}
 				} else {
 					disable();
+
+					createAndSendAction(null, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+							null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+
 					useJollyIfPresent();
 				}
 
-				wallet.setText((Integer.parseInt(randVal.getText()) * counter + Integer.parseInt(wallet.getText())+""));
+				
 
 			}
 
 		}
 	}
 
+
+
+
+	private boolean isVisibleAsLabel(TextField insertConsonant) {
+
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (labels[i][j].getText().equalsIgnoreCase(insertConsonant.getText()) && labels[i][j].isVisible()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 
 	private void useJollyIfPresent() {
 		if(Client.getUser().hasJolly()) {
@@ -398,9 +439,9 @@ public class GameController implements Initializable {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param e
@@ -408,8 +449,12 @@ public class GameController implements Initializable {
 	public void useJolly(ActionEvent e) {
 		Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK); //L'effetto che si ottiene è quello di resettare il timer a 5 secondi invece di perdere il turno
 		jollyButton.setDisable(true);
+
+		createAndSendAction(null, Client.getUser().getId(), "USE_JOLLY", Client.getUser().hasJolly(), 0, 
+				null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+
 		enable();
-		
+
 	}
 
 	private void sendUpdate(String s, Commands command) throws IOException {
@@ -563,7 +608,20 @@ public class GameController implements Initializable {
 	}
 
 	private void pressedVowel(String pressed) {
+		HashSet<Character> called = new HashSet<Character>();
 
+		if (!sentence.getSentence().contains(pressed)) {
+			//svuoto vocali chiamate prima di finire il turno
+			called.clear();
+			try {
+				Client.getProxy().endTurn();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		called.add(pressed.charAt(0));
 		try {
 			sendUpdate(pressed, Commands.UPDATEGAMETABLE);
 			sendUpdate(pressed, Commands.UPDATEGAMETEXT);
@@ -612,6 +670,7 @@ public class GameController implements Initializable {
 
 
 	public void giveSolution(ActionEvent e) {
+		insertSolution.setDisable(true);
 		Client.getProxy().buttonPressedNotification(Commands.SOLUTIONBUTTON);
 		insertSolution.setVisible(true);
 	}
@@ -632,7 +691,7 @@ public class GameController implements Initializable {
 			Client.getProxy().sendDeposit(Integer.parseInt(deposit.getText()));
 			wallet.setText(0 + "");
 			disable();
-			
+
 		} else {
 			disable();
 			useJollyIfPresent();
@@ -654,9 +713,9 @@ public class GameController implements Initializable {
 	public void setTimer(String s) {
 
 		timer.setText("Remaining time: " + s + " sec");
-		
+
 	}
-	
+
 	/**
 	 * Back to the menu window when the match is finished
 	 */
@@ -670,6 +729,16 @@ public class GameController implements Initializable {
 		}
 		Main.setLoader(newLoader);	
 	}
+
+
+	private void createAndSendAction(Integer turn, Integer playerId, String actionName, boolean jolly, Integer actionWallet, Integer playerNumber,
+			String letterCalled, Integer matchId, Integer mancheNumber) {
+		Action action = new Action(turn, playerId, actionName, jolly, actionWallet, playerNumber, letterCalled, matchId, mancheNumber);
+
+		//Client.getProxy().sendAction(action);
+
+	}
+
 
 }
 

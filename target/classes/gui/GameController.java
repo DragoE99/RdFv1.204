@@ -175,8 +175,11 @@ public class GameController implements Initializable {
 	@FXML private Button i;
 	@FXML private Button o;
 	@FXML private Button u;
-	
+
 	@FXML private TextField insertSolution;
+
+	@FXML private Label nManche;
+	@FXML private Label timer;
 
 
 	private Label [][] labels;	
@@ -212,11 +215,7 @@ public class GameController implements Initializable {
 										pane3_8, pane3_9, pane3_10, pane3_11, pane3_12, pane3_13, pane3_14}};
 
 
-										sentence = Client.getMatch().getSentences().get(1);
-
-										insertSentence(sentence);
-
-										hint.setText(sentence.getHint());
+										resetScreen();
 
 										userName.setText(Client.getUser().getNickname());
 
@@ -232,6 +231,30 @@ public class GameController implements Initializable {
 											depositIcon.setVisible(false);
 											walletIcon.setVisible(false);
 										}
+
+	}
+
+	public void resetScreen() {
+
+		for (int i = 0; i < panes.length; i++) {
+			for (int j = 0; j < panes[0].length; j++) {
+				
+				panes[i][j].setBackground(new Background(new BackgroundFill(Paint.valueOf("#21232F"), null, null)));
+				
+			}
+		}
+
+		sentence = Client.getMatch().getSentences().get(Client.getMatch().getManche());
+
+		insertSentence(sentence);
+
+		hint.setText(sentence.getHint());
+		
+		hint.setTextFill(Paint.valueOf("#C2D3E4"));
+
+		wallet.setText(0 + "");
+
+		nManche.setText("Manche: " + Client.getMatch().getManche());
 
 	}
 
@@ -271,6 +294,8 @@ public class GameController implements Initializable {
 	 */
 	public void spin(ActionEvent e) throws IOException { 
 
+		Client.getProxy().buttonPressedNotification(Commands.SPINBUTTON);
+		
 		spinButton.setDisable(true);
 
 		insertConsonant.setDisable(false);
@@ -304,12 +329,15 @@ public class GameController implements Initializable {
 	}
 
 
-	private void disable() {
+	public void disable() {
 		buyVowelButton.setDisable(true);
 		giveSolutionButton.setDisable(true);
 		spinButton.setDisable(true);
 		insertConsonant.setDisable(true);
 		jollyButton.setDisable(true);
+		insertSolution.setVisible(false);
+		insertConsonant.setText("");
+		insertSolution.setText("");
 
 	}
 
@@ -325,26 +353,30 @@ public class GameController implements Initializable {
 
 
 		insertConsonant.setDisable(true);
-		
+
 		sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETEXT);
 
 		if (insertConsonant.getText().length() != 1) {
 
-			Client.getProxy().endAction();
+			disable();
+			Client.getProxy().endTurn();
 
 		} else {
 
 			if (!GameLogic.handleInsertedConsonant(insertConsonant.getText())) {
 				disable();
+				useJollyIfPresent();
 			} else {
 
 				int counter = GameLogic.consonantOccurrences(this.sentence.getSentence(), insertConsonant, labels);
 
 				if(counter > 0) {
+					Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK);
 					spinButton.setDisable(false);
 					sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETABLE);
 				} else {
-					Client.getProxy().endAction();
+					disable();
+					useJollyIfPresent();
 				}
 
 				wallet.setText((Integer.parseInt(randVal.getText()) * counter + Integer.parseInt(wallet.getText())+""));
@@ -354,6 +386,31 @@ public class GameController implements Initializable {
 		}
 	}
 
+
+	private void useJollyIfPresent() {
+		if(Client.getUser().hasJolly()) {
+			jollyButton.setDisable(false);
+			Client.getProxy().activateJolly();
+		} else {
+			try {
+				Client.getProxy().endTurn();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 */
+	public void useJolly(ActionEvent e) {
+		Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK); //L'effetto che si ottiene è quello di resettare il timer a 5 secondi invece di perdere il turno
+		jollyButton.setDisable(true);
+		enable();
+		
+	}
 
 	private void sendUpdate(String s, Commands command) throws IOException {
 		Client.getProxy().sendGameUpdate(s, command);
@@ -545,23 +602,24 @@ public class GameController implements Initializable {
 			System.out.println("Non hai abbastanza soldi");
 
 			try {
-				Client.getProxy().endAction();
+				Client.getProxy().endTurn();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	public void giveSolution(ActionEvent e) {
+		Client.getProxy().buttonPressedNotification(Commands.SOLUTIONBUTTON);
 		insertSolution.setVisible(true);
 	}
-	
-	
-	
+
+
+
 	public void checkSolution(ActionEvent e) {
-		
+
 		if (insertSolution.getText().trim().equalsIgnoreCase(sentence.getSentence())) {
 			//TODO mostrare a tutti il vincitore e passare alla prossima manche
 			try {
@@ -570,26 +628,47 @@ public class GameController implements Initializable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			deposit.setText(Integer.parseInt(deposit.getText()) + Integer.parseInt(wallet.getText()) + "");
+			Client.getProxy().sendDeposit(Integer.parseInt(deposit.getText()));
+			wallet.setText(0 + "");
+			disable();
+			
 		} else {
-			try {
-				Client.getProxy().endAction();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			disable();
+			useJollyIfPresent();
 		}
-		
+
 		insertSolution.setVisible(false);
-		
+
 	}
 
 	public void setSentenceVisible() {
-		
+
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 15; j++) {
-					this.labels[i][j].setVisible(true);
+				this.labels[i][j].setVisible(true);
 			}
 		}
+	}
+
+	public void setTimer(String s) {
+
+		timer.setText("Remaining time: " + s + " sec");
+		
+	}
+	
+	/**
+	 * Back to the menu window when the match is finished
+	 */
+	public void exitMatch() {
+		FXMLLoader newLoader = new FXMLLoader(getClass().getResource("Menu.fxml"));
+		try {
+			Main.getStage().setScene(new Scene(newLoader.load()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Main.setLoader(newLoader);	
 	}
 
 }

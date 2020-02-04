@@ -10,11 +10,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.ModifySentenceSearchController">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.DeleteSentenceController">
    <children>
-      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" layoutX="20.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label fx:id="title" text="Modify sentence" textFill="#c2d3e4">
+            <Label fx:id="title" text="Delete sentence" textFill="#c2d3e4">
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
@@ -23,7 +24,7 @@
                </VBox.margin>
             </Label>
             <ListView fx:id="list" prefHeight="200.0" prefWidth="200.0" />
-            <Button mnemonicParsing="false" onAction="#search" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Select" textFill="#c2d3e4">
+            <Button mnemonicParsing="false" onAction="#delete" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #424967;" text="Delete" textFill="#c2d3e4">
                <font>
                   <Font size="30.0" />
                </font>
@@ -33,7 +34,7 @@
             </Button>
          </children>
       </VBox>
-      <ImageView fx:id="back" fitHeight="49.0" fitWidth="64.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="back" fitHeight="49.0" fitWidth="64.0" layoutX="20.0" layoutY="20.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@backIcon1.png" />
          </image>

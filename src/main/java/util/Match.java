@@ -91,7 +91,23 @@ public class Match implements Serializable {
 		}else {/*TODO Gestisci l'errore*/}
 	}
 
-	
+	/**
+	 * 
+	 * @param u
+	 */
+	public synchronized boolean removePlayer(User u) {
+		boolean last = false;
+		for(int i = 0; i < players.size(); i++) {
+			if(players.get(i).getId().equals(u.getId())) {
+				//se l'array contiene un solo elemento
+				if(players.size() == 1) {
+					last = true;
+				}
+				players.remove(i);
+			}	
+		}
+		return last;
+	}
 
 	/**
 	 * Getter

@@ -28,10 +28,23 @@ public class Action {
 	
 	private Integer playerNumber;
 	
-	private Character letterCalled;
+	private String letterCalled;
 	
 	
-	public Action() {}
+	public Action(Integer turn, Integer playerId, String actionName, boolean jolly, Integer actionWallet, Integer playerNumber,
+            		String letterCalled, Integer matchId, Integer mancheNumber) {
+		
+		setTurn(turn);
+		setPlayerId(playerId);
+		setActionName(actionName);
+		setJolly(jolly);
+		setActionWallet(actionWallet);
+		setPlayerNumber(playerNumber);
+		setLetterCalled(letterCalled);
+		setMatchId(matchId);
+		setMancheNumber(mancheNumber);
+		
+	}
 
 	/**
 	 * 
@@ -184,7 +197,7 @@ public class Action {
 	 * Getter
 	 * @return
 	 */
-	public Character getLetterCalled() {
+	public String getLetterCalled() {
 		return letterCalled;
 	}
 
@@ -192,7 +205,7 @@ public class Action {
 	 * Setter
 	 * @param letterCalled
 	 */
-	public void setLetterCalled(Character letterCalled) {
+	public void setLetterCalled(String letterCalled) {
 		this.letterCalled = letterCalled;
 	}
 	

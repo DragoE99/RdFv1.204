@@ -37,6 +37,14 @@
                   <Font size="30.0" />
                </font>
             </Button>
+            <Button alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#delete" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: #424967;" text="Delete" textFill="#c2d3e4">
+               <font>
+                  <Font size="30.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
             <Button alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#importCSV" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: #424967;" text="Import CSV" textFill="#c2d3e4">
                <VBox.margin>
                   <Insets top="10.0" />

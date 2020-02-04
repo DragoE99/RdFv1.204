@@ -9,38 +9,21 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.Sentence;
 
-/**
- * The controller for sentenceSearch window
- * 
- * @author Achille Lambrughi
- * @author Emanuele Drago
- * @author Lorenzo Ottaviani
- * @author Elisabeth Veronika Venturino
- *
- */
-public class ModifySentenceSearchController {
-
-	@FXML private ImageView back;
-	@FXML private Label title;
-
-	@FXML private ListView<String> list;
-
+public class DeleteSentenceController {
 	private ArrayList<Sentence> frasi;
+	@FXML private ListView<String> list;
 
 	/**
 	 * Displays list of sentences.
 	 */
 	public void initialize() {
-		title.setFocusTraversable(true);
 
 		ArrayList<String> sentences = new ArrayList<>();
 
@@ -61,6 +44,39 @@ public class ModifySentenceSearchController {
 
 		list.setItems(ob);
 	}
+	
+	/**
+	 * Deletes the selected sentence.
+	 * @throws IOException .
+	 */
+	private void delete() throws IOException {
+		//TODO cancella la frase da DB
+		
+		Sentence s = frasi.get(list.getSelectionModel().getSelectedIndex());
+		
+		Client.getProxy().deleteSentence(s);
+		
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
+	}
+
+	/**
+	 * Sends to modify sentence window and memorizes the sentence searched.
+	 * @param e Action on "delete" button.
+	 * @throws IOException .
+	 */
+	public void delete(ActionEvent e) throws IOException {
+		delete();
+	}
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException {
+		if(e.getCode().toString().equals("ENTER")) {
+			delete();
+		}
+	}
 
 	/**
 	 * Goes to the previous window.
@@ -73,44 +89,4 @@ public class ModifySentenceSearchController {
 			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
 		}
 	}
-
-	/**
-	 * Searches the sentence in the DB.
-	 * @throws IOException .
-	 */
-	private void search() throws IOException {
-
-		String selected = list.getSelectionModel().getSelectedItem();
-		Sentence choice = null;
-		for (Sentence sentence : frasi) {
-			if(sentence.getSentence().equals(selected))
-				choice = sentence;
-		}
-
-		if(choice != null) {
-			ModifySentenceController.setSentence(choice);
-
-			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ModifySentence.fxml"))));
-		}
-
-	}
-	/**
-	 * Sends to modify sentence window and memorizes the sentence searched.
-	 * @param e Action on "search" button.
-	 * @throws IOException .
-	 */
-	public void search(ActionEvent e) throws IOException {
-		search();
-	}
-	/**
-	 * Allows to press confirm button by pressing ENTER.
-	 * @param e the pressed key.
-	 * @throws IOException .
-	 */
-	public void buttonPressed(KeyEvent e) throws IOException {
-		if(e.getCode().toString().equals("ENTER")) {
-			search();
-		}
-	}
-
 }

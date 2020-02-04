@@ -52,6 +52,15 @@ public class ManageSentenceController {
 	}
 
 	/**
+	 * Sends in deleteSentence.
+	 * @param e Action on "Delete" button.
+	 * @throws IOException .
+	 */
+	public void delete(ActionEvent e) throws IOException {
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("DeleteSentence.fxml"))));
+	}
+	
+	/**
 	 * Sends in CSVfile.
 	 * @param e Action on "Import CSV" button.
 	 * @throws IOException .
