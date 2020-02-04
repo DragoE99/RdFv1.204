@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import playerRdF.Client;
 
 /**
  * The controller for waiting room window
@@ -29,16 +30,16 @@ public class WaitingRoomController {
 	public void back(MouseEvent e) throws IOException {
 
 		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Client.getProxy().setInWaitingRoom(false);
 			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
 		}
 	}
 	
 	/**
 	 * If there are enough players, sends to game screen.
-	 * @param e Action on "Begin" button.
 	 * @throws IOException .
 	 */
-	public void begin(ActionEvent e) throws IOException {	
+	public void begin() throws IOException {	
 		FXMLLoader newLoader = new FXMLLoader(getClass().getResource("Game.fxml"));
 		Main.getStage().setScene(new Scene(newLoader.load()));
 		Main.setLoader(newLoader);	

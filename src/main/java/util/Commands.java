@@ -27,7 +27,7 @@ public enum Commands implements Serializable {
 	NOTVERIFIED, 
 	ACTIVATIONCODE,
 	QUIT, 
-	ENDACTION, 
+	ENDTURN, 
 	PLAY, 
 	START, 
 	SPECTATE,
@@ -39,7 +39,32 @@ public enum Commands implements Serializable {
 	GETALLSENTENCES, 
 	MANCHEWON,
 	MODIFYSENTENCE, 
-	REMOVEME;
+	DELETESENTENCE,
+	REMOVEME, 
+	TIMER, 
+	TIMEOUT, 
+	SPINBUTTON,
+	SOLUTIONBUTTON,
+	CONSONANTOK,
+	ACTIVATEJOLLY,
+	NEWMANCHE,
+	ENDMATCH,
+	DEPOSIT,
+	EXITMATCH;
 
+	
+	@Override
+	public String toString() {
+		switch (this) {
+		case TIMEOUT: return "TIMEOUT";
+		
+		case EXITMATCH: return "EXITMATCH";
+		
+		case NEWMANCHE: return "NEWMANCHE";
+
+		default: return "altro comando";
+
+		}
+	}
 
 }

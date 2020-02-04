@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.Sentence;
 
@@ -71,6 +72,18 @@ public class CreateSentenceController implements Initializable{
 	public void buttonPressed(KeyEvent e) throws IOException {
 		if(e.getCode().toString().equals("ENTER")) {
 			create();
+		}
+	}
+	
+	/**
+	 * Goes to the previous window.
+	 * @param e Action on back icon.
+	 * @throws IOException .
+	 */
+	public void back(MouseEvent e) throws IOException {
+
+		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
 		}
 	}
 }

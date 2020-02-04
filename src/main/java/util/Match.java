@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.omg.CORBA.INITIALIZE;
+
 /**
  * Match is our game state class, that will be passed back and forth and updated between client and server 
  * 
@@ -24,7 +26,7 @@ public class Match implements Serializable {
 	private Integer id = null; //TODO 
 	private ArrayList<User> players = new ArrayList<User>();	//3
 	private ArrayList<User> spectators = new ArrayList<User>();
-	private HashMap<Integer, Integer> totScores; 	// <id user, punteggio totale della sua partita>
+	private HashMap<Integer, Integer> totScores = new HashMap<Integer, Integer>(); 	// <id user, punteggio totale della sua partita>
 	private Integer manche;
 	private HashMap<Integer, ArrayList<Integer>> mancheScore; //3 , 5  <Id user, lista dei punteggi di ciascuna delle 5 manche>
 	private User currentPlayingUser; // app. a players 
@@ -36,9 +38,10 @@ public class Match implements Serializable {
 	 * Default Constructor
 	 */
 	public Match() {
-
+		initializeScores();
 	}
 	
+
 	/**
 	 * constructor
 	 * @param name
@@ -62,13 +65,30 @@ public class Match implements Serializable {
 	}
 	
 	/**
+	 * 
+	 * @param matchId Id of this match
+	 * @param matchName Name of this match
+	 */
+	public Match(Integer matchId, String matchName) {
+
+		id = matchId;
+		
+		name = matchName;
+		
+	}
+
+
+	/**
 	 * Method that adds an user to the list of players, if not already full
 	 * @param u the user to be added
 	 */
 	public synchronized void addPlayer(User u) {
-		if(players.size() < 3)
+		if(players.size() < 3) {
 		players.add(u);
-		else {/*TODO Gestisci l'errore*/}
+		if(players.size() == 3) {
+			initializeScores();
+		}
+		}else {/*TODO Gestisci l'errore*/}
 	}
 
 	
@@ -219,6 +239,34 @@ public class Match implements Serializable {
 		this.manche = manche;
 	}
 
+	/**
+	 * @return the totScores
+	 */
+	public HashMap<Integer, Integer> getTotScores() {
+		return totScores;
+	}
 
+	/**
+	 * @param totScores the totScores to set
+	 */
+	public void setTotScores(HashMap<Integer, Integer> totScores) {
+		this.totScores = totScores;
+	}
+
+
+	private void initializeScores() {
+		
+		for (User key : players) {
+			totScores.put(key.getId(), 0);
+		}
+		
+	}
+
+
+	public void setScore(Integer playerId, Integer amount) {
+
+		totScores.put(playerId, amount);
+		
+	}
 
 }

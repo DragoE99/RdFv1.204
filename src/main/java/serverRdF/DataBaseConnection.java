@@ -163,7 +163,7 @@ public class DataBaseConnection {
         User temp;
         try (Connection conn = getConnectionInstance()) {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='" + email + "' AND password = '" + password + "'");
+            ResultSet rs = st.executeQuery("SELECT * FROM users WHERE mail='" + email + "' AND password = crypt('" + password +"', password)");
             rs.next();
             //System.out.println(rs.getString("name") + " " + rs.getString("surname"));
             String role = rs.getString("role");
@@ -311,7 +311,7 @@ public class DataBaseConnection {
                 + " surname = ?,"
                 + " mail = ?,"
                 + " nickname = ?,"
-                + " password = ?,"
+                + " password = crypt(?, gen_salt('bf')),"
                 + " last_change_date = CURRENT_TIMESTAMP "
                 + "WHERE id = ?";
 
@@ -368,7 +368,7 @@ public class DataBaseConnection {
      * @param newUser
      */
     public int insertUser(User newUser) {
-        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, crypt('"+newUser.getPassword()+"', gen_salt('bf')), ?, ?)";
         int affectedrows = 0;
 
         try (Connection conn = getConnectionInstance();
@@ -377,15 +377,15 @@ public class DataBaseConnection {
             pstmt.setString(1, newUser.getName());
             pstmt.setString(2, newUser.getSurname());
             pstmt.setString(3, newUser.getEmail());
-            pstmt.setString(4, newUser.getPassword());
-            pstmt.setString(5, newUser.getNickname());
+           // pstmt.setString(4, "crypt('"+newUser.getPassword()+"', gen_salt('bf')");
+            pstmt.setString(4, newUser.getNickname());
             //TODO cambiare ruolo 'a' in 't' e 'p' in 'v'
                 if(newUser instanceof Admin){
-                    pstmt.setString(6, "t");
+                    pstmt.setString(5, "t");
                 }else if(newUser instanceof Player){
-                    pstmt.setString(6, "v");
+                    pstmt.setString(5, "v");
                 }else {
-                    pstmt.setString(6, "u");
+                    pstmt.setString(5, "u");
                 }
                 new Thread(() -> {
                     try {
@@ -498,7 +498,16 @@ public class DataBaseConnection {
 
     }
 
-    //todo cambiare la classe sentence from List<User> to List<Integer>
+    public void deleteSentence(Sentence sentence){
+        String qry = "DELETE FROM sentences WHERE id = ?";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+            pstmt.setInt(1, sentence.getId());  // Set ID palyers
+            pstmt.executeUpdate();  // Execute the query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Method that update the list associated with a sentence that represent who have seen that sentence
      */
@@ -532,6 +541,9 @@ public class DataBaseConnection {
     private boolean checkQuery(String tableName, String[] column, String[] valueToCheck) {
         String qry = "SELECT COUNT(*) FROM " + tableName + " WHERE " + column[0] + " = '" + valueToCheck[0] + "'";
         for (int i = 1; i < valueToCheck.length; i++) {
+            if(column[i].equals(StringManager.getString("users_column_password"))){
+                qry = qry + " AND " + column[i] + " = crypt('" +  valueToCheck[i] +"', "+column[i]+")";
+            }else
             qry = qry + " AND " + column[i] + " = '" + valueToCheck[i] + "'";
         }
         try (Connection conn = getConnectionInstance()) {
@@ -760,13 +772,15 @@ public class DataBaseConnection {
      * Method that return a match from the database identified by his name
      * @param match
      */
-    private Match getMatchbyName(Match match) {
+    public Match getMatchbyName(Match match) {
         String qry = "SELECT * FROM matches WHERE match_name = ?";
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
             pstmt.setString(1, match.getName());
             ResultSet rs = pstmt.executeQuery();  // Execute the query
             rs.next();
+            Integer matchId = rs.getInt("id");
+            String matchName = rs.getString("match_name");
             ArrayList<User> userID = new ArrayList<User>();
             Integer[] arrayId = (Integer[]) rs.getArray("user_id").getArray();
             for (Integer id : arrayId
@@ -774,7 +788,7 @@ public class DataBaseConnection {
                 userID.add(getUserById(id));
             }
            // return new Match(rs.getInt("id"), userID, rs.getString("match_name"), rs.getString("state"));
-            return new Match(); //TODO costruttore con metch id e nome match
+            return new Match(matchId, matchName); //TODO costruttore con metch id e nome match
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -785,39 +799,27 @@ public class DataBaseConnection {
      * Method that update the information of a match in the database
      * @param machId
      * @param playerId
+     * @param matchState
      */
-    public Match updateMatch(Integer[] playerId, int machId) {
+    public void updateMatch(Integer[] playerId, int machId, String matchState) {
         String qry = "UPDATE matches " +
                 "SET user_id = ? ," +
                 " state = ? " +
                 "WHERE id = ?";
-        Match toUpdate = new Match();
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
 
             Array array = conn.createArrayOf("INTEGER", playerId);
             pstmt.setArray(1, array);  // Set ID palyers
-            if (playerId.length == 3) {
-                pstmt.setString(2, StringManager.getString("match_state_running_convention"));
-            } else pstmt.setString(2, StringManager.getString("match_state_created_convention"));  // Set state
+            pstmt.setString(2, matchState.toUpperCase()); // Set state
             pstmt.setInt(3, machId); //set creator id
 
 
-            ResultSet rs = pstmt.executeQuery();  // Execute the query
-            rs.next();
-            toUpdate = new Match();     //da aggingere i campi qui sotto commentati per inizializzarlo
-                /*
-                rs.getString("match_name");
-                rs.getInt("id");
-                rs.getArray("user_id");
-                 */
+            pstmt.executeUpdate();  // Execute the query
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
-
-        return toUpdate;
     }
 
     /**
@@ -972,6 +974,42 @@ public class DataBaseConnection {
         deleteQuery("manches", new String[]{"match_id", "number"}, new String[]{match_id.toString(), numberOfManche.toString()});
     }
 
+    /* **************************ACTION QUERY******************************/
+    public void insertAction(Action a){
+    	
+    	Integer turn = a.getTurn(); 
+    	Integer playerId = a.getPlayerId();
+        String actionName = a.getActionName(); 
+        boolean jolly = a.getJolly();
+        Integer actionWallet = a.getActionWallet(); 
+        Integer playerNumber = a.getPlayerNumber();
+        String letterCalled = a.getLetterCalled(); 
+        Integer matchId = a.getMatchId();
+        Integer mancheNumber = a.getMancheNumber();
+    	
+    	
+        String qry= "INSERT INTO actions(turn, player_id, " +
+                "action_name, jolly, action_wallet, player_number, letter_called, match_id, manche_number) " +
+                "VALUES(?,?,?,?,?,?,?,?,?)";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+            pstmt.setInt(1, turn);
+            pstmt.setInt(2,playerId);
+            pstmt.setString(3,actionName);
+            pstmt.setBoolean(4,jolly);
+            pstmt.setInt(5,actionWallet);
+            pstmt.setInt(6,playerNumber);
+            pstmt.setString(7, letterCalled);
+            pstmt.setInt(8, matchId);
+            pstmt.setInt(9,mancheNumber);
+            pstmt.executeUpdate();  // Execute the query
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /* **********************************Statistic query **/
     /**
      * Query returning all requested personal statistics of a user
@@ -980,6 +1018,7 @@ public class DataBaseConnection {
      */
     public ArrayList<String> getUserStat(Integer idUser){
         ArrayList<String> userStat= new ArrayList<>();
+        double matchWon =statisticQuery(idUser, "match_won", "player_id","count");
         double mancheWon =statisticQuery(idUser, "manche_won", "player_id","count");
         double loseCount = statisticQuery(idUser, "lose_all_count", "player_id","count");
         double passCount = statisticQuery(idUser, "pass_count", "player_id","count");
@@ -992,6 +1031,7 @@ public class DataBaseConnection {
         double averagePassMatch =playedMatch==0? 0: passCount/playedMatch;
         double averagePassManche = playedManches==0? 0: passCount/playedManches;
         String mancheWonString= new String("Number of manches won: "+mancheWon);
+        String matchWonString= new String("Number of matches won: "+matchWon);
 
         String mancheSeen = new String("Number of manches seen: " +
                 statisticQuery(idUser, "manche_seen", "user_id", "count"));
@@ -1012,6 +1052,7 @@ public class DataBaseConnection {
         String avgPMn = "Average of PASSA rolled per manche: " + averagePassManche;
 
         userStat.add(mancheWonString);
+        userStat.add(matchWonString);
         userStat.add(mancheSeen);
         userStat.add(manchePlayed);
         userStat.add(matchPlayed);
@@ -1039,41 +1080,74 @@ public class DataBaseConnection {
                 "WHERE count= (SELECT MAX(count) " +
                 "FROM manche_won) " +
                 "GROUP BY player_id ";
-        globalStat.add("Higher count of manche played "+globalStatisticExecutor(maxNumberManchePlayed,"MAX"));
+        globalStat.add("Higher count of manche played: "+globalStatisticExecutor(maxNumberManchePlayed,"MAX"));
 
         //media piu' alta di punti acquisiti per manche
         String higherAvgManchePoints="SELECT player_id, MAX(user_point) FROM avg_match_points " +
                 "WHERE user_point= (SELECT MAX(user_point) " +
                 "FROM avg_match_points) " +
                 "GROUP BY player_id";
-        globalStat.add("Higher average points gained for manche "+globalStatisticExecutor(higherAvgManchePoints,"MAX"));
+        globalStat.add("Higher average points gained for manche: "+globalStatisticExecutor(higherAvgManchePoints,"MAX"));
         //punti massimi acquisiti in un match
         String maxPointMatch = "SELECT player_id, MAX(user_point) FROM gained_points_match " +
                 "WHERE user_point= (SELECT MAX(user_point) " +
                 "FROM gained_points_match) " +
                 "GROUP BY player_id";
-        globalStat.add("Most points gained during a match "+globalStatisticExecutor(maxPointMatch,"MAX"));
+        globalStat.add("Most points gained during a match: "+globalStatisticExecutor(maxPointMatch,"MAX"));
 
         //punti massimi in una manche
         String maxPointManche= "SELECT player_id, MAX(user_point) FROM gained_points_manche " +
                 "WHERE user_point=(SELECT MAX(user_point) FROM gained_points_manche) " +
                 "GROUP BY player_id";
-        globalStat.add("Most points gained during a manche "+globalStatisticExecutor(maxPointManche,"MAX"));
+        globalStat.add("Most points gained during a manche: "+globalStatisticExecutor(maxPointManche,"MAX"));
 
 
         //estratto perde tutto
         String maxLoseRolled = "SELECT player_id, MAX(count) FROM lose_all_count " +
                 "WHERE count=(SELECT MAX(count) FROM lose_all_count) " +
                 "GROUP BY player_id";
-        globalStat.add("Rolled PERDI most time "+globalStatisticExecutor(maxLoseRolled,"MAX"));
+        globalStat.add("Rolled PERDI most time: "+globalStatisticExecutor(maxLoseRolled,"MAX"));
 
         //maggior numero di volte perso il turno per errori
         String maxPass="SELECT player_id, MAX(count) FROM pass_count " +
                 "WHERE count=(SELECT MAX(count) FROM pass_count) " +
                 "GROUP BY player_id";
-        globalStat.add("Lose turn most time "+globalStatisticExecutor(maxLoseRolled,"MAX"));
+        globalStat.add("Lose turn most time: "+globalStatisticExecutor(maxLoseRolled,"MAX"));
 
+        globalStat.add(higerMovePoint());
+
+        //TODO aggiungere query mancante (sul foglio delle query sul desktop)
         return globalStat;
+    }
+    private String higerMovePoint(){
+        String qry= "SELECT a1.player_id, MAX(a1.action_wallet), a1.match_id, a1.letter_called, a1.manche_number, manches.sentence " +
+                " FROM actions AS a1 JOIN ( SELECT * FROM manches JOIN sentences ON sentence_id = sentences.id) as manches " +
+                "  ON (a1.match_id = manches.match_id AND  a1.manche_number = manches.number) " +
+                " WHERE a1.action_wallet = (SELECT MAX(action_wallet) FROM actions)  " +
+                " GROUP BY a1.player_id, a1.match_id, a1.letter_called, a1.manche_number, manches.sentence";
+        String toReturn = "Higer points move: ";
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry);) {
+            ResultSet rs =    pstmt.executeQuery();  // Execute the query
+
+            ArrayList<Integer> userId= new ArrayList<>();
+            while (rs.next()){
+                Integer playerId= rs.getInt("player_id");
+
+                User u =getUserById(playerId);
+                String player = u.getName();
+                if(!userId.contains(playerId)) {
+                    String sentence = rs.getString("sentence");
+                    int pointsGained = rs.getInt("max");
+                    String letterCalled = rs.getString("letter_called");
+                    toReturn = toReturn + player + " letter called: '" + letterCalled + "' on sentence: " + sentence + " gained points: " + pointsGained + "\n \t";
+                }
+                userId.add(playerId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return toReturn;
     }
     /**
      * General query that returns the count of a column for global statistics

@@ -67,7 +67,8 @@ public class AdminProxy extends Thread {									//cambiare nome?
 
 	/**
 	 * Method that sends user data to be checked by the server at the moment of authentication
-	 * @param u user
+	 * @param usr String, the username/mail
+	 * @param psw String, password
 	 * @return 
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
@@ -105,7 +106,7 @@ public class AdminProxy extends Thread {									//cambiare nome?
 	}
 
 	/**
-	 * @throws IOException
+	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 * 
 	 */
@@ -136,7 +137,7 @@ public class AdminProxy extends Thread {									//cambiare nome?
 	
 	/**
 	 * 
-	 * @param newLobby
+	 * @param name
 	 * @return
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 

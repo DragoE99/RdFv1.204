@@ -54,7 +54,6 @@ public class CreateLobbyController implements Initializable{
 
 		if(reply == Commands.OK) {
 
-			Client.getProxy().sendChosenMatch(Commands.CHOSENMATCH, newLobby);
 			Client.getProxy().setInWaitingRoom(true);
 			//manda alla waiting room
 			FXMLLoader newLoader = new FXMLLoader(getClass().getResource("WaitingRoom.fxml"));

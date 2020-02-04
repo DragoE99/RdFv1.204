@@ -2,7 +2,6 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,8 +10,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
@@ -155,16 +154,30 @@ public class GameController implements Initializable {
 	@FXML private Pane pane3_13; 
 	@FXML private Pane pane3_14;
 
+	@FXML private Label randVal; //TODO cambierei in spinResult
+	@FXML private TextField insertConsonant;
 	@FXML private Label hint;
-	@FXML private MenuItem callCons;
+
 	@FXML private Button buyVowelButton;
 	@FXML private Button jollyButton;
 	@FXML private Button giveSolutionButton;
 	@FXML private Button spinButton;
-	@FXML private Label randVal; //TODO cambierei in spinResult
-	@FXML private TextField insertConsonant;
 	@FXML private Label wallet;
 	@FXML private Label userName;
+	@FXML private ImageView userIcon;
+	@FXML private ImageView walletIcon;
+	@FXML private ImageView depositIcon;
+	@FXML private Label deposit;
+	@FXML private Label currentPlayer;
+
+	@FXML private Button a;
+	@FXML private Button e;
+	@FXML private Button i;
+	@FXML private Button o;
+	@FXML private Button u;
+	
+	@FXML private TextField insertSolution;
+
 
 	private Label [][] labels;	
 	private Pane [][] panes;
@@ -199,14 +212,27 @@ public class GameController implements Initializable {
 										pane3_8, pane3_9, pane3_10, pane3_11, pane3_12, pane3_13, pane3_14}};
 
 
-										sentence = new Sentence("VINSERO BATTAGLIE GRAZIE ALLA LORO FOGA", "Le amazzoni");
+										sentence = Client.getMatch().getSentences().get(1);
 
 										insertSentence(sentence);
 
 										hint.setText(sentence.getHint());
-	
+
 										userName.setText(Client.getUser().getNickname());
-										
+
+										if(Client.isSpectator()) {
+											buyVowelButton.setVisible(false);
+											spinButton.setVisible(false);
+											jollyButton.setVisible(false);
+											giveSolutionButton.setVisible(false);
+											deposit.setVisible(false);
+											wallet.setVisible(false);
+											userName.setVisible(false);
+											userIcon.setVisible(false);
+											depositIcon.setVisible(false);
+											walletIcon.setVisible(false);
+										}
+
 	}
 
 	/**
@@ -244,36 +270,86 @@ public class GameController implements Initializable {
 	 * @throws IOException .
 	 */
 	public void spin(ActionEvent e) throws IOException { 
-		
+
+		spinButton.setDisable(true);
+
 		insertConsonant.setDisable(false);
-		
+
 		randVal.setText(GameLogic.spinWheel());
 
 		sendUpdate(randVal.getText(), Commands.UPDATEGAMEWHEEL);
-		
-		if (GameLogic.checkSpinResult(randVal.getText()).equals("PERDI"))
+
+		if (randVal.getText().equals("PERDI")) {
 			wallet.setText("0");
+
+
+		}
+
+		if(!GameLogic.handleSpinResult(randVal.getText())) { //Se deve passare il turno
+			disable();
+			if(Client.getUser().hasJolly()) {
+				jollyButton.setDisable(false);
+			}
+			disable();
+		} else {
+			if (randVal.getText().equals("JOLLY")) {
+				spinButton.setDisable(false);
+
+				insertConsonant.setDisable(true);
+			}
+			//spinButton.setDisable(false); TODO
+		}
+
 
 	}
 
 
+	private void disable() {
+		buyVowelButton.setDisable(true);
+		giveSolutionButton.setDisable(true);
+		spinButton.setDisable(true);
+		insertConsonant.setDisable(true);
+		jollyButton.setDisable(true);
+
+	}
+
+	private void enable() {
+		buyVowelButton.setDisable(false);
+		giveSolutionButton.setDisable(false);
+		spinButton.setDisable(false);
+		insertConsonant.setDisable(false);
+
+	}
+
 	public void checkConsonant(ActionEvent e) throws IOException {
 
+
+		insertConsonant.setDisable(true);
+		
 		sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETEXT);
 
 		if (insertConsonant.getText().length() != 1) {
 
-			//Client.getProxy().giveTurn();
+			Client.getProxy().endAction();
 
 		} else {
 
-			int counter = GameLogic.consonantOccurrences(this.sentence.getSentence(), insertConsonant, labels);
-			
-			if(counter > 0) {
-				sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETABLE);
-			}
+			if (!GameLogic.handleInsertedConsonant(insertConsonant.getText())) {
+				disable();
+			} else {
 
-			wallet.setText((Integer.parseInt(randVal.getText()) * counter + Integer.parseInt(wallet.getText().substring(0, wallet.getText().length()-2)) + " E"));
+				int counter = GameLogic.consonantOccurrences(this.sentence.getSentence(), insertConsonant, labels);
+
+				if(counter > 0) {
+					spinButton.setDisable(false);
+					sendUpdate(insertConsonant.getText(), Commands.UPDATEGAMETABLE);
+				} else {
+					Client.getProxy().endAction();
+				}
+
+				wallet.setText((Integer.parseInt(randVal.getText()) * counter + Integer.parseInt(wallet.getText())+""));
+
+			}
 
 		}
 	}
@@ -287,8 +363,9 @@ public class GameController implements Initializable {
 		return hint;
 	}
 
-	private void setHint(Label hint) {
-		this.hint = hint;
+	public void setHint(String s) {
+		this.hint.setText(s);
+		this.hint.setTextFill(Paint.valueOf("green"));
 	}
 
 	private Button getBuyVowel() {
@@ -389,13 +466,131 @@ public class GameController implements Initializable {
 	}
 
 	public void play() {
-		
+
 		buyVowelButton.setDisable(false);
 		giveSolutionButton.setDisable(false);
 		spinButton.setDisable(false);
+
+	}
+
+	public void setCurrentPlayer(String current) {
+		currentPlayer.setText(current);
+
+	}
+
+	String pressed = null;
+
+	public void pressA(ActionEvent e) {
+		pressed = "a";
+		pressedVowel(pressed);
+	}
+
+	public void pressE(ActionEvent e) {
+		pressed = "e";
+		pressedVowel(pressed);
+	}
+
+	public void pressI(ActionEvent e) {
+		pressed = "i";
+		pressedVowel(pressed);
+	}
+
+	public void pressO(ActionEvent e) {
+		pressed = "o";
+		pressedVowel(pressed);
+	}
+
+	public void pressU(ActionEvent e) {
+		pressed = "u";
+		pressedVowel(pressed);
+	}
+
+	private void pressedVowel(String pressed) {
+
+		try {
+			sendUpdate(pressed, Commands.UPDATEGAMETABLE);
+			sendUpdate(pressed, Commands.UPDATEGAMETEXT);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		invisibleVowel();
+		enable();
+
+	}
+
+	private void invisibleVowel() {
+		a.setVisible(false);
+		e.setVisible(false);
+		i.setVisible(false);
+		o.setVisible(false);
+		u.setVisible(false);
+	}
+
+	private void visibleVowel() {
+		a.setVisible(true);
+		e.setVisible(true);
+		i.setVisible(true);
+		o.setVisible(true);
+		u.setVisible(true);
+	}
+
+	public void selectVowel(ActionEvent e) {
+		if(Integer.parseInt(wallet.getText()) >= 1000) {
+			disable();
+			visibleVowel();
+			wallet.setText(Integer.parseInt(wallet.getText()) - 1000 + "");
+		} else {			
+			disable();
+			System.out.println("Non hai abbastanza soldi");
+
+			try {
+				Client.getProxy().endAction();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	
+	
+	public void giveSolution(ActionEvent e) {
+		insertSolution.setVisible(true);
+	}
+	
+	
+	
+	public void checkSolution(ActionEvent e) {
+		
+		if (insertSolution.getText().trim().equalsIgnoreCase(sentence.getSentence())) {
+			//TODO mostrare a tutti il vincitore e passare alla prossima manche
+			try {
+				sendUpdate("Manche vinta da " + Client.getUser().getNickname() + "!" , Commands.MANCHEWON);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else {
+			try {
+				Client.getProxy().endAction();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
+		insertSolution.setVisible(false);
 		
 	}
 
+	public void setSentenceVisible() {
+		
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 15; j++) {
+					this.labels[i][j].setVisible(true);
+			}
+		}
+	}
 
 }
 

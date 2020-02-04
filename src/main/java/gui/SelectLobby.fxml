@@ -42,7 +42,7 @@
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#create" style="-fx-background-color: #424967;" text="Create" textFill="#c2d3e4">
+                  <Button fx:id="createButton" mnemonicParsing="false" onAction="#create" style="-fx-background-color: #424967;" text="Create" textFill="#c2d3e4">
                      <font>
                         <Font size="20.0" />
                      </font>

@@ -52,6 +52,8 @@ public class Main extends Application {
 		super.stop();
 		Client.getProxy().removeMe();
 		Client.getProxy().setRunning(false);
+		Client.getProxy().setInGameWindow(false);
+		Client.getProxy().setInWaitingRoom(false);
 	}
 
 	/**

@@ -12,7 +12,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ModifySentenceController">
    <children>
-      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label fx:id="title" text="Modify sentence" textFill="#c2d3e4">
                <font>
@@ -22,12 +22,12 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="name" maxWidth="-Infinity" prefWidth="300.0" promptText="sentence" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
+            <TextField fx:id="frase" maxWidth="-Infinity" prefWidth="300.0" promptText="sentence" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="surname" maxWidth="-Infinity" prefWidth="300.0" promptText="hint" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
+            <TextField fx:id="hint" maxWidth="-Infinity" prefWidth="300.0" promptText="hint" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>

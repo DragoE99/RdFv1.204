@@ -46,11 +46,9 @@ public class SelectLobbyController implements Initializable{
 	private HashMap<String, Lobby> lobbyList;
 	public ObservableList<InsertableLobby> data = FXCollections.observableArrayList();
 	
-	@FXML
-	private Button playButton;
-	
-	@FXML
-	private Button spectateButton;
+	@FXML private Button playButton;
+	@FXML private Button createButton;
+	@FXML private Button spectateButton;
 	
 	/**
 	 * Initializes the lobby table and populate it.
@@ -83,7 +81,15 @@ public class SelectLobbyController implements Initializable{
 		}
 
 		tab.setItems(data);
-
+		
+		if(Main.getIsAdmin()) {
+			playButton.setVisible(false);
+			createButton.setVisible(false);
+			
+		} else {
+			playButton.setVisible(true);
+			createButton.setVisible(true);
+		}
 
 	}
 

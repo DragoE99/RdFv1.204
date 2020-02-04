@@ -3,14 +3,19 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import playerRdF.Client;
+import util.Sentence;
 
 /**
  * The controller for modifySentence window
@@ -22,9 +27,14 @@ import javafx.scene.input.MouseEvent;
  *
  */
 public class ModifySentenceController implements Initializable{
-	
+
 	@FXML private ImageView back;
 	@FXML private Label title;
+	
+	@FXML private TextField frase;
+	@FXML private TextField hint;
+	
+	private static Sentence sentence;
 
 	/**
 	 * Sets the label window title focus traversable. It's used to set the first prompt text field visible.
@@ -32,6 +42,9 @@ public class ModifySentenceController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		title.setFocusTraversable(true);
+		frase.setText(sentence.getSentence());
+		hint.setText(sentence.getHint());
+		System.out.println("Frase da modificare: " + sentence.getSentence());
 	}
 
 	/**
@@ -47,13 +60,43 @@ public class ModifySentenceController implements Initializable{
 	}
 
 	/**
+	 * Utility method that modifies a sentence.
+	 * @throws IOException .
+	 */
+	private void modify() throws IOException {
+		//TODO modificare la frase, devo aggiungere sia hint che sentence? mettere caso solo un texfield compilato
+		sentence.setSentence(frase.getText());
+		sentence.setHint(hint.getText());
+		Client.getProxy().modifySentence(sentence);
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
+	}
+	/**
 	 * Modifies sentence and returns to manage sentence.
 	 * @param e Action on "Modify" button.
 	 * @throws IOException .
 	 */
 	public void modify(ActionEvent e) throws IOException{
-		//TODO modificare la frase, devo aggiungere sia hint che sentence? mettere caso solo un texfield compilato
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("ManageSentence.fxml"))));
+
+		modify();
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException {
+		if(e.getCode().toString().equals("ENTER")) {
+			modify();
+		}
+	}
+	
+	/**
+	 * Setter
+	 * @param s
+	 */
+	public static void setSentence(Sentence s) {
+		sentence = s;
 	}
 
 }

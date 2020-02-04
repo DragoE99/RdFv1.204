@@ -20,12 +20,11 @@ public class AdminClient {
 	private static Proxy proxy;
 	private static User me;																	//dovrebbe essere final, oppure non modificabile
 
-
 	public static void main(String[] args) throws IOException {
 		proxy = new Proxy();
 		proxy.start();
 		Client.setProxy(proxy);
-		gui.Main.setUserType(true);
+		gui.Main.setIsAdmin(true);
 		Application.launch(Main.class, args);												//launching the GUI
 		
 	}

@@ -7,10 +7,11 @@ import java.util.ArrayList;
  * Lobby is used to keep track of the active and "waiting" games, the server
  * possesses a collection of lobbies
  * 
- * @author gruppo aelv
- *
+ * @author Achille Lambrughi
+ * @author Emanuele Drago
+ * @author Lorenzo Ottaviani
+ * @author Elisabeth Veronika Venturino
  */
-
 @SuppressWarnings("serial")
 public class Lobby implements Serializable {
 
@@ -21,8 +22,9 @@ public class Lobby implements Serializable {
 	private Integer nSpectators;
 	private Boolean isActive;
 	private final User creator;
+	
 	/**
-	 * 
+	 * Constructor
 	 * @param lobbyName
 	 * @param nPlayers
 	 * @param nSpectators
@@ -40,7 +42,7 @@ public class Lobby implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Constructor
 	 * @param lobbyName
 	 * @param isActive
 	 * @param creator
@@ -53,6 +55,9 @@ public class Lobby implements Serializable {
 		this.creator = creator;
 	}
 	
+	/**
+	 * default constructor
+	 */
 	protected Lobby() {
 		this.lobbyName = null;
 		this.nPlayers = null;
@@ -62,7 +67,7 @@ public class Lobby implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Getter for the Match field
 	 * @return match
 	 */
 	public Match getMatch() {
@@ -70,7 +75,7 @@ public class Lobby implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Setter for the Match field
 	 * @param match
 	 */
 	public void setMatch(Match match) {
@@ -78,7 +83,7 @@ public class Lobby implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Getter
 	 * @return
 	 */
 	public String getLobbyName() {
@@ -93,7 +98,7 @@ public class Lobby implements Serializable {
 				 */
 
 	/**
-	 * 
+	 * Getter
 	 * @return
 	 */
 	public Integer getNPlayers() {
@@ -101,7 +106,7 @@ public class Lobby implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Setter
 	 * @param nPlayers
 	 */
 	public void setNPlayers(int nPlayers) {
@@ -109,43 +114,40 @@ public class Lobby implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Getter
 	 * @return
 	 */
 	public Integer getNSpectators() {
 		return nSpectators;
 	}
 	
+	/**
+	 * Setter
+	 * @param nSpecs
+	 */
 	public void setNSpectators(int nSpecs) {
 		this.nSpectators = nSpecs;
 	}
-
-//	/**
-//	 * 
-//	 * @param nSpectators
-//	 */
-//	public void setnSpectators(int nSpectators) {
-//		this.nSpectators = nSpectators;
-//	}
+	
 
 	/**
-	 * 
+	 * Getter
 	 * @return
 	 */
 	public Boolean isActive() {
 		return isActive;
 	}
 
-//	/**
-//	 * 
-//	 * @param status
-//	 */
-//	public void setStatus(boolean status) {
-//		this.status = status;
-//	}
-	
 	/**
 	 * 
+	 * @param status
+	 */
+	public void setStatus(boolean status) {
+		this.isActive = status;
+	}
+	
+	/**
+	 * Getter
 	 * @return
 	 */
 	public User getCreator() {
@@ -153,7 +155,7 @@ public class Lobby implements Serializable {
 	}
 	
 	/**
-	 * 
+	 * Adds a thread to the list of threads in this lobby, represented by their ID
 	 * @param serverThread
 	 */
 	public void addThread(Integer id) {
@@ -163,6 +165,10 @@ public class Lobby implements Serializable {
 		
 	}
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public ArrayList<Integer> getThreads() {
 
 		return threads;

@@ -1,11 +1,17 @@
 package gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import playerRdF.Client;
 
 /**
  * The controller for activationCode window
@@ -20,7 +26,28 @@ import javafx.scene.input.MouseEvent;
 public class GlobalStatController {
 
 	@FXML private ImageView back;
+	
+	@FXML private ListView<String> list;
 
+	
+	/**
+	 * 
+	 */
+	public void initialize() {
+		ArrayList<String> stats = null;
+		try {
+			stats = Client.getProxy().globalStats();
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ObservableList<String> ob = FXCollections.observableArrayList(stats);
+		
+		list.setItems(ob);
+	}
+	
+	
 	/**
 	 * Goes to the previous window.
 	 * @param e Action on back icon.

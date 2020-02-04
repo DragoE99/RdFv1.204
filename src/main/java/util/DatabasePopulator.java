@@ -32,8 +32,9 @@ public class DatabasePopulator {
         DatabasePopulator test = new DatabasePopulator();
         //test.populate();
         //test.deletePopulate();
-        test.getGlobalStat();
-        //test.getUserStat(11);
+        //test.insertUser();
+        //test.getGlobalStat();
+        //test.getUserStat(37);
         //test.insertManche(1,35,82);
         //test.insertManche(2,35,83);
         //test.deleteManche(35,1);
@@ -42,21 +43,21 @@ public class DatabasePopulator {
 
     public ArrayList<String> getUserStat(Integer idUser){
         ArrayList<String> userStat= new ArrayList<>();
-        int mancheWon =statisticQuery(idUser, "manche_won", "player_id","count");
-        int loseCount = statisticQuery(idUser, "lose_all_count", "player_id","count");
-        int passCount = statisticQuery(idUser, "pass_count", "player_id","count");
-        int playedMatch = statisticQuery(idUser, "played_match", "player_id","count");
-        int playedManches = statisticQuery(idUser, "played_manche", "player_id","count");
-        int avgMatchPoints = statisticQuery(idUser, "avg_match_points", "player_id","user_point");
-        int avgManchePoints = statisticQuery(idUser, "avg_manche_points", "player_id","user_point");
-        int averageLoseMatch= loseCount/playedMatch;
-        int averageLoseManches= loseCount/playedManches;
-        int averagePassMatch = passCount/playedMatch;
-        int averagePassManche = passCount/playedManches;
+        double mancheWon =statisticQuery(idUser, "manche_won", "player_id","count");
+        double loseCount = statisticQuery(idUser, "lose_all_count", "player_id","count");
+        double passCount = statisticQuery(idUser, "pass_count", "player_id","count");
+        double playedMatch = statisticQuery(idUser, "played_match", "id","count");
+        double playedManches = statisticQuery(idUser, "played_manche", "user_id","count");
+        double avgMatchPoints = statisticQuery(idUser, "avg_match_points", "player_id","user_point");
+        double avgManchePoints = statisticQuery(idUser, "avg_manche_points", "player_id","user_point");
+        double averageLoseMatch= playedMatch==0? 0: loseCount/playedMatch;
+        double averageLoseManches= playedManches==0? 0:loseCount/playedManches;
+        double averagePassMatch =playedMatch==0? 0: passCount/playedMatch;
+        double averagePassManche = playedManches==0? 0: passCount/playedManches;
         String mancheWonString= new String("Number of manches won: "+mancheWon);
 
         String mancheSeen = new String("Number of manches seen: " +
-                statisticQuery(idUser, "manche_seen", "player_id", "count"));
+                statisticQuery(idUser, "manche_seen", "user_id", "count"));
 
         String manchePlayed = new String("Number of manches played: " +playedManches);
 
@@ -180,13 +181,13 @@ public class DatabasePopulator {
         }
 
     }
-    public int statisticQuery(Integer userId, String viewName, String columnIdName, String columnCountName){
+    private double statisticQuery(Integer userId, String viewName, String columnIdName, String columnCountName){
         String qry ="SELECT * FROM "+viewName+" WHERE "+columnIdName+" = "+userId;
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-            return rs.getInt(columnCountName);
+            return rs.getDouble(columnCountName);
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
@@ -255,6 +256,7 @@ public class DatabasePopulator {
             lastWallet=new Integer[] {0,0,0};
             for(int mancheNumber=1; mancheNumber<6; mancheNumber++){
                 lastWallet[(mancheNumber-1)%3]+=mancheNumber*500;
+                //(mancheNumber-1)%3
                 test.insertManche(mancheNumber,
                         matchID,
                         mancheSentence[currentMatch],
@@ -466,14 +468,14 @@ public class DatabasePopulator {
 
     public void insertUser() {
 
-        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO users (name, surname, mail, password, nickname, role) VALUES(?, ?, ?, crypt(?, gen_salt('bf')), ?, ?)";
         int affectedrows = 0;
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 
             int i = 0;
             for (i = 0; i < 20; i++) {
-                User newUser = new Player("utente" + i, "cognome" + i, i + "user@gmil.com", "number" + i, "1234");
+                User newUser = new Player("utente" + i, "cognome" + i,  "m@"+i+".it", "number" + i, "1234");
                 pstmt.setString(1, newUser.getName());
                 pstmt.setString(2, newUser.getSurname());
                 pstmt.setString(3, newUser.getEmail());

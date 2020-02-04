@@ -39,7 +39,7 @@ public class ServerThread extends Thread {
 	private ObjectOutputStream out;
 	private User me = new Player(null, null);
 	private Lobby myLobby;
-	
+
 	/**
 	 * Constructor, it also calls start()
 	 * 
@@ -99,62 +99,93 @@ public class ServerThread extends Thread {
 		Commands c;
 
 		try {
-		while(true) {
-			c = (Commands) in.readObject();
+			while(true) {
+				c = (Commands) in.readObject();
 
-			switch (c) {
-			case LOGIN : loginHandler();
-			break;
-			case SIGNUP : signup();
-			break;
-			case RESET : resetPwd();
-			break;
-			case MODIFYUSER: modifyUser();
-			break;
-			case OK:
+				switch (c) {
+				case LOGIN : loginHandler();
 				break;
-			case NEEDLOBBYLIST: giveLobbyList();
-			break;
-			case CREATELOBBY : createLobby();
-			break;
-			case ACTIVATIONCODE : activation();
-			break;
-			case UPDATEGAMETABLE: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.UPDATEGAMETABLE, (Integer)in.readObject());
-			break;
-			case UPDATEGAMETEXT: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.UPDATEGAMETEXT, (Integer)in.readObject());
-			break;
-			case UPDATEGAMEWHEEL: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.UPDATEGAMEWHEEL, (Integer)in.readObject());
-			break;
-			case CHOSENMATCH: addMeToMatch((Lobby) in.readObject());
-			break;
-			case SPECTATE: addMeToLobby((Lobby) in.readObject());
-			break;
-			case QUIT: quit();
-			break;
-			case ENDACTION : ServerListener.updateCurrentPlayerOfMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()).getMatch());
-			break;
-			case USTATS: userStats();
-			break;
-			case GSTATS: globalStats();
-			break;
-			case INSERTSENTENCES:insertSentences();
-			break;
-			case GETALLSENTENCES:getAllSentences();
-			break;
-			case MANCHEWON: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.MANCHEWON, (Integer)in.readObject());
-			break;
-			case MODIFYSENTENCE: modifySentence();
-			break;
-			case REMOVEME: ServerListener.removeClient(this);
-			break;
-			default: 
+				case SIGNUP : signup();
 				break;
+				case RESET : resetPwd();
+				break;
+				case MODIFYUSER: modifyUser();
+				break;
+				case OK:
+					break;
+				case NEEDLOBBYLIST: giveLobbyList();
+				break;
+				case CREATELOBBY : createLobby();
+				break;
+				case ACTIVATIONCODE : activation();
+				break;
+				case UPDATEGAMETABLE: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.UPDATEGAMETABLE, (Integer)in.readObject());
+				break;
+				case UPDATEGAMETEXT: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.UPDATEGAMETEXT, (Integer)in.readObject());
+				break;
+				case UPDATEGAMEWHEEL: ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.UPDATEGAMEWHEEL, (Integer)in.readObject());
+				break;
+				case CHOSENMATCH: addMeToMatch((Lobby) in.readObject());
+				break;
+				case SPECTATE: addMeToLobby((Lobby) in.readObject());
+				break;
+				case QUIT: quit();
+				break;
+				case ENDTURN : {
+					ServerListener.stopTask(ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+					ServerListener.updateCurrentPlayerOfMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()).getMatch());
+				}
+				break;
+				case USTATS: userStats();
+				break;
+				case GSTATS: globalStats();
+				break;
+				case INSERTSENTENCES:insertSentences();
+				break;
+				case GETALLSENTENCES:getAllSentences();
+				break;
+				case MANCHEWON: {
+					
+					ServerListener.stopTask(ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+					ServerListener.UpdateClientsOfThisMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()), Commands.MANCHEWON, (Integer)in.readObject());
+					ServerListener.updateManche(ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+					ServerListener.displayWinnerTimer(ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+
+				}
+				break;
+				case DEPOSIT: ServerListener.updateScores(ServerListener.getLobbies().get(myLobby.getMatch().getName()), getUser().getId(), (Integer)in.readObject());
+				break;
+				case MODIFYSENTENCE: modifySentence();
+				break;
+				case DELETESENTENCE: deleteSentence();
+				break;
+				case REMOVEME: {
+					ServerListener.removeClient(this);
+					out.writeObject(Commands.REMOVEME);
+				}
+				break;
+				case SPINBUTTON: ServerListener.resetTimerTask(5, ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+				break;
+				case SOLUTIONBUTTON: ServerListener.resetTimerTask(10, ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+				break;
+				case CONSONANTOK: ServerListener.resetTimerTask(5, ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+				break;
+				case ACTIVATEJOLLY: ServerListener.resetTimerTask(3, ServerListener.getLobbies().get(myLobby.getMatch().getName()));
+				break;
+				default: 
+					break;
+				}
 			}
-		}
 		} catch (SocketException e) {
 			ServerListener.addClient(me.getId(), null);
 		}
 	}
+
+	private void deleteSentence() throws ClassNotFoundException, IOException {
+		Sentence sentence =(Sentence)in.readObject();
+		ServerListener.getDB().deleteSentence(sentence);
+	}
+
 
 	private void modifySentence() throws IOException, ClassNotFoundException {
 		Sentence sentence =(Sentence)in.readObject();
@@ -166,10 +197,10 @@ public class ServerThread extends Thread {
 	 * @throws IOException 
 	 * 
 	 */
-	private void globalStats() throws IOException {
-		
+	private synchronized void globalStats() throws IOException {
+
 		ArrayList<String> stats = new ArrayList<>(ServerListener.getDB().getGlobalStat());
-		
+
 		out.writeObject(stats);
 	}
 
@@ -180,13 +211,13 @@ public class ServerThread extends Thread {
 	 * @throws ClassNotFoundException 
 	 * 
 	 */
-	private void userStats() throws ClassNotFoundException, IOException {
-		
+	private synchronized void userStats() throws ClassNotFoundException, IOException {
+
 		Integer id = (Integer)in.readObject();
-		
-		
+
+
 		ArrayList<String> stats = new ArrayList<>(ServerListener.getDB().getUserStat(id));
-		
+
 		out.writeObject(stats);
 	}
 
@@ -203,58 +234,58 @@ public class ServerThread extends Thread {
 		myLobby.addThread(me.getId());
 
 		Match match = myLobby.getMatch();
-		
+
 		match.addPlayer(me);
-		
+
 		myLobby.setMatch(match);
-		
+
 		System.out.println("lunghezza della lista di players dopo essere entrato nella lobby" + myLobby.getMatch().getPlayers().size());
 
 		ServerListener.putLobby(myLobby);
 		//in fine controllo se sono il terzo giocatore e quindi il gioco puo' partire
-				if (myLobby.getNPlayers() == 3) {
-					
-					myLobby.setStatus(true);
-					
-					ServerListener.startGame(myLobby);
-					
-					ServerListener.updateCurrentPlayerOfMatch(lobby.getMatch());
-					
-				}
-				
-				myLobby.setMatch(match);
-				
-				System.out.println("lunghezza della lista di players dopo essere entrato nella lobby" + myLobby.getMatch().getPlayers().size());
+		if (myLobby.getNPlayers() == 3) {
 
-				ServerListener.putLobby(myLobby);
+			myLobby.setStatus(true);
 
-			}
-			
-			
-			
-			/**
-			 * This method adds the current User to the match and lobby. It is called when a spectator joins a match
-			 * @param lobby its the Lobby that needs to be updated
-			 */
-			private void addMeToLobby(Lobby lobby) {
+			ServerListener.startGame(myLobby);
+
+			ServerListener.updateCurrentPlayerOfMatch(lobby.getMatch());
+
+			match.setSentences(ServerListener.getDB().getMatchSentence(match.getPlayersId()));
+
+		}
+
+		myLobby.setMatch(match);
+
+		System.out.println("lunghezza della lista di players dopo essere entrato nella lobby" + myLobby.getMatch().getPlayers().size());
+
+		ServerListener.putLobby(myLobby);
+
+	}
 
 
-				myLobby = lobby;
 
-				myLobby.addThread(me.getId());
-				
-				Match match = myLobby.getMatch();
-				
-				match.setSentences(ServerListener.getDB().getMatchSentence(match.getPlayersId()));
-				
-				match.addSpectator(me);
+	/**
+	 * This method adds the current User to the match and lobby. It is called when a spectator joins a match
+	 * @param lobby its the Lobby that needs to be updated
+	 */
+	private void addMeToLobby(Lobby lobby) {
 
-				myLobby.setMatch(match);
-				
-				System.out.println("lunghezza della lista di players dopo essere entrato nella lobby" + myLobby.getMatch().getPlayers().size());
 
-				ServerListener.putLobby(myLobby);
-				
+		myLobby = lobby;
+
+		myLobby.addThread(me.getId());
+
+		Match match = myLobby.getMatch();
+
+		match.addSpectator(me);
+
+		myLobby.setMatch(match);
+
+		System.out.println("lunghezza della lista di players dopo essere entrato nella lobby" + myLobby.getMatch().getPlayers().size());
+
+		ServerListener.putLobby(myLobby);
+
 	}
 
 	/**
@@ -275,34 +306,34 @@ public class ServerThread extends Thread {
 	 * @throws ClassNotFoundException 
 	 * 
 	 */
-	private void loginHandler() throws ClassNotFoundException, IOException {
+	private synchronized void loginHandler() throws ClassNotFoundException, IOException {
 		User u = (User)in.readObject();
 
 
 		//se c'e l'utente nel db
 		if(ServerListener.getDB().logInCheck(u.getEmail(), u.getPassword())) {
-			
+
 			//devo rimandare al client l'utente completo, serve altrimenti l'utente locale al client non ha ID
 			User temp = ServerListener.getDB().getOneUser(u.getEmail(), u.getPassword());
-			
+
 			boolean notAlreadyOnline = true;
-			
+
 			//Cancello l'attuale thread dalla mappa nel ServerListener per reinserirlo con la chiave corrispondente al suo id
 			if (temp != null) {
 				notAlreadyOnline = ServerListener.replaceClient(me.getId(), temp.getId());
 				me = temp;
 				//TODO Segnalare all'utente se e' gia' online
 			}
-			
+
 			if(notAlreadyOnline) {
 				out.writeObject(Commands.OK);
 				out.writeObject(temp);
 			} else {
 				out.writeObject(Commands.ALREADYON);
 			}
-			
-			
-			
+
+
+
 		} else {
 			out.writeObject(Commands.NO);
 		}
@@ -315,7 +346,7 @@ public class ServerThread extends Thread {
 	 * Methods that writes the active lobbies preset on the server on the output stream
 	 * @throws IOException
 	 */
-	private void giveLobbyList() throws IOException {
+	private synchronized void giveLobbyList() throws IOException {
 		//questo reset forse serviva al refresh in selectLobby
 		//mi dava problemi anche quando creavo una lobby, al client non risultava
 		out.reset();
@@ -330,7 +361,7 @@ public class ServerThread extends Thread {
 	 * @throws MessagingException
 	 * 
 	 */
-	private void signup() throws ClassNotFoundException, IOException, MessagingException {
+	private synchronized void signup() throws ClassNotFoundException, IOException, MessagingException {
 		User u = (User)in.readObject();
 
 		//se c'e l'utente nel db
@@ -363,7 +394,7 @@ public class ServerThread extends Thread {
 	 * @throws MessagingException 
 	 * 
 	 */
-	private void resetPwd() throws ClassNotFoundException, IOException, MessagingException {
+	private synchronized void resetPwd() throws ClassNotFoundException, IOException, MessagingException {
 		String email = (String)in.readObject();
 
 		if(!ServerListener.getDB().checkMailExistence(email)) {						// controlla sul db se esiste l'utente
@@ -392,36 +423,42 @@ public class ServerThread extends Thread {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private void createLobby() throws IOException, ClassNotFoundException {
+	private synchronized void createLobby() throws IOException, ClassNotFoundException {
 		Lobby newLobby = (Lobby)in.readObject();
 
 		//e' un casino, c'e il nome della lobby e quello del match, usiamo quello del match ma sul client creiamo quello della lobby... HELP
 		Match match = new Match(newLobby.getLobbyName());
 		newLobby.setMatch(match);
-		
+
 		//controlla sul db se esiste il nome della lobby
 		if(ServerListener.getDB().matchNameCheck(match.getName())) {
-			
+
 			out.writeObject(Commands.NO);
 		} else {
-			
+
 			//TODO aggiungere i campi mancanti a lobby:nPlayers, nSpecs.
 			newLobby.setNPlayers(1);
 			newLobby.setNSpectators(0);
-			
-			
-			// metterlo nella lista di lobby
-			addMeToMatch(newLobby);		//non so se funziona
-			
+
+
+//			// metterlo nella lista di lobby
+//			addMeToMatch(newLobby);		
+
 			//TODO metterlo sul database
-			
+
 			ServerListener.getDB().createMatch(new Integer[] {newLobby.getCreator().getId()}, match.getName());
 			
-			System.out.println("Aggiungo :" + ServerListener.getLobbies().get(match.getName()).getLobbyName());
+			newLobby.setMatch(ServerListener.getDB().getMatchbyName(match));
 			
+			// metterlo nella lista di lobby
+			addMeToMatch(newLobby);
+			
+
+			System.out.println("Aggiungo :" + ServerListener.getLobbies().get(match.getName()).getLobbyName());
+
 			out.writeObject(Commands.OK);
 		}
-		
+
 	}
 
 	/**
@@ -429,7 +466,7 @@ public class ServerThread extends Thread {
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	private void modifyUser() throws ClassNotFoundException, IOException {
+	private synchronized void modifyUser() throws ClassNotFoundException, IOException {
 
 		User u = (User)in.readObject();	
 		System.out.println(u.getId());
@@ -441,14 +478,14 @@ public class ServerThread extends Thread {
 		System.out.println(me.getName() + me.getEmail());
 		System.out.println(me.getPassword());
 	}
-	
+
 	/**
 	 * Method that removes the players from a lobby
 	 * @throws IOException
 	 */
-	private void quit() throws IOException {
+	private synchronized void quit() throws IOException {
 		out.writeObject(Commands.QUIT);
-		
+
 		//TODO togliere dalla lobby, chiudere tutte le lobby (?)
 	}
 
@@ -486,11 +523,11 @@ public class ServerThread extends Thread {
 			Transport.send(msg,username,password);
 		} catch (AddressException ex) {
 			ex.printStackTrace();
-			
+
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
-	
+
 		System.out.println("\nMail was sent successfully.");
 	}
 
@@ -500,7 +537,7 @@ public class ServerThread extends Thread {
 	 * @throws MessagingException 
 	 * @throws AddressException 
 	 */
-	private static void sendResetPasswordMail(String to, String newPwd) {
+	private synchronized static void sendResetPasswordMail(String to, String newPwd) {
 
 		String text = "Your new password is: '" + newPwd + "'.\n Please remember it or change it.";
 		String subject = "Password reset";
@@ -521,12 +558,12 @@ public class ServerThread extends Thread {
 		//TODO
 		String from = "ruotadellafortuna321@gmail.com";		//i dati di un nostro account? Pero' non si dovrebbe fare, non so come
 		String pwd = "Rdfaccount9";
-		
+
 		String activationCode = code; 						//TODO genereare un codice e metterlo nel db
-		
+
 		String subject = "Activation Code";
 		String text = "This is your activation code : '" + activationCode + "'.";
-		
+
 		sendMail(from, pwd, to, subject, text);
 	}
 
@@ -535,7 +572,7 @@ public class ServerThread extends Thread {
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	private void activation() throws ClassNotFoundException, IOException {
+	private synchronized void activation() throws ClassNotFoundException, IOException {
 
 		User user = (User)in.readObject();	
 
@@ -559,21 +596,21 @@ public class ServerThread extends Thread {
 	 * @param command description of the update, needed to handle it on the client side
 	 * @throws IOException
 	 */
-	public void sendUpdateToProxy(String gameUpdate, Commands command) throws IOException {
+	public synchronized void sendUpdateToProxy(String gameUpdate, Commands command) throws IOException {
 		out.writeObject(command);
 		out.writeObject(gameUpdate);
 	}
-	
+
 	/**
 	 * Utility method that generates a random alphanumeric String of the specified length
 	 * @param length the desired length of the string
 	 * @return
 	 */
 	private String randomString(int length) {
-		
+
 		Random r = new Random();
 		String s = "";
-		
+
 		for(int i= 0; i < length; i++) { 
 			char c = (char) (r.nextInt(26) + 65); //Lettere maiuscole
 			if(r.nextBoolean()) {
@@ -583,7 +620,7 @@ public class ServerThread extends Thread {
 			}
 			s += c;
 		}
-		
+
 		return s;
 	}
 
@@ -598,7 +635,7 @@ public class ServerThread extends Thread {
 	/**
 	 * Sends a notification to the players that their match is ready
 	 */
-	public void sendStartNotification() {
+	public synchronized void sendStartNotification() {
 		try {
 			out.writeObject(Commands.START);
 			out.writeObject(ServerListener.getLobbies().get(myLobby.getMatch().getName()).getMatch());
@@ -606,14 +643,14 @@ public class ServerThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 	/**
 	 * Sends an update to the client, telling him that he should play his turn
 	 */
-	public void sendPlayToClient() {
+	public synchronized void sendPlayToClient() {
 
 		try {
 			out.writeObject(Commands.PLAY);
@@ -621,26 +658,26 @@ public class ServerThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 		ServerListener.updateCurrentPlayerLabel(ServerListener.getLobbies().get(myLobby.getMatch().getName()));
-		
+
 	}
 
 
 	/**
 	 * Sends the nickName of the player that is currently playing 
 	 */
-	public void sendCurrentPlayerLabel() {
+	public synchronized void sendCurrentPlayerLabel() {
 		try {
-		out.writeObject(Commands.CURRENTPLAYERLABEL);
-		out.writeObject(ServerListener.getLobbies().get(myLobby.getMatch().getName()).getMatch().getCurrentPlayingUser().getNickname());
+			out.writeObject(Commands.CURRENTPLAYERLABEL);
+			out.writeObject(ServerListener.getLobbies().get(myLobby.getMatch().getName()).getMatch().getCurrentPlayingUser().getNickname());
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void insertSentences(){
+	public synchronized void insertSentences(){
 		try {
 			List<Sentence> sentences = (List<Sentence>) in.readObject();
 			User u = (User) in.readObject();
@@ -653,12 +690,80 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	private void getAllSentences() {
+	private synchronized void getAllSentences() {
 		ArrayList<Sentence> sentences = ServerListener.getDB().getAllSentence();
 		try {
 			out.writeObject(sentences);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	public synchronized void sendTimer(int i) {
+		try {
+			out.writeObject(Commands.TIMER);
+			out.writeObject(i + "");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+	public synchronized void sendTimeOut() {
+
+		try {
+			out.writeObject(Commands.TIMEOUT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ServerListener.updateCurrentPlayerOfMatch(ServerListener.getLobbies().get(myLobby.getMatch().getName()).getMatch());
+
+	}
+
+
+	/**
+	 * 
+	 * @param manche
+	 */
+	public synchronized void sendNewManche(Integer manche) {
+
+		try {
+			out.writeObject(Commands.NEWMANCHE);
+			out.writeObject(manche);
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+
+	}
+
+
+	public synchronized void sendEndMatch(String winner) {
+
+		
+		try {
+			out.writeObject(Commands.ENDMATCH);
+			out.writeObject(winner);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	public synchronized void sendExitMatch() {
+
+		try {
+			out.writeObject(Commands.EXITMATCH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

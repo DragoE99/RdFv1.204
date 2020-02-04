@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.User;
@@ -148,11 +149,10 @@ public class SettingsController implements Initializable{
 	}
 
 	/**
-	 * Modifies only user's data that had corresponding text field filled out.
-	 * @param e Action on "Apply" button.
+	 * Utility method that changes user data.
 	 * @throws IOException .
 	 */
-	public void apply(ActionEvent e) throws IOException {
+	private void apply() throws IOException {
 		//TODO creare un user con le nuove caratteristiche, ma solo quelle che ha modificato
 		System.out.println(Client.getUser().getId());
 		System.out.println(temp.getEmail() + " " + temp.getName() + temp.getId());
@@ -172,6 +172,26 @@ public class SettingsController implements Initializable{
 	}
 
 	/**
+	 * Modifies only user's data that had corresponding text field filled out.
+	 * @param e Action on "Apply" button.
+	 * @throws IOException .
+	 */
+	public void apply(ActionEvent e) throws IOException {
+		apply();
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException {
+		if(e.getCode().toString().equals("ENTER")) {
+			apply();
+		}
+	}
+
+	/**
 	 * Goes to the previous window.
 	 * @param e Action on back icon.
 	 * @throws IOException .
@@ -179,7 +199,11 @@ public class SettingsController implements Initializable{
 	public void back(MouseEvent e) throws IOException {
 
 		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
-			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+			if(Main.getIsAdmin()) {
+				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("MenuAdmin.fxml"))));
+			} else {
+				Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));				
+			}
 		}
 	}
 

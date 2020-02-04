@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import playerRdF.Client;
 import util.Commands;
@@ -39,13 +40,11 @@ public class ResetPasswordController implements Initializable{
 	}
 
 	/**
-	 * Resets password and sends an email with the new generated one, than if successful sends to login screen.
-	 * @param e Action on "Send" button.
+	 * Utility method that resets password.
 	 * @throws IOException .
 	 * @throws ClassNotFoundException .
 	 */
-	public void enter(ActionEvent e) throws IOException, ClassNotFoundException {
-
+	private void enter() throws IOException, ClassNotFoundException {
 		Commands reply = Client.getProxy().resetPwd(email.getText());
 
 		if(reply == Commands.OK) {
@@ -55,6 +54,27 @@ public class ResetPasswordController implements Initializable{
 		} else if (reply == Commands.NO){
 			//TODO
 			System.err.println("Utente non esiste");
+		}
+	}
+	/**
+	 * Resets password and sends an email with the new generated one, than if successful sends to login screen.
+	 * @param e Action on "Send" button.
+	 * @throws IOException .
+	 * @throws ClassNotFoundException .
+	 */
+	public void enter(ActionEvent e) throws IOException, ClassNotFoundException {
+		enter();	
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws ClassNotFoundException .
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException, ClassNotFoundException {
+		if(e.getCode().toString().equals("ENTER")) {
+			enter();
 		}
 	}
 

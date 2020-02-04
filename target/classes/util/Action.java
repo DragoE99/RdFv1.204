@@ -1,5 +1,13 @@
 package util;
 
+/**
+ * 
+ * @author Achille Lambrughi
+ * @author Emanuele Drago
+ * @author Lorenzo Ottaviani
+ * @author Elisabeth Veronika Venturino
+ * Class that the action made by user. Helpful to inform the DB on what is happening in the game
+ */
 public class Action {
 
 	private Integer id;
@@ -82,7 +90,7 @@ public class Action {
 	}
 
 	/**
-	 * 
+	 * Setter
 	 * @param matchId
 	 */
 	public void setMatchId(Integer matchId) {
@@ -90,61 +98,100 @@ public class Action {
 	}
 
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Integer getPlayerId() {
 		return playerId;
 	}
 
 
+	/**
+	 * Setter
+	 * @param playerId
+	 */
 	public void setPlayerId(Integer playerId) {
 		this.playerId = playerId;
 	}
 
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public String getActionName() {
 		return actionName;
 	}
 
-
+	/**
+	 * Setter
+	 * @param actionName
+	 */
 	public void setActionName(String actionName) {
 		this.actionName = actionName;
 	}
 
-
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Boolean getJolly() {
 		return jolly;
 	}
 
-
+	/**
+	 * Setter
+	 * @param jolly
+	 */
 	public void setJolly(Boolean jolly) {
 		this.jolly = jolly;
 	}
 
-
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Integer getActionWallet() {
 		return actionWallet;
 	}
 
-
+	/**
+	 * Setter
+	 * @param actionWallet
+	 */
 	public void setActionWallet(Integer actionWallet) {
 		this.actionWallet = actionWallet;
 	}
 
-
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Integer getPlayerNumber() {
 		return playerNumber;
 	}
 
-
+	/**
+	 * Setter
+	 * @param playerNumber
+	 */
 	public void setPlayerNumber(Integer playerNumber) {
 		this.playerNumber = playerNumber;
 	}
 
-
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Character getLetterCalled() {
 		return letterCalled;
 	}
 
-
+	/**
+	 * Setter
+	 * @param letterCalled
+	 */
 	public void setLetterCalled(Character letterCalled) {
 		this.letterCalled = letterCalled;
 	}

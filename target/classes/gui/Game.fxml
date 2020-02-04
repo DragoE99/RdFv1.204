@@ -18,13 +18,23 @@
 
 <AnchorPane style="-fx-background-color: #21232F;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GameController">
    <children>
+      <Label fx:id="currentPlayer" textFill="#34ba0b" AnchorPane.leftAnchor="160.0" AnchorPane.topAnchor="34.5">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label text="Current player: " textFill="#c2d3e4" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="35.0">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
       <VBox alignment="CENTER" layoutX="3.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox nodeOrientation="RIGHT_TO_LEFT">
                <children>
                   <VBox nodeOrientation="LEFT_TO_RIGHT">
                      <children>
-                        <ImageView fitHeight="71.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
+						<ImageView fx:id="depositIcon" fitHeight="71.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@storageIcon2.png" />
                            </image>
@@ -32,7 +42,7 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </ImageView>
-                        <Label alignment="CENTER" prefHeight="18.0" prefWidth="80.0" text="0 €" textAlignment="CENTER" textFill="#c2d3e4">
+						<Label fx:id="deposit" alignment="CENTER" prefHeight="18.0" prefWidth="80.0" text="0" textAlignment="CENTER" textFill="#c2d3e4">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -47,7 +57,7 @@
                   </VBox>
                   <VBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="98.0" prefWidth="74.0">
                      <children>
-                        <ImageView fitHeight="60.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" translateY="10.0">
+						<ImageView fx:id="walletIcon" fitHeight="60.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" translateY="10.0">
                            <image>
                               <Image url="@bagIcon.png" />
                            </image>
@@ -55,7 +65,7 @@
                               <Insets />
                            </VBox.margin>
                         </ImageView>
-                        <Label fx:id="wallet" alignment="CENTER" prefHeight="26.0" prefWidth="75.0" text="0 €" textFill="#c2d3e4">
+                        <Label fx:id="wallet" alignment="CENTER" prefHeight="26.0" prefWidth="75.0" text="0" textFill="#c2d3e4">
                            <VBox.margin>
                               <Insets top="10.5" />
                            </VBox.margin>
@@ -73,7 +83,7 @@
                   </VBox>
                   <VBox maxWidth="64.0" minWidth="60.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="98.0" prefWidth="60.0">
                      <children>
-                        <ImageView fitHeight="60.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+						<ImageView fx:id="userIcon" fitHeight="60.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@userIcon.png" />
                            </image>
@@ -81,12 +91,12 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </ImageView>
-                        <Label fx:id="userName" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="26.0" prefWidth="72.0" textFill="#c2d3e4">
-                           <font>
+ 							<Label fx:id="userName" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="26.0" prefWidth="70.0" text="0" textAlignment="CENTER" textFill="#c2d3e4" textOverrun="CLIP">
+                            <font>
                               <Font size="16.0" />
                            </font>
                            <VBox.margin>
-                              <Insets right="6.0" />
+                              <Insets />
                            </VBox.margin>
                         </Label>
                      </children>
@@ -104,7 +114,7 @@
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id = "spinButton" alignment="CENTER" disable = "true" contentDisplay="CENTER" mnemonicParsing="false" onAction="#spin" style="-fx-background-color: #424967;" text="Spin" textFill="#c2d3e4">
+					<Button fx:id="spinButton" alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#spin" style="-fx-background-color: #424967;" text="Spin" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -535,7 +545,7 @@
             </Label>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                <Button fx:id = "buyVowelButton" alignment="CENTER" disable="true" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Buy vowel" textFill="#c2d3e4">
+				<Button fx:id="buyVowelButton" alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#selectVowel" style="-fx-background-color: #424967;" text="Buy vowel" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -546,7 +556,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id = "jollyButton" alignment="CENTER" disable="true" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Jolly" textFill="#c2d3e4">
+					<Button fx:id="jollyButton" alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Jolly" textFill="#c2d3e4">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -554,8 +564,8 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id = "giveSolutionButton" alignment="CENTER" disable="true" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Give solution" textFill="#c2d3e4">
-                     <font>
+                  <Button fx:id="giveSolutionButton" alignment="CENTER" contentDisplay="CENTER" onAction="#giveSolution" disable="true" mnemonicParsing="false" style="-fx-background-color: #424967;" text="Give solution" textFill="#c2d3e4">
+                                       <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
                      <HBox.margin>
@@ -566,6 +576,70 @@
                <VBox.margin>
                   <Insets left="175.1" />
                </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="a" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#pressA" prefWidth="25.0" style="-fx-background-color: #424967;" text="A" textFill="#c2d3e4" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets left="185.0" right="3.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="e" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#pressE" prefWidth="25.0" style="-fx-background-color: #424967;" text="E" textFill="#c2d3e4" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets right="3.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="i" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#pressI" prefWidth="25.0" style="-fx-background-color: #424967;" text="I" textFill="#c2d3e4" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets right="3.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="o" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#pressO" prefWidth="26.0" style="-fx-background-color: #424967;" text="O" textFill="#c2d3e4" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets right="3.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="u" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#pressU" prefWidth="25.0" style="-fx-background-color: #424967;" text="U" textFill="#c2d3e4" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets right="3.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <TextField fx:id="insertSolution" focusTraversable="false" maxWidth="-Infinity" onAction="#checkSolution" prefWidth="300.0" promptText="Insert solution" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;" visible="false">
+                     <HBox.margin>
+                        <Insets left="110.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
             </HBox>
             <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#quit" style="-fx-background-color: #424967;" text="Quit" textFill="#c2d3e4" translateX="350.0">
                <font>

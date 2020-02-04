@@ -16,17 +16,28 @@ import javafx.stage.Stage;
 /**
  * Class representing our game sentence, with methods to handle it
  * 
- * @author gruppo aelv
+ * @author Achille Lambrughi
+ * @author Emanuele Drago
+ * @author Lorenzo Ottaviani
+ * @author Elisabeth Veronika Venturino
  *
  */
 public class Sentence implements Serializable {
 
-	final private String sentence;
-	final private String hint;
+	 private String sentence;
+	 private String hint;
 	final private Integer id;
 	final private Integer author_id;
 	private List<Integer> seenBy;
 
+	/**
+	 * Constructor
+	 * @param sentence
+	 * @param hint
+	 * @param id
+	 * @param author_id
+	 * @param seenBy
+	 */
 	public Sentence(String sentence, String hint, Integer id, Integer author_id, List<Integer> seenBy) {
 		this.sentence = sentence;
 		this.hint = hint;
@@ -35,6 +46,11 @@ public class Sentence implements Serializable {
 		this.seenBy = seenBy;
 	}
 
+	/**
+	 * Constructor
+	 * @param sentence
+	 * @param hint
+	 */
 	public Sentence(String sentence, String hint) {
 		this.sentence = sentence;
 		this.hint = hint;
@@ -43,6 +59,13 @@ public class Sentence implements Serializable {
 		this.seenBy = null;
 	}
 
+	/**
+	 * Constructor
+	 * @param sentence
+	 * @param hint
+	 * @param id
+	 * @param create_by_user
+	 */
 	public Sentence(String sentence, String hint, int id, int create_by_user) {
 		this.sentence = sentence;
 		this.hint = hint;
@@ -51,7 +74,7 @@ public class Sentence implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Method that turns the sentence into a two dimensional array of char, used to initialize the labels in the game window
 	 * @return the char's 2D array to put into the game window
 	 */
 	public char[][] tokenize() {
@@ -99,7 +122,7 @@ public class Sentence implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Methods that separates the rows that make up the sentence, based on the bounds of the game window
 	 * @param input
 	 * @param maxLineLength
 	 * @return an array of String that represent the value of every row 
@@ -153,27 +176,59 @@ public class Sentence implements Serializable {
 		return sb.toString().split("\n");
 	}
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public List<Integer> getSeenBy() {
 		return seenBy;
 	}
 
+	/**
+	 * Setter
+	 * @param seenBy
+	 */
 	public void setSeenBy(List<Integer> seenBy) {
 		this.seenBy = seenBy;
 	}
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public String getSentence() {
 		return sentence;
 	}
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public String getHint() {
 		return hint;
 	}
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Integer getId() {
 		return id;
 	}
 
+	/**
+	 * Getter
+	 * @return
+	 */
 	public Integer getAuthor_id() {
 		return author_id;
 	}
+
+	public void setSentence(String newSentence){
+		sentence=newSentence;
+	}
+	public void setHint(String newHint){
+		hint= newHint;
+	}
+
 }

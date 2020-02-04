@@ -3,7 +3,7 @@ package util;
 import java.io.Serializable;
 
 /**
- * 
+ * An enumeration with all commands needed to handle ocommunication between server and client
  * @author gruppo aelv
  *
  */
@@ -29,10 +29,17 @@ public enum Commands implements Serializable {
 	QUIT, 
 	ENDACTION, 
 	PLAY, 
-	ALREADYON,
+	START, 
+	SPECTATE,
+	ALREADYON, 
+	USTATS, 
+	GSTATS, 
+	CURRENTPLAYERLABEL,
 	INSERTSENTENCES,
-	GETALLSENTENCES,
-	MODIFYSENTENCE;
-	//tutti gli altri comandi
+	GETALLSENTENCES, 
+	MANCHEWON,
+	MODIFYSENTENCE, 
+	REMOVEME;
+
 
 }

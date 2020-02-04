@@ -45,5 +45,10 @@
             </Button>
          </children>
       </VBox>
+      <Button alignment="CENTER" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: #424967;" text="Log out" textFill="#c2d3e4" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Button>
    </children>
 </AnchorPane>

@@ -168,7 +168,11 @@ public class SettingsController implements Initializable{
 		//System.out.println(Client.getUser().getEmail() + " " + Client.getUser().getName());
 
 		//torna al menu principale
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));	
+		if(Main.getIsAdmin()) {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("MenuAdmin.fxml"))));
+		} else {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));				
+		}
 	}
 
 	/**

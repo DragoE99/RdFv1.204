@@ -3,6 +3,8 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import adminRdF.AdminClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -20,6 +23,7 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import playerRdF.Client;
+import util.Admin;
 import util.Commands;
 import util.Player;
 import util.User;
@@ -58,12 +62,11 @@ public class SignUpController implements Initializable{
 	//altri label per messaggi per errori, operazione non riuscita...
 
 	/**
-	 * Registers the new user. If successful sends to activation code sceen. Controls if new password and check password are equal, if nick or email already exists. 
-	 * @param e Action on "Register" button.
+	 * Utility method that registers user.
 	 * @throws IOException .
 	 * @throws ClassNotFoundException .
 	 */
-	public void register(ActionEvent e) throws IOException, ClassNotFoundException {
+	private void register() throws IOException, ClassNotFoundException {
 		//psw sbagliata
 		if (!password.getText().equals(passwordCheck.getText())) {
 			//rimuovi vecchi errori
@@ -79,10 +82,18 @@ public class SignUpController implements Initializable{
 
 		} else {
 
+			Commands reply;
+			if(!Main.getIsAdmin()){
 			User u = (User)new Player(name.getText(), surname.getText(), email.getText(), nickname.getText(), password.getText());
 			Client.setUser(u);
 
-			Commands reply = Client.getProxy().signup(u);
+			 reply = Client.getProxy().signup(u);
+			}else {
+				User u = (User)new Admin(name.getText(), surname.getText(), email.getText(), nickname.getText(), password.getText());
+				Client.setUser(u);
+
+				 reply = AdminClient.getProxy().signup(u);
+			}
 
 			if(reply == Commands.OK) {
 				//rimanda al login quando hai finito con successo? NO
@@ -114,6 +125,27 @@ public class SignUpController implements Initializable{
 				errorNick.setVisible(true);
 				nickname.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
 			}
+		}
+	}
+	/**
+	 * Registers the new user. If successful sends to activation code sceen. Controls if new password and check password are equal, if nick or email already exists. 
+	 * @param e Action on "Register" button.
+	 * @throws IOException .
+	 * @throws ClassNotFoundException .
+	 */
+	public void register(ActionEvent e) throws IOException, ClassNotFoundException {
+		register();
+	}
+
+	/**
+	 * Allows to press confirm button by pressing ENTER.
+	 * @param e the pressed key.
+	 * @throws ClassNotFoundException .
+	 * @throws IOException .
+	 */
+	public void buttonPressed(KeyEvent e) throws IOException, ClassNotFoundException {
+		if(e.getCode().toString().equals("ENTER")) {
+			register();
 		}
 	}
 

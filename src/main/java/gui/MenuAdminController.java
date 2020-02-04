@@ -4,6 +4,7 @@ import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import playerRdF.Client;
 
 /**
  * The controller for menuAdmin window
@@ -51,6 +52,16 @@ public class MenuAdminController {
 	 */
 	public void settings(ActionEvent e) throws IOException {		
 		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Settings.fxml"))));
+	}
+	
+	/**
+	 * Does the logout.
+	 * @param e Action on "Logout" button.
+	 * @throws IOException .
+	 */
+	public void logout(ActionEvent e) throws IOException {
+		Client.getProxy().removeMe();
+		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Login.fxml"))));
 	}
 
 }
