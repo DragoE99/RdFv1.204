@@ -91,7 +91,6 @@ public class GameLogic {
 		}
 		if(spinResult.equals("PASSA")) {
 			//TODO dare l'opzione di giocare il jolly se ce l'ha
-			yieldTurn();
 			return false;
 		} else if(spinResult.equals("PERDI")) {
 			yieldTurn();

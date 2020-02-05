@@ -801,7 +801,7 @@ public class DataBaseConnection {
      * @param playerId
      * @param matchState
      */
-    public void updateMatch(Integer[] playerId, int machId, String matchState) {
+    public void updateMatch(ArrayList<Integer> playerId, int machId, String matchState) {
         String qry = "UPDATE matches " +
                 "SET user_id = ? ," +
                 " state = ? " +
@@ -809,7 +809,12 @@ public class DataBaseConnection {
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry)) {
 
-            Array array = conn.createArrayOf("INTEGER", playerId);
+        	Integer[] ids = new Integer[playerId.size()];
+        	for(int i = 0; i < playerId.size(); i++) {
+        		ids[i] = playerId.get(i);
+        	}
+        	
+            Array array = conn.createArrayOf("INTEGER", ids);
             pstmt.setArray(1, array);  // Set ID palyers
             pstmt.setString(2, matchState.toUpperCase()); // Set state
             pstmt.setInt(3, machId); //set creator id
@@ -930,9 +935,9 @@ public class DataBaseConnection {
         String qry= "INSERT INTO manches(number, match_id, sentence_id) VALUES (?,?,?)";
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {
-            pstmt.setInt(1, 1); //TODO metodo che ritorna la manche Corrente
+            pstmt.setInt(1, match.getManche()); //TODO metodo che ritorna la manche Corrente
             pstmt.setInt(2,match.getId());
-            pstmt.setInt(3,4); //TODO metodo che ritorna la frase associata al match corrente (o almeno il suo id)
+            pstmt.setInt(3,match.getSentences().get(match.getManche()).getId()); //TODO metodo che ritorna la frase associata al match corrente (o almeno il suo id)
             pstmt.executeUpdate();  // Execute the query
 
         } catch (SQLException e) {
@@ -945,18 +950,31 @@ public class DataBaseConnection {
      * Update the manches of a match 
      * @param match
      */
-    public void updateManches(Match match){
+    public void updateManches(Match match, ArrayList<Integer> seenBy){
         String qry= "UPDATE manches SET " +
-                "seen_by_user = ? " +
+                "seen_by_user = ? , " +
                 "manche_wallets = ? " +
                 "WHERE (match_id = ?) AND (number = ?)";
         try (Connection conn = getConnectionInstance();
              PreparedStatement pstmt = conn.prepareStatement(qry);) {
 
-            pstmt.setInt(1, 1); //TODO qualcosa per ritornare chi ha visto la manche
-            pstmt.setInt(2, 1);
+        	Integer[] ids = new Integer[seenBy.size()];
+        	for(int i = 0; i < seenBy.size(); i++) {
+        		ids[i] = seenBy.get(i);
+        	}
+        	Integer[] users = new Integer[match.getTotScores().size()];
+        	for(int i = 0; i < match.getTotScores().size(); i++) {
+        		users[i] = 0; //li metto tutti a 0 per ora, i punteggi
+        	}
+        	updateSeenByUserSentence(match.getSentences().get(match.getManche()).getId(), ids);
+        	
+            Array seenByUser = conn.createArrayOf("INTEGER", ids);
+            Array scores = conn.createArrayOf("INTEGER", users);
+        	
+            pstmt.setArray(1, seenByUser);  //chi ha visto la manche
+            pstmt.setArray(2, scores);
             pstmt.setInt(3,match.getId());
-            pstmt.setInt(4,4); //da agiornare qundo fatto i todos di prima
+            pstmt.setInt(4, match.getManche()); 
             pstmt.executeUpdate();  // Execute the query
 
         } catch (SQLException e) {

@@ -51,7 +51,8 @@ public enum Commands implements Serializable {
 	ENDMATCH,
 	DEPOSIT,
 	EXITMATCH,
-	QUITWR;
+	QUITWR,
+	ACTION;
 
 	
 	@Override

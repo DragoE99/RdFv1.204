@@ -157,11 +157,14 @@ public class SelectLobbyController implements Initializable{
 		HashMap<String, Lobby> lobbies = Client.getProxy().demandLobbyList();
 		Lobby lobby = lobbies.get(l.getMatch().getName());
 		lobby.setNSpectators(lobby.getNSpectators() + 1);
+		
 		Client.getProxy().sendChosenMatch(Commands.SPECTATE, lobby);
+		
 		Client.getProxy().setInWaitingRoom(true); //TODO pensare meglio a come gestire questa cosa
 		
 		FXMLLoader newLoader;
 		if(lobby.isActive()) {
+			Client.setMatch(lobby.getMatch());
 			newLoader = new FXMLLoader(getClass().getResource("Game.fxml"));
 		} else {
 			newLoader = new FXMLLoader(getClass().getResource("WaitingRoom.fxml"));

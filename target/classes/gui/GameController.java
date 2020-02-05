@@ -308,25 +308,35 @@ public class GameController implements Initializable {
 
 		if (randVal.getText().equals("PERDI")) {
 			wallet.setText("0");
+			
+			createAndSendAction(0, Client.getUser().getId(), "LOSE", Client.getUser().hasJolly(), 0, 
+					0, "", Client.getMatch().getId(), Client.getMatch().getManche());
 
 
 		}
+		
+		
 
-		if(!GameLogic.handleSpinResult(randVal.getText())) { //Se deve passare il turno
+		if(randVal.getText().equals("PASSA")) { 
 			disable();
-			if(Client.getUser().hasJolly()) {
-				jollyButton.setDisable(false);
-			}
-			disable();
+			createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+					0, "", Client.getMatch().getId(), Client.getMatch().getManche());
+			useJollyIfPresent();
 		} else {
 			if (randVal.getText().equals("JOLLY")) {
 				spinButton.setDisable(false);
 
 				insertConsonant.setDisable(true);
+				
+				createAndSendAction(0, Client.getUser().getId(), "RECIVE_JOLLY", Client.getUser().hasJolly(), 0, 
+						0, "", Client.getMatch().getId(), Client.getMatch().getManche());
 			}
+			
+			
 			//spinButton.setDisable(false); TODO
 		}
-
+		
+		GameLogic.handleSpinResult(randVal.getText());
 
 	}
 
@@ -363,8 +373,8 @@ public class GameController implements Initializable {
 			disable();
 			Client.getProxy().endTurn();
 
-			createAndSendAction(null, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
-					null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+			createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+					0, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
 
 
 		} else {
@@ -372,8 +382,8 @@ public class GameController implements Initializable {
 			if (!GameLogic.handleInsertedConsonant(insertConsonant.getText())) {
 				disable();
 
-				createAndSendAction(null, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
-						null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+				createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+						0, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
 
 				useJollyIfPresent();
 			} else {
@@ -381,9 +391,15 @@ public class GameController implements Initializable {
 				int counter = GameLogic.consonantOccurrences(this.sentence.getSentence(), insertConsonant, labels);
 
 				if(counter > 0) {
-					if (isVisibleAsLabel(insertConsonant)) {
-						Client.getProxy().endTurn();
+					if (isVisibleAsLabel(insertConsonant.getText())) {
+						
 						disable();
+						
+						createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+								0, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+						
+						useJollyIfPresent();
+						
 					} else {
 						Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK);
 						spinButton.setDisable(false);
@@ -391,21 +407,21 @@ public class GameController implements Initializable {
 
 						int actionWallet = Integer.parseInt(randVal.getText()) * counter;
 
-						createAndSendAction(null, Client.getUser().getId(), "CONSONANT", Client.getUser().hasJolly(), actionWallet, 
-								null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+						createAndSendAction(0, Client.getUser().getId(), "CONSONANT", Client.getUser().hasJolly(), actionWallet, 
+								0, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
 
 						wallet.setText((Integer.parseInt(randVal.getText()) * counter + Integer.parseInt(wallet.getText())+""));
 					}
 				} else {
 					disable();
 
-					createAndSendAction(null, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
-							null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+					createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+							0, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
 
 					useJollyIfPresent();
 				}
 
-				
+
 
 			}
 
@@ -415,11 +431,11 @@ public class GameController implements Initializable {
 
 
 
-	private boolean isVisibleAsLabel(TextField insertConsonant) {
+	private boolean isVisibleAsLabel(String insertConsonant) {
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 15; j++) {
-				if (labels[i][j].getText().equalsIgnoreCase(insertConsonant.getText()) && labels[i][j].isVisible()) {
+				if (labels[i][j].getText().equalsIgnoreCase(insertConsonant) && labels[i][j].isVisible()) {
 					return true;
 				}
 			}
@@ -427,6 +443,7 @@ public class GameController implements Initializable {
 
 		return false;
 	}
+
 
 	private void useJollyIfPresent() {
 		if(Client.getUser().hasJolly()) {
@@ -438,6 +455,7 @@ public class GameController implements Initializable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 		}
 
 	}
@@ -447,11 +465,12 @@ public class GameController implements Initializable {
 	 * @param e
 	 */
 	public void useJolly(ActionEvent e) {
-		Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK); //L'effetto che si ottiene è quello di resettare il timer a 5 secondi invece di perdere il turno
+		Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK); //L'effetto che si ottiene e' quello di resettare il timer a 5 secondi invece di perdere il turno
 		jollyButton.setDisable(true);
+		Client.getUser().setJolly(false);
 
-		createAndSendAction(null, Client.getUser().getId(), "USE_JOLLY", Client.getUser().hasJolly(), 0, 
-				null, insertConsonant.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+		createAndSendAction(0, Client.getUser().getId(), "USE_JOLLY", Client.getUser().hasJolly(), 0, 
+				0, "", Client.getMatch().getId(), Client.getMatch().getManche());
 
 		enable();
 
@@ -583,54 +602,56 @@ public class GameController implements Initializable {
 	String pressed = null;
 
 	public void pressA(ActionEvent e) {
-		pressed = "a";
+		pressed = "A";
 		pressedVowel(pressed);
 	}
 
 	public void pressE(ActionEvent e) {
-		pressed = "e";
+		pressed = "E";
 		pressedVowel(pressed);
 	}
 
 	public void pressI(ActionEvent e) {
-		pressed = "i";
+		pressed = "I";
 		pressedVowel(pressed);
 	}
 
 	public void pressO(ActionEvent e) {
-		pressed = "o";
+		pressed = "O";
 		pressedVowel(pressed);
 	}
 
 	public void pressU(ActionEvent e) {
-		pressed = "u";
+		pressed = "U";
 		pressedVowel(pressed);
 	}
 
 	private void pressedVowel(String pressed) {
-		HashSet<Character> called = new HashSet<Character>();
+		
+		if (!sentence.getSentence().contains(pressed) || isVisibleAsLabel(pressed)) {
+			
+			createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), -1000, 
+					0, pressed, Client.getMatch().getId(), Client.getMatch().getManche());
+			
+			disable();
+			
+			useJollyIfPresent();
+			
+		} else {	
+			Client.getProxy().buttonPressedNotification(Commands.CONSONANTOK);
+			
+			createAndSendAction(0, Client.getUser().getId(), "VOWEL", Client.getUser().hasJolly(), -1000, 
+					0, pressed, Client.getMatch().getId(), Client.getMatch().getManche());
 
-		if (!sentence.getSentence().contains(pressed)) {
-			//svuoto vocali chiamate prima di finire il turno
-			called.clear();
-			try {
-				Client.getProxy().endTurn();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+			enable();
 		}
-		called.add(pressed.charAt(0));
 		try {
 			sendUpdate(pressed, Commands.UPDATEGAMETABLE);
 			sendUpdate(pressed, Commands.UPDATEGAMETEXT);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		invisibleVowel();
-		enable();
 
 	}
 
@@ -652,6 +673,7 @@ public class GameController implements Initializable {
 
 	public void selectVowel(ActionEvent e) {
 		if(Integer.parseInt(wallet.getText()) >= 1000) {
+			Client.getProxy().buttonPressedNotification(Commands.SPINBUTTON);
 			disable();
 			visibleVowel();
 			wallet.setText(Integer.parseInt(wallet.getText()) - 1000 + "");
@@ -670,9 +692,9 @@ public class GameController implements Initializable {
 
 
 	public void giveSolution(ActionEvent e) {
-		insertSolution.setDisable(true);
 		Client.getProxy().buttonPressedNotification(Commands.SOLUTIONBUTTON);
 		insertSolution.setVisible(true);
+		giveSolutionButton.setDisable(true);
 	}
 
 
@@ -680,7 +702,7 @@ public class GameController implements Initializable {
 	public void checkSolution(ActionEvent e) {
 
 		if (insertSolution.getText().trim().equalsIgnoreCase(sentence.getSentence())) {
-			//TODO mostrare a tutti il vincitore e passare alla prossima manche
+			
 			try {
 				sendUpdate("Manche vinta da " + Client.getUser().getNickname() + "!" , Commands.MANCHEWON);
 			} catch (IOException e1) {
@@ -691,9 +713,16 @@ public class GameController implements Initializable {
 			Client.getProxy().sendDeposit(Integer.parseInt(deposit.getText()));
 			wallet.setText(0 + "");
 			disable();
+			
+			createAndSendAction(0, Client.getUser().getId(), "SOLUTION", Client.getUser().hasJolly(), 0, 
+					0, insertSolution.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
 
 		} else {
 			disable();
+			
+			createAndSendAction(0, Client.getUser().getId(), "PASS", Client.getUser().hasJolly(), 0, 
+					0, insertSolution.getText(), Client.getMatch().getId(), Client.getMatch().getManche());
+			
 			useJollyIfPresent();
 		}
 
@@ -735,7 +764,7 @@ public class GameController implements Initializable {
 			String letterCalled, Integer matchId, Integer mancheNumber) {
 		Action action = new Action(turn, playerId, actionName, jolly, actionWallet, playerNumber, letterCalled, matchId, mancheNumber);
 
-		//Client.getProxy().sendAction(action);
+		Client.getProxy().sendAction(action);
 
 	}
 
