@@ -50,7 +50,8 @@ public enum Commands implements Serializable {
 	NEWMANCHE,
 	ENDMATCH,
 	DEPOSIT,
-	EXITMATCH;
+	EXITMATCH,
+	QUITWR;
 
 	
 	@Override

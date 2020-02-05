@@ -301,6 +301,8 @@ public class ServerListener {
 
 			match.setManche(1);
 
+			DB.insertManches(match);
+
 			lobby.setMatch(match);
 
 			lobbies.put(match.getName(), lobby);
@@ -491,14 +493,14 @@ public class ServerListener {
 				}
 
 				lobbies.remove(lobby.getMatch().getName());
-				
+
 				DB.endMatch(lobby.getMatch().getId());
 
 			}		
 		};
 
 		timer.schedule(tt, 3000); //timerTask, dopo quanto avvio
-		
+
 		tasks.put(lobby.getMatch().getName(), tt);
 	}
 
@@ -516,6 +518,11 @@ public class ServerListener {
 		Match m = lobby.getMatch();
 
 		m.setManche(m.getManche() + 1);
+
+		if (m.getManche() < 6) {
+			DB.insertManches(m);
+			DB.updateManches(m, lobby.getThreads()); //TODO controlla sta roba e finisci, devi aggiornare i punteggi
+		}
 
 		lobby.setMatch(m);
 

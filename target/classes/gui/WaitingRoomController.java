@@ -30,7 +30,9 @@ public class WaitingRoomController {
 	public void back(MouseEvent e) throws IOException {
 
 		if (12 < e.getX() && e.getX()< 76 && 15 < e.getY() && e.getY()< 64) {
-			Client.getProxy().setInWaitingRoom(false);
+			//Client.getProxy().setInWaitingRoom(false);
+			Client.getProxy().quitWR();
+			
 			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
 		}
 	}

@@ -173,6 +173,9 @@ public class ServerThread extends Thread {
 				case ACTIVATEJOLLY: ServerListener.resetTimerTask(3, ServerListener.getLobbies().get(myLobby.getMatch().getName()));
 				break;
 				case QUITWR: quitWR();
+				break;
+				case ACTION: ServerListener.getDB().insertAction((Action)in.readObject());
+				break;
 				default: 
 					break;
 				}
@@ -194,6 +197,9 @@ public class ServerThread extends Thread {
 		lobby.removeThread(getUser().getId());
 		lobby.setNPlayers(lobby.getNPlayers() - 1);
 		boolean last = match.removePlayer(getUser());
+	
+		//aggiorna sul DB
+		ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "C");
 		
 		if(lobby.getNPlayers() < 1 && last) {
 			//elimina da lobbies
@@ -283,6 +289,10 @@ public class ServerThread extends Thread {
 		System.out.println("lunghezza della lista di players dopo essere entrato nella lobby" + myLobby.getMatch().getPlayers().size());
 
 		ServerListener.putLobby(myLobby);
+		
+		//aggiorna DB
+		ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "C");
+		
 		//in fine controllo se sono il terzo giocatore e quindi il gioco puo' partire
 		if (myLobby.getNPlayers() == 3) {
 
@@ -293,8 +303,11 @@ public class ServerThread extends Thread {
 			ServerListener.updateCurrentPlayerOfMatch(lobby.getMatch());
 
 			match.setSentences(ServerListener.getDB().getMatchSentence(match.getPlayersId()));
+			
+			//aggiorna DB
+			ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "R");
 
-		}
+		} 
 
 		myLobby.setMatch(match);
 
@@ -485,7 +498,6 @@ public class ServerThread extends Thread {
 //			// metterlo nella lista di lobby
 //			addMeToMatch(newLobby);		
 
-			//TODO metterlo sul database
 
 			ServerListener.getDB().createMatch(new Integer[] {newLobby.getCreator().getId()}, match.getName());
 			

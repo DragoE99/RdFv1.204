@@ -157,13 +157,25 @@ public class Lobby implements Serializable {
 	
 	/**
 	 * Adds a thread to the list of threads in this lobby, represented by their ID
-	 * @param serverThread
+	 * @param id
 	 */
 	public void addThread(Integer id) {
 
 		threads.add(id); 
 		
 		
+	}
+	
+	/**
+	 * Removes a thread from the list of threads in this lobby
+	 * @param id
+	 */
+	public void removeThread(Integer id) {
+		for (int i = 0; i < threads.size(); i++) {
+			if(threads.get(i).equals(id)) {
+				threads.remove(i);
+			}
+		}
 	}
 
 	/**

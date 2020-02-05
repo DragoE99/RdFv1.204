@@ -497,8 +497,8 @@ public class ServerListener {
 			}		
 		};
 
-		timer.schedule(tt, 3000); //timerTask, dopo quanto avvio, ogni quanto esegue
-
+		timer.schedule(tt, 3000); //timerTask, dopo quanto avvio
+		
 		tasks.put(lobby.getMatch().getName(), tt);
 	}
 

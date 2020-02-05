@@ -114,7 +114,7 @@ public class Proxy extends Thread {									//cambiare nome?
 	/**
 	 * Check if the server send the start notification and then opens the Game window
 	 */
-	private void startGame() {
+	private synchronized void startGame() {
 		
 		
 		 try {
@@ -136,7 +136,7 @@ public class Proxy extends Thread {									//cambiare nome?
 					}
 				});
 			} else if(c == Commands.QUITWR) {
-				
+				System.out.println("ho ricevuto quitWr");
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -375,7 +375,7 @@ public class Proxy extends Thread {									//cambiare nome?
 	 * @throws ClassNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
-	public HashMap<String, Lobby> demandLobbyList() throws IOException, ClassNotFoundException {
+	public synchronized HashMap<String, Lobby> demandLobbyList() throws IOException, ClassNotFoundException {
 		out.writeObject(Commands.NEEDLOBBYLIST);
 		Object obj = in.readObject();
 		HashMap<String, Lobby> map = new HashMap<String, Lobby>();
@@ -714,6 +714,18 @@ public class Proxy extends Thread {									//cambiare nome?
 		
 		
 		setInWaitingRoom(false);
+	}
+
+
+	public void sendAction(Action action) {
+		
+		try {
+			out.writeObject(Commands.ACTION);
+			out.writeObject(action);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

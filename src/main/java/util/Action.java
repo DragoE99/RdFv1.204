@@ -1,5 +1,7 @@
 package util;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Achille Lambrughi
@@ -8,7 +10,7 @@ package util;
  * @author Elisabeth Veronika Venturino
  * Class that the action made by user. Helpful to inform the DB on what is happening in the game
  */
-public class Action {
+public class Action implements Serializable {
 
 	private Integer id;
 	

@@ -127,12 +127,19 @@ public class GameLogic {
 		HashSet<Character> consonants = new HashSet<Character>(Arrays.asList('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
                 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z' ));
 		
-		Character insertedValue = s.charAt(0);
+		HashSet<Character> called = new HashSet<Character>();
 		
-		if (!consonants.contains(insertedValue)) {
+		Character insertedValue = s.charAt(0);
+		called.add(insertedValue);
+		
+		if (!consonants.contains(insertedValue) && called.contains(insertedValue)) {
 			
-			//
-			
+			/*Action action = new Action();
+			action.setActionName("PASS");
+			action.setActionWallet(0);
+			action.setLetterCalled(insertedValue + "");*/
+			//prima di passare il turno pulisci le consonanti chiamate
+			called.clear();
 			yieldTurn();
 			
 			
