@@ -14,6 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import serverRdF.DataBaseConnection;
 import serverRdF.ServerListener;
 
@@ -29,6 +35,7 @@ import serverRdF.ServerListener;
 public class DBConnectionController implements Initializable{
 
 	@FXML private Label title;
+	@FXML private Label errorLabel;
 	
 	@FXML private TextField ip;
 	@FXML private TextField port;
@@ -52,24 +59,39 @@ public class DBConnectionController implements Initializable{
 	 */
 	private void login() throws IOException {
 		//TODO fare il login parte admin
-		
 		DataBaseConnection DB = new DataBaseConnection(ip.getText(),port.getText(), name.getText(), user.getText(), pwd.getText());
-		
 		ServerListener.setDB(DB);
-		
 		ServerListener.setMailAndPassword(email.getText(), emailPwd.getText());
-		
-		if(ServerListener.AdminPresent()) {
-			//TODO
+		if(!DB.testConnection()){
+			//SEGNALA ERRORE
+			errorLabel.setText("Wrong ip or port or DBname or user or password");
+			ip.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+			port.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+			name.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+			user.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+			pwd.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+		}else if(!ServerListener.testMail()){
+			//SEGNALA ERRORE
+			errorLabel.setText("Wrong email or email password");
+			//resetta i contorni di prima
+			ip.setBorder(null);
+			port.setBorder(null);
+			name.setBorder(null);
+			user.setBorder(null);
+			pwd.setBorder(null);
+			//nuovi errori
+			email.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+			emailPwd.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+
+		}else if(ServerListener.AdminPresent()) {
 			Platform.exit();
 		} else {
-			//TODO
 			FirstAdminController.setDataBaseConnection(DB);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("FirstAdmin.fxml"));
 			ServerStarter.getStage().setScene(new Scene(loader.load()));
 		}
-		
-		
+
+
 	}
 	/**
 	 * Checks

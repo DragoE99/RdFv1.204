@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.omg.CORBA.INITIALIZE;
-
 /**
  * Match is our game state class, that will be passed back and forth and updated between client and server 
  * 
@@ -28,7 +26,7 @@ public class Match implements Serializable {
 	private ArrayList<User> spectators = new ArrayList<User>();
 	private HashMap<Integer, Integer> totScores = new HashMap<Integer, Integer>(); 	// <id user, punteggio totale della sua partita>
 	private Integer manche;
-	private HashMap<Integer, ArrayList<Integer>> mancheScore; //3 , 5  <Id user, lista dei punteggi di ciascuna delle 5 manche>
+	private HashMap<Integer, ArrayList<Integer>> mancheScore = new HashMap<Integer, ArrayList<Integer>>(); //  <Manche, <id e punteggio del vincitore>>
 	private User currentPlayingUser; // app. a players 
 	private HashMap<Integer, Sentence> sentences = new HashMap<Integer, Sentence>(); //<manche, frase per quella manche>
 	private static int nextPlayer = 0;
@@ -269,7 +267,9 @@ public class Match implements Serializable {
 		this.totScores = totScores;
 	}
 
-
+/**
+ * 
+ */
 	private void initializeScores() {
 		
 		for (User key : players) {
@@ -278,11 +278,49 @@ public class Match implements Serializable {
 		
 	}
 
-
+	/**
+	 * 
+	 * @param playerId
+	 * @param amount
+	 */
 	public void setScore(Integer playerId, Integer amount) {
 
 		totScores.put(playerId, amount);
 		
+	}
+	
+	/**
+	 * 
+	 * @param manche
+	 */
+	public void setSentence(Integer manche, Sentence s) {
+		sentences.put(manche, s);
+	}
+
+
+	public Integer getScore(Integer userId) {
+
+		return totScores.get(userId);
+		
+	}
+
+
+	public void addMancheScore(Integer senderId, int i) {
+		
+		ArrayList<Integer> thisPlayerScore = new ArrayList<Integer>();
+		
+		thisPlayerScore.add(senderId);
+		
+		thisPlayerScore.add(i);
+		
+		mancheScore.put(manche, thisPlayerScore);
+		
+	}
+
+
+	public HashMap<Integer, ArrayList<Integer>> getMancheScores() {
+		
+		return mancheScore;
 	}
 
 }

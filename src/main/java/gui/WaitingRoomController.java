@@ -33,7 +33,18 @@ public class WaitingRoomController {
 			//Client.getProxy().setInWaitingRoom(false);
 			Client.getProxy().quitWR();
 			
-			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
+			exit();
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void exit() {
+		try {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

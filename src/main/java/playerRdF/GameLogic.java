@@ -130,6 +130,9 @@ public class GameLogic {
 		
 		Character insertedValue = s.charAt(0);
 		called.add(insertedValue);
+		if(consonants.contains(insertedValue)){
+			System.out.println("la lettera chiamata c'e'");
+		}else System.out.println("la lettera chiamata non e' presente");
 		
 		if (!consonants.contains(insertedValue) && called.contains(insertedValue)) {
 			
@@ -139,13 +142,14 @@ public class GameLogic {
 			action.setLetterCalled(insertedValue + "");*/
 			//prima di passare il turno pulisci le consonanti chiamate
 			called.clear();
-			yieldTurn();
-			
+			//yieldTurn();
+			return false;
 			
 			
 		}
 		
-		return consonants.contains(insertedValue);
+		//return consonants.contains(insertedValue);
+		return true;
 		
 		
 	}

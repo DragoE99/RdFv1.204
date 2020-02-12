@@ -3,7 +3,6 @@ C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\CreateSentence
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\StatisticsController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\MenuController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\serverRdF\ServerListener.java
-C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\adminRdF\Proxy.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\GlobalStatController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\adminRdF\AdminProxy.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\LoginController.java
@@ -11,16 +10,18 @@ C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\util\DatabasePopul
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\Main.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\util\Action.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\SelectLobbyController.java
+C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\FirstAdminController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\ModifySentenceSearchController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\CreateLobbyController.java
+C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\ServerStarter.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\util\Manche.java
+C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\DeleteSentenceController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\MenuAdminController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\SettingsController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\GameController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\adminRdF\AdminClient.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\playerRdF\GameLogic.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\util\StringManager.java
-C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\adminRdF\Client.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\ActivationCodeController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\gui\ResetPasswordController.java
 C:\Users\Bill\Documents\prog\RdfrRepo\RdFv1.204\src\main\java\playerRdF\Client.java

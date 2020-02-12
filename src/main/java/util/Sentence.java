@@ -2,15 +2,14 @@ package util;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import gui.Main;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.Axis;
 import javafx.stage.Stage;
 
 /**
@@ -24,11 +23,12 @@ import javafx.stage.Stage;
  */
 public class Sentence implements Serializable {
 
-	 private String sentence;
-	 private String hint;
+	private String sentence;
+	private String hint;
 	final private Integer id;
 	final private Integer author_id;
 	private List<Integer> seenBy;
+	private ArrayList<String> lettersShown = new ArrayList<>();
 
 	/**
 	 * Constructor
@@ -230,5 +230,21 @@ public class Sentence implements Serializable {
 	public void setHint(String newHint){
 		hint= newHint;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<String> getLettersShown() {
+		return lettersShown;
+	}
+	
+	/**
+	 * 
+	 * @param s
+	 */
+	public void addLetter(String s) {
+		lettersShown.add(s);
+	}
+		//forse creare un metodo che svuota lettersShown
 }

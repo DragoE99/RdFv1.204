@@ -142,6 +142,12 @@ public class LoginController implements Initializable{
 				user.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
 				psw.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
 				System.err.println("User already online");
+			}else if(reply==Commands.NOTANADMIN){
+				errorLabel.setText("This user is not an admin");
+				errorLabel.setVisible(true);
+				user.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+				psw.setBorder(new Border(new BorderStroke(Color.rgb(194, 24, 24), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
+
 			}
 		}
 	}

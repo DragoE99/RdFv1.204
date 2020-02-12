@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="612.0" prefWidth="750.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.DBConnectionController">
+<AnchorPane prefHeight="612.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DBConnectionController">
    <children>
       <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#buttonPressed" prefHeight="572.0" prefWidth="750.0" style="-fx-background-color: #21232F;" AnchorPane.bottomAnchor="-110.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -21,6 +21,7 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </Label>
+            <Label fx:id="errorLabel" textFill="#c21818" />
             <TextField fx:id="ip" maxWidth="-Infinity" prefWidth="300.0" promptText="IP" style="-fx-background-color: #151720; -fx-text-fill: #FFFFFF;">
                <VBox.margin>
                   <Insets top="10.0" />

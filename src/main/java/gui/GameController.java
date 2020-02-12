@@ -232,6 +232,12 @@ public class GameController implements Initializable {
 											userIcon.setVisible(false);
 											depositIcon.setVisible(false);
 											walletIcon.setVisible(false);
+											
+											if(sentence.getLettersShown() != null) {
+												for (String letter  : sentence.getLettersShown()) {
+													setLabels(letter);
+												}
+											}
 										}
 
 	}
@@ -278,16 +284,7 @@ public class GameController implements Initializable {
 		}
 	}
 
-	/**
-	 * Exits from the match and return to lobby list screen.
-	 * @param e Action on "Quit".
-	 * @throws IOException .
-	 * @throws ClassNotFoundException .
-	 */
-	public void quit(ActionEvent e) throws IOException, ClassNotFoundException {
-		Client.getProxy().quit();
-		Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("SelectLobby.fxml"))));
-	}
+	
 
 	/**
 	 * Generates a random value, if major 0 then spin result a multiplier for the score, if = 0 spin result is skip, if = -1 spin result is loose, if = -2 spin result is jolly.
@@ -308,7 +305,7 @@ public class GameController implements Initializable {
 
 		if (randVal.getText().equals("PERDI")) {
 			wallet.setText("0");
-			
+			disable();
 			createAndSendAction(0, Client.getUser().getId(), "LOSE", Client.getUser().hasJolly(), 0, 
 					0, "", Client.getMatch().getId(), Client.getMatch().getManche());
 
@@ -703,14 +700,16 @@ public class GameController implements Initializable {
 
 		if (insertSolution.getText().trim().equalsIgnoreCase(sentence.getSentence())) {
 			
+			deposit.setText(Integer.parseInt(deposit.getText()) + Integer.parseInt(wallet.getText()) + "");
+			Client.getProxy().sendDeposit(Integer.parseInt(deposit.getText()));
+			
 			try {
 				sendUpdate("Manche vinta da " + Client.getUser().getNickname() + "!" , Commands.MANCHEWON);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			deposit.setText(Integer.parseInt(deposit.getText()) + Integer.parseInt(wallet.getText()) + "");
-			Client.getProxy().sendDeposit(Integer.parseInt(deposit.getText()));
+			
 			wallet.setText(0 + "");
 			disable();
 			
@@ -768,7 +767,23 @@ public class GameController implements Initializable {
 
 	}
 
-
+	/**
+	 * Exits from the match and return to lobby list screen.
+	 * @param e Action on "Quit".
+	 * @throws IOException .
+	 * @throws ClassNotFoundException .
+	 */
+	public void quit(ActionEvent e) throws IOException, ClassNotFoundException {
+		Client.getProxy().quit();
+	}
+	
+	public void exit() {
+		try {
+			Main.getStage().setScene(new Scene(FXMLLoader.load(getClass().getResource("Menu.fxml"))));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
 
 

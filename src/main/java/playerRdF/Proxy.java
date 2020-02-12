@@ -137,6 +137,12 @@ public class Proxy extends Thread {									//cambiare nome?
 				});
 			} else if(c == Commands.QUITWR) {
 				System.out.println("ho ricevuto quitWr");
+				setInWaitingRoom(false);
+				Platform.runLater(new Runnable() {
+					@Override public void run() {
+					((WaitingRoomController)(Main.getLoader().getController())).exit();
+					}
+				});
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -151,8 +157,6 @@ public class Proxy extends Thread {									//cambiare nome?
 
 	/**
 	 * Method that sends user data to be checked by the server at the moment of authentication
-	 * @param usr String, the username/mail
-	 * @param psw String, password
 	 * @return 
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
@@ -172,7 +176,11 @@ public class Proxy extends Thread {									//cambiare nome?
 			if(reply == Commands.OK) {
 				//setto l'utente della sessione uguale all'utente sul DB, serve per l'ID
 				Client.setUser((User)in.readObject());
-				
+				if(Main.getIsAdmin()){
+					if(Client.getUser() instanceof Admin){
+						return reply;
+					}else return Commands.NOTANADMIN;
+				}
 				//se l'utente non e' verificato mi torna nullo
 				if(Client.getUser() == null) {
 					reply = Commands.NOTVERIFIED;
@@ -202,13 +210,13 @@ public class Proxy extends Thread {									//cambiare nome?
 			try {
 
 				c = (Commands) in.readObject();
-				System.out.println("while");
+				
 				switch (c) {
 				case UPDATEGAMETABLE: {
 					String s = (String)in.readObject();
 
 					Platform.runLater(new Runnable() {
-						@Override public void run() {System.out.println("qua ci entro" + s);
+						@Override public void run() {
 						((GameController)(Main.getLoader().getController())).setLabels(s);
 						}
 					});
@@ -219,7 +227,7 @@ public class Proxy extends Thread {									//cambiare nome?
 					String s = (String)in.readObject();
 
 					Platform.runLater(new Runnable() {
-						@Override public void run() {System.out.println("qua ci entro" + s);
+						@Override public void run() {
 						((GameController)(Main.getLoader().getController())).setInsertConsonant(s);
 						}
 					});
@@ -230,13 +238,22 @@ public class Proxy extends Thread {									//cambiare nome?
 					String s = (String)in.readObject();
 
 					Platform.runLater(new Runnable() {
-						@Override public void run() {System.out.println("qua ci entro" + s);
+						@Override public void run() {
 						((GameController)(Main.getLoader().getController())).setRandVal(s);
 						}
 					});
 				}
 				break;
-				case QUIT : {inGameWindow = false; inWaitingRoom = false;}
+				case QUIT : { //System.out.println("Ho ricevuto quit");
+							
+							inGameWindow = false; 
+							inWaitingRoom = false;
+							Platform.runLater(new Runnable() {
+								@Override public void run() {
+								((GameController)(Main.getLoader().getController())).exit();
+								}
+							});
+				}
 				break;
 				case PLAY : {
 
@@ -272,7 +289,7 @@ public class Proxy extends Thread {									//cambiare nome?
 					String s = (String)in.readObject();
 
 					Platform.runLater(new Runnable() {
-						@Override public void run() {System.out.println("proxy riceve comando timer");
+						@Override public void run() {//System.out.println("proxy riceve comando timer");
 						((GameController)(Main.getLoader().getController())).setTimer(s);
 						}
 					});

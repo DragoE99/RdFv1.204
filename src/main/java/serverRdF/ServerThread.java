@@ -188,7 +188,7 @@ public class ServerThread extends Thread {
 	/**
 	 * 
 	 */
-	private synchronized void quitWR() {
+	public synchronized void quitWR() {
 		
 		Lobby lobby = ServerListener.getLobbies().get(myLobby.getMatch().getName());
 		Match match = lobby.getMatch();
@@ -302,7 +302,6 @@ public class ServerThread extends Thread {
 
 			ServerListener.updateCurrentPlayerOfMatch(lobby.getMatch());
 
-			match.setSentences(ServerListener.getDB().getMatchSentence(match.getPlayersId()));
 			
 			//aggiorna DB
 			ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "R");
@@ -537,11 +536,51 @@ public class ServerThread extends Thread {
 	 * @throws IOException
 	 */
 	private synchronized void quit() throws IOException {
-		out.writeObject(Commands.QUIT);
-
-		//TODO togliere dalla lobby, chiudere tutte le lobby (?)
+		
+		Lobby lobby = ServerListener.getLobbies().get(myLobby.getMatch().getName());
+		Match match = lobby.getMatch();
+		
+		boolean amPlayer = false;
+		for (Integer id : match.getPlayersId()) {
+			if(id.equals(getUser().getId())) {
+				amPlayer = true;
+			}
+		}
+		
+		if(amPlayer) {
+			//sono player, quindi interrompi
+			ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "I");
+			
+			//mandare la notifica a tutti gli altri
+			ServerListener.quitMatch(lobby);
+		} else {
+			//sono spettatore
+			
+			ServerListener.getLobbies().get(match.getName()).removeThread(getUser().getId());
+			
+			ServerListener.getLobbies().get(match.getName()).setNSpectators(ServerListener.getLobbies().get(match.getName()).getNSpectators() - 1);
+			
+			out.writeObject(Commands.QUIT);
+			myLobby = null;
+		}
+		
+		
+	
 	}
 
+	/**
+	 * 
+	 */
+	public synchronized void quitMatch() {
+		try {
+			out.writeObject(Commands.QUIT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		myLobby = null;
+	}
+	
 	/**
 	 * Template method to send an email
 	 * @param usr username of the account that sends the email	
@@ -608,11 +647,10 @@ public class ServerThread extends Thread {
 	 * @throws AddressException 
 	 */
 	private static void sendActivationCode(String to, String code) {
-		//TODO
-		String from = "ruotadellafortuna321@gmail.com";		//i dati di un nostro account? Pero' non si dovrebbe fare, non so come
-		String pwd = "Rdfaccount9";
+		String from = ServerListener.getEmail();
+		String pwd = ServerListener.getEmailPwd();
 
-		String activationCode = code; 						//TODO genereare un codice e metterlo nel db
+		String activationCode = code;
 
 		String subject = "Activation Code";
 		String text = "This is your activation code : '" + activationCode + "'.";

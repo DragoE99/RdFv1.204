@@ -9,13 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import gui.ServerStarter;
 import javafx.application.Application;
-import playerRdF.Client;
 import util.Admin;
 import util.Commands;
 import util.Lobby;
@@ -174,6 +182,16 @@ public class ServerListener {
 		ServerThread sThread = clients.get(senderId);
 		System.out.println(sThread);
 		String update = sThread.getGameTableUpdate();
+		
+		if(command == Commands.UPDATEGAMETABLE) {
+			Match m = lobby.getMatch();
+			Sentence s = m.getSentences().get(m.getManche());
+			s.addLetter(update);
+			m.setSentence(m.getManche(), s);
+			lobby.setMatch(m);
+			lobbies.put(m.getName(), lobby);
+		}
+		
 		for (int i = 0; i < threads.size(); i++) {
 
 			clients.get(threads.get(i)).sendUpdateToProxy(update, command);
@@ -293,7 +311,17 @@ public class ServerListener {
 
 		ArrayList<Sentence> sentences = DB.getMatchSentence(lobby.getMatch().getPlayersId());
 		if (sentences.size() < 5) {
-
+			sendNotEnoughSentence();
+			ArrayList<ServerThread> copy = new ArrayList<>();
+			for (Integer th : lobby.getThreads()) {
+				copy.add(clients.get(th));  
+			}
+			
+			for (ServerThread s : copy) {
+				s.quitWR();
+			}
+			
+			
 		} else {
 			Match match = lobby.getMatch();
 
@@ -318,10 +346,43 @@ public class ServerListener {
 
 		}
 
-
-
 	}
+	public static void sendNotEnoughSentence(){
+		String password=ServerListener.getEmailPwd();
+		String username=ServerListener.getEmail();
 
+		ArrayList<String> adminMail= getDB().getAdminMail();
+		String host = "smtp.gmail.com"; //per il nostro account
+		String from=username;
+
+		Properties props = System.getProperties();
+		props.put("mail.smtp.host",host);
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.port",587);
+
+		Session session = Session.getInstance(props);
+
+		try {
+			Message msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(from));
+			for (String mail: adminMail
+			) {
+				System.out.println("AGGIUNTO ADMIN MAIL");
+				msg.addRecipients(Message.RecipientType.TO, InternetAddress.parse(mail, false));
+			}
+
+			System.out.println("MAIL ALL'ADMIN INVIATA");
+			msg.setSubject("WARNING: Insert new sentences");
+			msg.setText("Some users can not play.\nPlease insert new sentences");
+
+			Transport.send(msg,username,password);
+		} catch (AddressException ex) {
+			ex.printStackTrace();
+
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Inform every ServerThread(so its relative client) connected to the specified lobby on the value of the current player (so that is visible on screen)
 	 * @param lobby
@@ -517,11 +578,13 @@ public class ServerListener {
 
 		Match m = lobby.getMatch();
 
+		DB.updateManches(m, lobby.getThreads()); //TODO controlla sta roba e finisci, devi aggiornare i punteggi
+		
 		m.setManche(m.getManche() + 1);
 
 		if (m.getManche() < 6) {
 			DB.insertManches(m);
-			DB.updateManches(m, lobby.getThreads()); //TODO controlla sta roba e finisci, devi aggiornare i punteggi
+			
 		}
 
 		lobby.setMatch(m);
@@ -529,12 +592,59 @@ public class ServerListener {
 	}
 
 
-	public static void updateScores(Lobby lobby, Integer senderId, Integer amount) {
+	public synchronized static void updateScores(Lobby lobby, Integer senderId, Integer amount) {
 
 		Match match = lobby.getMatch();
+		
+		Integer oldScore = match.getScore(senderId);
 
 		match.setScore(senderId, amount);
+		
+		Integer newScore = match.getScore(senderId);
+		
+		match.addMancheScore(senderId, newScore - oldScore);
 
 
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static boolean testMail(){
+		String host = "smtp.gmail.com";
+		String user = ServerListener.email;
+		String pwd = ServerListener.getEmailPwd();
+
+		try {
+			Properties props = System.getProperties();
+			props.put("mail.smtp.host",host);
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.port",587);
+			Session session = Session.getInstance(props);
+			Transport transport = session.getTransport("smtp");
+			transport.connect(host, 587, user, pwd);
+			transport.close();
+			System.out.println("success");
+		} catch(MessagingException e) {
+			System.out.println("ERRORE MAIL"); //TODO eliminare print
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param lobby
+	 */
+	public synchronized static void quitMatch(Lobby lobby) {
+
+		for (Integer th : lobby.getThreads()) {
+			clients.get(th).quitMatch();
+		}
+		
+		tasks.get(lobby.getMatch().getName()).cancel();
+		
+		getLobbies().remove(lobby.getMatch().getName());
 	}
 }

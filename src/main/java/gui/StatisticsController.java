@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
@@ -22,6 +23,11 @@ public class StatisticsController {
 
 	@FXML private ImageView back;
 
+	@FXML private Button personalButton;
+	public void initialize(){
+
+		if(Main.getIsAdmin())personalButton.setVisible(false);		
+	}
 	/**
 	 * Sends to global statistics screen.
 	 * @param e Action on "Global" button.

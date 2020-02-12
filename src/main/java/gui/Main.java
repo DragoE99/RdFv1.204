@@ -84,6 +84,7 @@ public class Main extends Application {
 		Main.isAdmin = userType;
 	}
 
+	/**return ture if the current user is an admin*/
 	public static boolean getIsAdmin() {
 		return isAdmin;
 	}

@@ -150,6 +150,16 @@ public class DataBaseConnection {
         System.out.println("connessione avvenuta");
         return connection;
     }
+    
+    public boolean testConnection(){
+        try {
+            getConnectionInstance();
+        } catch (SQLException e) {
+            System.out.println("ERRORE Database"); //TODO eliminare print
+            return false;
+        }
+        return true;
+    }
 
     /* ******************** Query users table *************************/
 
@@ -282,6 +292,23 @@ public class DataBaseConnection {
         }
 
     }
+    public  ArrayList<String> getAdminMail(){
+        String qry="SELECT * FROM users WHERE role= 'a'";
+        ArrayList<String> adminMail= new ArrayList<>();
+        try (Connection conn = getConnectionInstance();
+             PreparedStatement pstmt = conn.prepareStatement(qry)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                adminMail.add(rs.getString("mail"));
+            }
+
+        } catch (SQLException ex) {
+            //System.out.println(ex.getMessage());
+            //ex.printStackTrace();
+        }
+        return adminMail;
+    }
+
 
     //FUNZIONE che stampa tutti gli utenti presenti nel server utile più che altro per test
     //TODO da elimimare
@@ -962,10 +989,15 @@ public class DataBaseConnection {
         	for(int i = 0; i < seenBy.size(); i++) {
         		ids[i] = seenBy.get(i);
         	}
-        	Integer[] users = new Integer[match.getTotScores().size()];
-        	for(int i = 0; i < match.getTotScores().size(); i++) {
-        		users[i] = 0; //li metto tutti a 0 per ora, i punteggi
-        	}
+        	Integer[] users = new Integer[] {0,0,0};
+  
+        		
+        		for(int i = 0; i < match.getPlayersId().size(); i++) {
+        			if(match.getPlayersId().get(i).equals(match.getMancheScores().get(match.getManche()).get(0))) { //se il giocatore in questa posizione ha l'id uguale al giocatore che ha vinto questa manche
+        				users[i] = match.getMancheScores().get(match.getManche()).get(1); //metti il guadagno corrispondente in questa posizione
+        			}
+        		}
+      
         	updateSeenByUserSentence(match.getSentences().get(match.getManche()).getId(), ids);
         	
             Array seenByUser = conn.createArrayOf("INTEGER", ids);
