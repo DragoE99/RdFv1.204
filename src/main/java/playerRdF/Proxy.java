@@ -125,24 +125,19 @@ public class Proxy extends Thread {									//cambiare nome?
 				
 				Client.setMatch((Match) in.readObject());
 				
-				Platform.runLater(new Runnable() {
-					@Override public void run() {System.out.println("inizio partita");
-					try {
-						((WaitingRoomController)(Main.getLoader().getController())).begin();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					}
+				Platform.runLater(() -> {System.out.println("inizio partita");
+				try {
+					((WaitingRoomController)(Main.getLoader().getController())).begin();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				});
 			} else if(c == Commands.QUITWR) {
 				System.out.println("ho ricevuto quitWr");
+				Platform.runLater(() -> ((WaitingRoomController)(Main.getLoader().getController())).exit());
+
 				setInWaitingRoom(false);
-				Platform.runLater(new Runnable() {
-					@Override public void run() {
-					((WaitingRoomController)(Main.getLoader().getController())).exit();
-					}
-				});
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

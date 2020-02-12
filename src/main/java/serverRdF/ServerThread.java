@@ -300,11 +300,17 @@ public class ServerThread extends Thread {
 
 			ServerListener.startGame(myLobby);
 
-			ServerListener.updateCurrentPlayerOfMatch(lobby.getMatch());
+			try{
+				ServerListener.updateCurrentPlayerOfMatch(lobby.getMatch());
 
-			
-			//aggiorna DB
-			ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "R");
+
+				//aggiorna DB
+				ServerListener.getDB().updateMatch(match.getPlayersId(), match.getId(), "R");
+			}catch(Exception ignored){
+
+				return;
+			}
+
 
 		} 
 
